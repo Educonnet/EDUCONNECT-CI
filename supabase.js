@@ -2,7 +2,7 @@
 // Configuration Supabase pour EDUCONNECT CI.
 
 const SUPABASE_URL = "https://lsgyjcpfpdnhxrafaobq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "COLLE_ICI_TA_CLE_PUBLISHABLE";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_5f6sMUAdH1vzyCP07xM8Pg_NALsBmMM";
 
 if (!window.supabase) {
   console.error("La bibliothèque Supabase n'est pas chargée.");
