@@ -1,0 +1,100 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion | EDUCONNECT CI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #17324d;
+      background: #f4f8fc;
+    }
+    header {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background: #073b70;
+    }
+    main {
+      width: min(92%, 460px);
+      margin: 40px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      margin-top: 7px;
+      padding: 12px;
+      border: 1px solid #bdcbd9;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: 0;
+      border-radius: 7px;
+      background: #087b55;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    a { color: #087b55; }
+    .centre { text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EDUCONNECT CI</h1>
+    <p>Heureux de te retrouver !</p>
+  </header>
+
+  <main>
+    <h2>Connexion</h2>
+    <p>Connecte-toi à ton espace apprenant.</p>
+
+    <form id="formConnexion">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" name="email" type="email"
+             autocomplete="email" required>
+
+      <label for="motdepasse">Mot de passe</label>
+      <input id="motdepasse" name="motdepasse"
+             type="password" autocomplete="current-password"
+             required>
+
+      <button type="submit">Se connecter</button>
+    </form>
+
+    <p id="message" role="status"></p>
+
+    <p class="centre">
+      Pas encore de compte ?
+      <a href="inscription.html">Créer un compte</a>
+    </p>
+    <p class="centre"><a href="index.html">Retour à l’accueil</a></p>
+  </main>
+
+  <script>
+    document.getElementById("formConnexion")
+      .addEventListener("submit", function(e) {
+        e.preventDefault();
+        document.getElementById("message").textContent =
+          "La connexion sera activée après la configuration de Supabase.";
+      });
+  </script>
+</body>
+</html>
+```
