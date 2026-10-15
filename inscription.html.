@@ -14,18 +14,17 @@
       color: #17324d;
     }
     header {
-      padding: 22px;
-      text-align: center;
-      color: white;
       background: #073b70;
+      color: white;
+      text-align: center;
+      padding: 22px;
     }
     main {
       width: min(92%, 480px);
-      margin: 35px auto;
-      padding: 25px;
+      margin: 30px auto;
+      padding: 24px;
       background: white;
       border-radius: 12px;
-      box-shadow: 0 3px 12px #0000000d;
     }
     label {
       display: block;
@@ -52,7 +51,7 @@
       font-weight: bold;
     }
     a { color: #087b55; }
-    .retour { text-align: center; margin-top: 20px; }
+    #message { line-height: 1.5; overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
@@ -63,38 +62,82 @@
 
   <main>
     <h2>Inscription</h2>
-    <p>Remplis les champs pour préparer ton compte.</p>
+    <p>Crée ton compte pour accéder aux formations.</p>
 
     <form id="formInscription">
       <label for="nom">Nom complet</label>
-      <input id="nom" name="nom" type="text"
-             autocomplete="name" required>
+      <input id="nom" type="text" autocomplete="name" required>
 
       <label for="email">Adresse e-mail</label>
-      <input id="email" name="email" type="email"
-             autocomplete="email" required>
+      <input id="email" type="email" autocomplete="email" required>
 
-      <label for="motdepasse">Mot de passe</label>
-      <input id="motdepasse" name="motdepasse"
-             type="password" minlength="8"
-             autocomplete="new-password" required>
+      <label for="motdepasse">Mot de passe (8 caractères minimum)</label>
+      <input id="motdepasse" type="password"
+             minlength="8" autocomplete="new-password" required>
 
-      <button type="submit">Créer mon compte</button>
+      <button id="boutonInscription" type="submit">
+        Créer mon compte
+      </button>
     </form>
 
-    <p class="retour">
-      Déjà inscrit ?
-      <a href="connexion.html">Se connecter</a>
-    </p>
-    <p class="retour"><a href="index.html">Retour à l’accueil</a></p>
+    <p id="message" role="status" aria-live="polite"></p>
+    <p>Déjà inscrit ? <a href="connexion.html">Se connecter</a></p>
+    <p><a href="index.html">Retour à l’accueil</a></p>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
   <script>
-    document.getElementById("formInscription")
-      .addEventListener("submit", function(e) {
-        e.preventDefault();
-        alert("L’inscription sera activée après la configuration de Supabase.");
-      });
+    const formulaire = document.getElementById("formInscription");
+    const message = document.getElementById("message");
+    const bouton = document.getElementById("boutonInscription");
+
+    formulaire.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      message.textContent = "";
+
+      const nom = document.getElementById("nom").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const motdepasse = document.getElementById("motdepasse").value;
+
+      if (!window.eduSupabase) {
+        message.textContent =
+          "Connexion au service indisponible. Réessaie plus tard.";
+        return;
+      }
+
+      bouton.disabled = true;
+      bouton.textContent = "Inscription en cours...";
+
+      try {
+        const { data, error } = await window.eduSupabase.auth.signUp({
+          email: email,
+          password: motdepasse,
+          options: {
+            data: { full_name: nom }
+          }
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          message.textContent =
+            "Compte créé ! Tu peux maintenant te connecter.";
+        } else {
+          message.textContent =
+            "Demande d’inscription envoyée. Consulte ta boîte e-mail pour confirmer ton adresse avant de te connecter.";
+        }
+
+        formulaire.reset();
+      } catch (erreur) {
+        console.error("Erreur d’inscription :", erreur);
+        message.textContent =
+          "Inscription impossible : " + erreur.message;
+      } finally {
+        bouton.disabled = false;
+        bouton.textContent = "Créer mon compte";
+      }
+    });
   </script>
 </body>
 </html>
