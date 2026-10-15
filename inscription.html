@@ -65,7 +65,6 @@
       <button type="submit">Créer mon compte</button>
     </form>
 
-    ```html
 <p id="message" role="status"></p>
 <p>Déjà inscrit ? <a href="connexion.html">Se connecter</a></p>
 <p><a href="index.html">Retour à l’accueil</a></p>
@@ -114,34 +113,7 @@
 </script>
 </body>
 </html>
-```
 
-      }
-
-      const fullName = document.getElementById("full_name").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-
-      try {
-        const { data, error } = await window.eduSupabase.auth.signUp({
-          email: email,
-          password: password,
-          options: {
-            data: { full_name: fullName }
-          }
-        });
-
-        if (error) throw error;
-
-        message.textContent = data.user
-          ? "Inscription envoyée. Vérifie ta boîte e-mail si une confirmation est demandée."
-          : "Inscription envoyée. Suis les instructions reçues par e-mail.";
-
-        form.reset();
-      } catch (error) {
-        message.textContent = "Erreur : " + error.message;
-      }
-    });
   </script>
 </body>
 </html>
