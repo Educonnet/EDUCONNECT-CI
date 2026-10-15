@@ -92,10 +92,14 @@
 
     try {
       const { data, error } = await window.eduSupabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: { full_name: fullName }
+email: email,
+password: password,
+options: {
+emailRedirectTo: "https://deluxe-stardust-9679d5.netlify.app/connexion.html",
+data: { full_name: fullName }
+}
+});
+
         }
       });
 
