@@ -73,6 +73,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
   <script>
+    <script>
+  alert(
+    "Bibliothèque Supabase : " + (window.supabase ? "chargée" : "absente") +
+    "\nClient EDUCONNECT CI : " + (window.eduSupabase ? "initialisé" : "absent")
+  );
+</script>
     const form = document.getElementById("inscription-form");
     const message = document.getElementById("message");
 
