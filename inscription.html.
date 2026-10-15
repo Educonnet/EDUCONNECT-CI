@@ -1,0 +1,101 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription | EDUCONNECT CI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f8fc;
+      color: #17324d;
+    }
+    header {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background: #073b70;
+    }
+    main {
+      width: min(92%, 480px);
+      margin: 35px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      margin-top: 7px;
+      padding: 12px;
+      border: 1px solid #bdcbd9;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: 0;
+      border-radius: 7px;
+      background: #087b55;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    a { color: #087b55; }
+    .retour { text-align: center; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EDUCONNECT CI</h1>
+    <p>Créer un compte apprenant</p>
+  </header>
+
+  <main>
+    <h2>Inscription</h2>
+    <p>Remplis les champs pour préparer ton compte.</p>
+
+    <form id="formInscription">
+      <label for="nom">Nom complet</label>
+      <input id="nom" name="nom" type="text"
+             autocomplete="name" required>
+
+      <label for="email">Adresse e-mail</label>
+      <input id="email" name="email" type="email"
+             autocomplete="email" required>
+
+      <label for="motdepasse">Mot de passe</label>
+      <input id="motdepasse" name="motdepasse"
+             type="password" minlength="8"
+             autocomplete="new-password" required>
+
+      <button type="submit">Créer mon compte</button>
+    </form>
+
+    <p class="retour">
+      Déjà inscrit ?
+      <a href="connexion.html">Se connecter</a>
+    </p>
+    <p class="retour"><a href="index.html">Retour à l’accueil</a></p>
+  </main>
+
+  <script>
+    document.getElementById("formInscription")
+      .addEventListener("submit", function(e) {
+        e.preventDefault();
+        alert("L’inscription sera activée après la configuration de Supabase.");
+      });
+  </script>
+</body>
+</html>
+```
