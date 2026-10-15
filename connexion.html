@@ -21,7 +21,7 @@
     }
     main {
       width: min(92%, 460px);
-      margin: 40px auto;
+      margin: 35px auto;
       padding: 25px;
       background: white;
       border-radius: 12px;
@@ -52,7 +52,7 @@
       font-weight: bold;
     }
     a { color: #087b55; }
-    .centre { text-align: center; margin-top: 20px; }
+    #message { line-height: 1.5; overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
@@ -67,33 +67,68 @@
 
     <form id="formConnexion">
       <label for="email">Adresse e-mail</label>
-      <input id="email" name="email" type="email"
-             autocomplete="email" required>
+      <input id="email" type="email" autocomplete="email" required>
 
       <label for="motdepasse">Mot de passe</label>
-      <input id="motdepasse" name="motdepasse"
-             type="password" autocomplete="current-password"
-             required>
+      <input id="motdepasse" type="password"
+             autocomplete="current-password" required>
 
-      <button type="submit">Se connecter</button>
+      <button id="boutonConnexion" type="submit">
+        Se connecter
+      </button>
     </form>
 
-    <p id="message" role="status"></p>
-
-    <p class="centre">
-      Pas encore de compte ?
+    <p id="message" role="status" aria-live="polite"></p>
+    <p>Pas encore de compte ?
       <a href="inscription.html">Créer un compte</a>
     </p>
-    <p class="centre"><a href="index.html">Retour à l’accueil</a></p>
+    <p><a href="index.html">Retour à l’accueil</a></p>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
   <script>
-    document.getElementById("formConnexion")
-      .addEventListener("submit", function(e) {
-        e.preventDefault();
-        document.getElementById("message").textContent =
-          "La connexion sera activée après la configuration de Supabase.";
-      });
+    const formulaire = document.getElementById("formConnexion");
+    const message = document.getElementById("message");
+    const bouton = document.getElementById("boutonConnexion");
+
+    formulaire.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      message.textContent = "";
+
+      const email = document.getElementById("email").value.trim();
+      const motdepasse = document.getElementById("motdepasse").value;
+
+      if (!window.eduSupabase) {
+        message.textContent =
+          "Service indisponible. Réessaie plus tard.";
+        return;
+      }
+
+      bouton.disabled = true;
+      bouton.textContent = "Connexion en cours...";
+
+      try {
+        const { data, error } =
+          await window.eduSupabase.auth.signInWithPassword({
+            email: email,
+            password: motdepasse
+          });
+
+        if (error) throw error;
+
+        if (data.user) {
+          window.location.href = "mon-compte.html";
+        }
+      } catch (erreur) {
+        console.error("Erreur de connexion :", erreur);
+        message.textContent =
+          "Connexion impossible. Vérifie ton e-mail et ton mot de passe, ou confirme ton adresse e-mail si nécessaire.";
+      } finally {
+        bouton.disabled = false;
+        bouton.textContent = "Se connecter";
+      }
+    });
   </script>
 </body>
 </html>
