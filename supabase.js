@@ -1,10 +1,8 @@
 ```javascript
 // Configuration Supabase pour EDUCONNECT CI.
-// Utilise uniquement la clé publishable, jamais une clé secrète.
 
 const SUPABASE_URL = "https://lsgyjcpfpdnhxrafaobq.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_5f6sMUAdH1vzyCP07xM8Pg_NALsBmMM";
+const SUPABASE_PUBLISHABLE_KEY = "COLLE_ICI_TA_CLE_PUBLISHABLE";
 
 if (!window.supabase) {
   console.error("La bibliothèque Supabase n'est pas chargée.");
