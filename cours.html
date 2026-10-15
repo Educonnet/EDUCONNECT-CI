@@ -1,0 +1,128 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nos cours | EDUCONNECT CI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #17324d;
+      background: #f4f8fc;
+    }
+    header, footer {
+      background: #073b70;
+      color: white;
+      padding: 22px;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 15px;
+      background: white;
+    }
+    nav a {
+      color: #073b70;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    main {
+      max-width: 1000px;
+      margin: auto;
+      padding: 25px 16px;
+    }
+    .liste {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+    }
+    article {
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+    h2, h3 { color: #087b55; }
+    .btn {
+      display: inline-block;
+      padding: 11px 16px;
+      background: #087b55;
+      color: white;
+      text-decoration: none;
+      border-radius: 7px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Nos cours et formations</h1>
+    <p>Apprends à ton rythme avec EDUCONNECT CI</p>
+  </header>
+
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="inscription.html">Inscription</a>
+    <a href="connexion.html">Connexion</a>
+  </nav>
+
+  <main>
+    <h2>Choisis ta formation</h2>
+    <div class="liste">
+      <article>
+        <h3>HTML : créer une page Web</h3>
+        <p>Apprends les bases du HTML et la structure d'un site Web.</p>
+        <p><strong>Niveau :</strong> Débutant</p>
+        <a class="btn" href="#html">Découvrir la leçon</a>
+      </article>
+
+      <article>
+        <h3>CSS : mettre en forme un site</h3>
+        <p>Découvre les couleurs, les espacements et la mise en page.</p>
+        <p><strong>Niveau :</strong> Débutant</p>
+        <a class="btn" href="#css">Découvrir la leçon</a>
+      </article>
+
+      <article>
+        <h3>JavaScript : rendre un site interactif</h3>
+        <p>Découvre les variables, les fonctions et les interactions.</p>
+        <p><strong>Niveau :</strong> Débutant</p>
+        <a class="btn" href="#javascript">Découvrir la leçon</a>
+      </article>
+    </div>
+
+    <section id="html">
+      <h2>Leçon 1 — HTML</h2>
+      <p>HTML sert à structurer le contenu d'une page Web.</p>
+      <pre><code>&lt;h1&gt;Bonjour le monde&lt;/h1&gt;
+&lt;p&gt;Ma première page Web.&lt;/p&gt;</code></pre>
+    </section>
+
+    <section id="css">
+      <h2>Leçon 2 — CSS</h2>
+      <p>CSS permet de modifier l'apparence des éléments HTML.</p>
+      <pre><code>h1 {
+  color: green;
+  text-align: center;
+}</code></pre>
+    </section>
+
+    <section id="javascript">
+      <h2>Leçon 3 — JavaScript</h2>
+      <p>JavaScript permet d'ajouter des comportements interactifs.</p>
+      <pre><code>alert("Bienvenue sur EDUCONNECT CI !");</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 EDUCONNECT CI</p>
+  </footer>
+</body>
+</html>
+```
