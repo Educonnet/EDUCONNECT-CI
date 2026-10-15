@@ -1,0 +1,138 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon compte | EDUCONNECT CI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #17324d;
+      background: #f4f8fc;
+    }
+    header {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background: #073b70;
+    }
+    main {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    .carte {
+      padding: 22px;
+      margin-bottom: 18px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+    a, button { color: #087b55; }
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 7px;
+      background: #073b70;
+      color: white;
+      font-size: 16px;
+    }
+    #message { line-height: 1.6; overflow-wrap: anywhere; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EDUCONNECT CI</h1>
+    <p>Mon espace apprenant</p>
+  </header>
+
+  <main>
+    <section class="carte">
+      <h2>Bienvenue !</h2>
+      <p><strong>Nom :</strong> <span id="nom">Chargement...</span></p>
+      <p><strong>E-mail :</strong> <span id="email">Chargement...</span></p>
+      <p id="message" role="status" aria-live="polite"></p>
+      <button id="deconnexion" type="button">Se déconnecter</button>
+    </section>
+
+    <section class="carte">
+      <h2>Mes formations</h2>
+      <p>Découvre les cours disponibles et poursuis ton apprentissage.</p>
+      <a href="cours.html">Consulter les cours</a>
+    </section>
+
+    <p><a href="index.html">Retour à l’accueil</a></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <script>
+    async function chargerCompte() {
+      const nom = document.getElementById("nom");
+      const email = document.getElementById("email");
+      const message = document.getElementById("message");
+
+      if (!window.eduSupabase) {
+        message.textContent = "Le service de compte est indisponible.";
+        return;
+      }
+
+      try {
+        const { data, error } =
+          await window.eduSupabase.auth.getUser();
+
+        if (error || !data.user) {
+          window.location.href = "connexion.html";
+          return;
+        }
+
+        email.textContent = data.user.email || "Non renseigné";
+
+        const { data: profil, error: erreurProfil } =
+          await window.eduSupabase
+            .from("profiles")
+            .select("full_name")
+            .eq("id", data.user.id)
+            .maybeSingle();
+
+        if (erreurProfil) {
+          console.error(erreurProfil);
+          nom.textContent =
+            data.user.user_metadata?.full_name || "Non renseigné";
+          message.textContent =
+            "Ton compte est connecté, mais ton profil n'a pas pu être chargé.";
+          return;
+        }
+
+        nom.textContent =
+          profil?.full_name ||
+          data.user.user_metadata?.full_name ||
+          "Nom non renseigné";
+      } catch (erreur) {
+        console.error(erreur);
+        message.textContent = "Impossible de charger ton compte.";
+      }
+    }
+
+    document.getElementById("deconnexion")
+      .addEventListener("click", async function() {
+        const { error } =
+          await window.eduSupabase.auth.signOut();
+
+        if (error) {
+          document.getElementById("message").textContent =
+            "La déconnexion a échoué. Réessaie.";
+          return;
+        }
+
+        window.location.href = "connexion.html";
+      });
+
+    chargerCompte();
+  </script>
+</body>
+</html>
+```
