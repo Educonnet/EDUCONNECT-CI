@@ -1,0 +1,130 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EDUCONNECT CI : plateforme de cours et de formations en ligne.">
+  <title>EDUCONNECT CI | Apprendre autrement</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #17324d;
+      background: #f4f8fc;
+    }
+    header {
+      background: #073b70;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 14px;
+      background: white;
+    }
+    nav a {
+      color: #073b70;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .hero {
+      text-align: center;
+      padding: 65px 20px;
+      background: #e2efff;
+    }
+    .hero h2 {
+      font-size: clamp(28px, 6vw, 44px);
+      margin: 0 0 15px;
+    }
+    .hero p {
+      max-width: 650px;
+      margin: 0 auto 25px;
+      line-height: 1.7;
+    }
+    .btn {
+      display: inline-block;
+      margin: 6px;
+      padding: 13px 20px;
+      border-radius: 8px;
+      background: #087b55;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .btn.secondary { background: #073b70; }
+    main { padding: 35px 18px; }
+    .courses {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      max-width: 1000px;
+      margin: 25px auto;
+    }
+    .course {
+      padding: 22px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+    .course h3 { color: #087b55; }
+    footer {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background: #073b70;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EDUCONNECT CI</h1>
+    <p>Le savoir à portée de clic</p>
+  </header>
+
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="cours.html">Cours</a>
+    <a href="inscription.html">Inscription</a>
+    <a href="connexion.html">Connexion</a>
+  </nav>
+
+  <section class="hero">
+    <h2>Construis ton avenir grâce au numérique</h2>
+    <p>
+      Découvre des cours et des formations en ligne,
+      développe tes compétences et progresse à ton rythme.
+    </p>
+    <a class="btn" href="cours.html">Découvrir les cours</a>
+    <a class="btn secondary" href="inscription.html">Créer un compte</a>
+  </section>
+
+  <main>
+    <h2 style="text-align:center">Nos domaines de formation</h2>
+    <div class="courses">
+      <article class="course">
+        <h3>Informatique</h3>
+        <p>Découvre la programmation, le Web et les outils numériques.</p>
+      </article>
+      <article class="course">
+        <h3>Bureautique</h3>
+        <p>Développe tes compétences en Word, Excel et PowerPoint.</p>
+      </article>
+      <article class="course">
+        <h3>Compétences professionnelles</h3>
+        <p>Prépare-toi aux exigences du monde professionnel.</p>
+      </article>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 EDUCONNECT CI — Tous droits réservés.</p>
+  </footer>
+</body>
+</html>
+```
