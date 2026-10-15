@@ -4,83 +4,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscription | EDUCONNECT CI</title>
+  <title>Inscription - EDUCONNECT CI</title>
   <style>
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f4f8fc;
-      color: #17324d;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 20px;
     }
-    header {
-      background: #073b70;
-      color: white;
-      text-align: center;
-      padding: 22px;
-    }
-    main {
-      width: min(92%, 480px);
-      margin: 30px auto;
-      padding: 24px;
+    .container {
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 25px;
       background: white;
       border-radius: 12px;
+      box-shadow: 0 2px 12px #0001;
     }
-    label {
-      display: block;
-      margin-top: 16px;
-      font-weight: bold;
-    }
+    h1, h2 { text-align: center; color: #174ea6; }
+    label { display: block; margin-top: 15px; }
     input {
+      box-sizing: border-box;
       width: 100%;
-      margin-top: 7px;
       padding: 12px;
-      border: 1px solid #bdcbd9;
-      border-radius: 7px;
-      font-size: 16px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
     button {
       width: 100%;
-      margin-top: 22px;
       padding: 13px;
-      border: 0;
-      border-radius: 7px;
-      background: #087b55;
+      margin-top: 20px;
+      background: #174ea6;
       color: white;
+      border: 0;
+      border-radius: 6px;
       font-size: 16px;
-      font-weight: bold;
     }
-    a { color: #087b55; }
-    #message { line-height: 1.5; overflow-wrap: anywhere; }
+    #message { margin-top: 15px; overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
-  <header>
+  <main class="container">
     <h1>EDUCONNECT CI</h1>
-    <p>Créer un compte apprenant</p>
-  </header>
-
-  <main>
-    <h2>Inscription</h2>
+    <h2>Créer un compte apprenant</h2>
     <p>Crée ton compte pour accéder aux formations.</p>
 
-    <form id="formInscription">
-      <label for="nom">Nom complet</label>
-      <input id="nom" type="text" autocomplete="name" required>
+    <form id="inscription-form">
+      <label for="full_name">Nom complet</label>
+      <input id="full_name" name="full_name"
+             type="text" required>
 
       <label for="email">Adresse e-mail</label>
-      <input id="email" type="email" autocomplete="email" required>
+      <input id="email" name="email"
+             type="email" required>
 
-      <label for="motdepasse">Mot de passe (8 caractères minimum)</label>
-      <input id="motdepasse" type="password"
-             minlength="8" autocomplete="new-password" required>
+      <label for="password">Mot de passe (8 caractères minimum)</label>
+      <input id="password" name="password"
+             type="password" minlength="8" required>
 
-      <button id="boutonInscription" type="submit">
-        Créer mon compte
-      </button>
+      <button type="submit">Créer mon compte</button>
     </form>
 
-    <p id="message" role="status" aria-live="polite"></p>
+    <p id="message" role="status"></p>
     <p>Déjà inscrit ? <a href="connexion.html">Se connecter</a></p>
     <p><a href="index.html">Retour à l’accueil</a></p>
   </main>
@@ -88,54 +73,40 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
   <script>
-    const formulaire = document.getElementById("formInscription");
+    const form = document.getElementById("inscription-form");
     const message = document.getElementById("message");
-    const bouton = document.getElementById("boutonInscription");
 
-    formulaire.addEventListener("submit", async function(event) {
+    form.addEventListener("submit", async function(event) {
       event.preventDefault();
-      message.textContent = "";
-
-      const nom = document.getElementById("nom").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const motdepasse = document.getElementById("motdepasse").value;
+      message.textContent = "Inscription en cours...";
 
       if (!window.eduSupabase) {
-        message.textContent =
-          "Connexion au service indisponible. Réessaie plus tard.";
+        message.textContent = "Connexion à Supabase indisponible.";
         return;
       }
 
-      bouton.disabled = true;
-      bouton.textContent = "Inscription en cours...";
+      const fullName = document.getElementById("full_name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
 
       try {
         const { data, error } = await window.eduSupabase.auth.signUp({
           email: email,
-          password: motdepasse,
+          password: password,
           options: {
-            data: { full_name: nom }
+            data: { full_name: fullName }
           }
         });
 
         if (error) throw error;
 
-        if (data.session) {
-          message.textContent =
-            "Compte créé ! Tu peux maintenant te connecter.";
-        } else {
-          message.textContent =
-            "Demande d’inscription envoyée. Consulte ta boîte e-mail pour confirmer ton adresse avant de te connecter.";
-        }
+        message.textContent = data.user
+          ? "Inscription envoyée. Vérifie ta boîte e-mail si une confirmation est demandée."
+          : "Inscription envoyée. Suis les instructions reçues par e-mail.";
 
-        formulaire.reset();
-      } catch (erreur) {
-        console.error("Erreur d’inscription :", erreur);
-        message.textContent =
-          "Inscription impossible : " + erreur.message;
-      } finally {
-        bouton.disabled = false;
-        bouton.textContent = "Créer mon compte";
+        form.reset();
+      } catch (error) {
+        message.textContent = "Erreur : " + error.message;
       }
     });
   </script>
