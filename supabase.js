@@ -1,4 +1,4 @@
-```javascript
+
 // Configuration Supabase pour EDUCONNECT CI.
 
 const SUPABASE_URL = "https://lsgyjcpfpdnhxrafaobq.supabase.co";
@@ -14,4 +14,4 @@ if (!window.supabase) {
 
   console.log("EDUCONNECT CI : Supabase est initialisé.");
 }
-```
+
