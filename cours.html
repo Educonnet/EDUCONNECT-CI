@@ -104,6 +104,7 @@
       <p>HTML sert à structurer le contenu d'une page Web.</p>
       <pre><code>&lt;h1&gt;Bonjour le monde&lt;/h1&gt;
 &lt;p&gt;Ma première page Web.&lt;/p&gt;</code></pre>
+      <button onclick="terminerLecon('html')">J’ai terminé cette leçon</button>
     </section>
 
     <section id="css">
@@ -113,17 +114,59 @@
   color: green;
   text-align: center;
 }</code></pre>
+            <button onclick="terminerLecon('css')">J’ai terminé cette leçon</button>
     </section>
 
     <section id="javascript">
       <h2>Leçon 3 — JavaScript</h2>
       <p>JavaScript permet d'ajouter des comportements interactifs.</p>
       <pre><code>alert("Bienvenue sur EDUCONNECT CI !");</code></pre>
+            <button onclick="terminerLecon('javascript')">J’ai terminé cette leçon</button>
     </section>
   </main>
 
   <footer>
     <p>&copy; 2026 EDUCONNECT CI</p>
   </footer>
+<script>
+  async function terminerLecon(courseId) {
+    const supabase = window.eduSupabase;
+
+    if (!supabase) {
+      alert("La connexion à Supabase n'est pas disponible.");
+      return;
+    }
+
+    const { data: { user }, error: userError } =
+      await supabase.auth.getUser();
+
+    if (userError || !user) {
+      alert("Connecte-toi pour enregistrer ta progression.");
+      window.location.href = "connexion.html";
+      return;
+    }
+
+    const { error } = await supabase
+      .from("course_progress")
+      .upsert(
+        {
+          user_id: user.id,
+          course_id: courseId,
+          progress: 100,
+          completed: true,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: "user_id,course_id" }
+      );
+
+    if (error) {
+      console.error("Erreur de sauvegarde :", error);
+      alert("La sauvegarde a échoué. Vérifie ta connexion et réessaie.");
+      return;
+    }
+
+    alert("Bravo ! Ta progression a été enregistrée.");
+  }
+</script>
 </body>
 </html>
