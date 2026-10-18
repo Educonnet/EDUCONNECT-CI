@@ -129,44 +129,7 @@
     <p>&copy; 2026 EDUCONNECT CI</p>
   </footer>
 <script>
-  async function terminerLecon(courseId) {
-    const supabase = window.eduSupabase;
-
-    if (!supabase) {
-      alert("La connexion à Supabase n'est pas disponible.");
-      return;
-    }
-
-    const { data: { user }, error: userError } =
-      await supabase.auth.getUser();
-
-    if (userError || !user) {
-      alert("Connecte-toi pour enregistrer ta progression.");
-      window.location.href = "connexion.html";
-      return;
-    }
-
-    const { error } = await supabase
-      .from("course_progress")
-      .upsert(
-        {
-          user_id: user.id,
-          course_id: courseId,
-          progress: 100,
-          completed: true,
-          updated_at: new Date().toISOString()
-        },
-        { onConflict: "user_id,course_id" }
-      );
-
-    if (error) {
-      console.error("Erreur de sauvegarde :", error);
-      alert("La sauvegarde a échoué. Vérifie ta connexion et réessaie.");
-      return;
-    }
-
-    alert("Bravo ! Ta progression a été enregistrée.");
-  }
+  
 </script>
 </body>
 </html>
