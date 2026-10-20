@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -70,51 +70,17 @@
 <p><a href="index.html">Retour à l’accueil</a></p>
 </main>
 
+<WritingBlock id="62841" variant="standard">```html
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-
-<script>
-  const form = document.getElementById("inscription-form");
-  const message = document.getElementById("message");
-
-  form.addEventListener("submit", async function(event) {
-    event.preventDefault();
-    message.textContent = "Inscription en cours...";
-
-    if (!window.eduSupabase) {
-      message.textContent = "Connexion à Supabase indisponible.";
-      return;
-    }
-
-    const fullName = document.getElementById("full_name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-
-    try {
-      const { data, error } = await window.eduSupabase.auth.signUp({
-email: email,
-password: password,
-options: {
-emailRedirectTo: "https://deluxe-stardust-9679d5.netlify.app/connexion.html",
-data: { full_name: fullName }
-}
-});
-
-        }
-      });
-
-      if (error) throw error;
-
-      message.textContent = data.user
-        ? "Inscription envoyée. Vérifie ta boîte e-mail si une confirmation est demandée."
-        : "Inscription envoyée. Suis les instructions reçues par e-mail.";
-
-      form.reset();
-    } catch (error) {
-      message.textContent = "Erreur : " + error.message;
-    }
-  });
-</script>
+<script> const form = document.getElementById("inscription-form"); const message = document.getElementById("message");
+form.addEventListener("submit", async function(event) { event.preventDefault(); message.textContent = "Inscription en cours...";
+if (!window.eduSupabase) { message.textContent = "Connexion à Supabase indisponible."; return; }
+const fullName = document.getElementById("full_name").value.trim(); const email = document.getElementById("email").value.trim(); const password = document.getElementById("password").value;
+try { const { data, error } = await window.eduSupabase.auth.signUp({ email: email, password: password, options: { emailRedirectTo: "https://deluxe-stardust-9679d5.netlify.app/connexion.html", data: { full_name: fullName } } });
+if (error) throw error;
+message.textContent = data.user ? "Inscription envoyée. Vérifie ta boîte e-mail si une confirmation est demandée." : "Inscription envoyée. Suis les instructions reçues par e-mail.";
+form.reset(); } catch (error) { message.textContent = "Erreur : " + error.message; } }); </script>```</WritingBlock>
 </body>
 </html>
 
