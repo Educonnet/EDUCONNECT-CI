@@ -240,6 +240,28 @@
   </footer>
 
 <script>
+  function corrigerQuizInformatique() {
+  const reponses = {
+    q1: "b",
+    q2: "a",
+    q3: "c"
+  };
+
+  let score = 0;
+
+  for (const question in reponses) {
+    const choix = document.querySelector(
+      'input[name="' + question + '"]:checked'
+    );
+
+    if (choix && choix.value === reponses[question]) {
+      score++;
+    }
+  }
+
+  document.getElementById("resultat-quiz").textContent =
+    "Ton résultat : " + score + "/3 bonnes réponses.";
+}
 async function terminerLecon(courseId) {
   try {
     const supabase = window.eduSupabase;
