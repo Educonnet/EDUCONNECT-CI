@@ -93,14 +93,37 @@
       <p><strong>Conseil de sécurité :</strong> protège tes mots de passe et évite de partager tes informations personnelles avec des personnes inconnues.</p>
     </section>
 
-    <section>
+    
+    <section id="quiz">
       <h2>Petit questionnaire</h2>
-      <p><strong>1.</strong> Quel élément permet de saisir du texte ?</p>
-      <p>Réponse : le clavier.</p>
-      <p><strong>2.</strong> Quel logiciel permet de visiter des sites Web ?</p>
-      <p>Réponse : un navigateur Web.</p>
-      <p><strong>3.</strong> Pourquoi faut-il protéger ses mots de passe ?</p>
-      <p>Réponse : pour protéger ses comptes et ses informations personnelles.</p>
+      <p>Choisis une réponse pour chaque question, puis vérifie ton résultat.</p>
+
+      <fieldset>
+        <legend>1. Quel élément permet de saisir du texte ?</legend>
+        <label><input type="radio" name="q1" value="a"> L’écran</label><br>
+        <label><input type="radio" name="q1" value="b"> Le clavier</label><br>
+        <label><input type="radio" name="q1" value="c"> L’imprimante</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Quel logiciel permet de visiter des sites Web ?</legend>
+        <label><input type="radio" name="q2" value="a"> Un navigateur Web</label><br>
+        <label><input type="radio" name="q2" value="b"> Une calculatrice</label><br>
+        <label><input type="radio" name="q2" value="c"> Un dossier</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Pourquoi faut-il protéger ses mots de passe ?</legend>
+        <label><input type="radio" name="q3" value="a"> Pour décorer son écran</label><br>
+        <label><input type="radio" name="q3" value="b"> Pour accélérer le clavier</label><br>
+        <label><input type="radio" name="q3" value="c"> Pour protéger ses comptes et ses informations</label>
+      </fieldset>
+
+      <button type="button" class="btn" onclick="corrigerQuiz()">
+        Corriger mes réponses
+      </button>
+
+      <p id="resultat" role="status" aria-live="polite"></p>
     </section>
 
     <section>
@@ -114,6 +137,42 @@
   <footer>
     <p>&copy; 2026 EDUCONNECT CI — Tous droits réservés.</p>
   </footer>
+  
+<script>
+function corrigerQuiz() {
+  const bonnesReponses = {
+    q1: "b",
+    q2: "a",
+    q3: "c"
+  };
+
+  let score = 0;
+  let incompletes = 0;
+
+  for (const question in bonnesReponses) {
+    const choix = document.querySelector(
+      'input[name="' + question + '"]:checked'
+    );
+
+    if (!choix) {
+      incompletes++;
+    } else if (choix.value === bonnesReponses[question]) {
+      score++;
+    }
+  }
+
+  const resultat = document.getElementById("resultat");
+
+  if (incompletes > 0) {
+    resultat.textContent =
+      "Réponds à toutes les questions avant la correction.";
+    return;
+  }
+
+  resultat.textContent =
+    "Ton résultat : " + score + "/3 bonnes réponses.";
+}
+</script>
 </body>
 </html>
 ```
