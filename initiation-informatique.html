@@ -138,8 +138,14 @@
     <p>&copy; 2026 EDUCONNECT CI — Tous droits réservés.</p>
   </footer>
   
+
 <script>
-function corrigerQuiz() {
+const quizInformatique = document.getElementById("quiz-informatique");
+const resultatQuiz = document.getElementById("resultat-quiz");
+
+quizInformatique.addEventListener("submit", function(event) {
+  event.preventDefault();
+
   const bonnesReponses = {
     q1: "b",
     q2: "a",
@@ -150,7 +156,7 @@ function corrigerQuiz() {
   let incompletes = 0;
 
   for (const question in bonnesReponses) {
-    const choix = document.querySelector(
+    const choix = quizInformatique.querySelector(
       'input[name="' + question + '"]:checked'
     );
 
@@ -161,17 +167,18 @@ function corrigerQuiz() {
     }
   }
 
-  const resultat = document.getElementById("resultat");
-
   if (incompletes > 0) {
-    resultat.textContent =
+    resultatQuiz.textContent =
       "Réponds à toutes les questions avant la correction.";
     return;
   }
 
-  resultat.textContent =
-    "Ton résultat : " + score + "/3 bonnes réponses.";
-}
+  resultatQuiz.innerHTML =
+    "<h3>Ton résultat : " + score + "/3</h3>" +
+    (score === 3
+      ? "<p>Excellent ! Tu maîtrises les bases de cette leçon.</p>"
+      : "<p>Continue tes efforts et relis la leçon pour progresser.</p>");
+});
 </script>
 </body>
 </html>
