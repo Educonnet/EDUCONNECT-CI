@@ -270,7 +270,13 @@ async function terminerLecon(courseId) {
       alert("La connexion à Supabase n'est pas disponible.");
       return;
     }
+console.log("Client Supabase :", !!supabase);
 
+const { data: sessionData, error: sessionError } =
+  await supabase.auth.getSession();
+
+console.log("Session présente :", !!sessionData?.session);
+console.log("Erreur de session :", sessionError);
     const { data, error: userError } =
       await supabase.auth.getUser();
 
