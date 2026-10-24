@@ -139,11 +139,12 @@
   </footer>
   
 
+
 <script>
 const quizInformatique = document.getElementById("quiz-informatique");
 const resultatQuiz = document.getElementById("resultat-quiz");
 
-quizInformatique.addEventListener("submit", function(event) {
+quizInformatique.addEventListener("submit", async function(event) {
   event.preventDefault();
 
   const bonnesReponses = {
@@ -178,6 +179,71 @@ quizInformatique.addEventListener("submit", function(event) {
     (score === 3
       ? "<p>Excellent ! Tu maîtrises les bases de cette leçon.</p>"
       : "<p>Continue tes efforts et relis la leçon pour progresser.</p>");
+
+  const supabase = window.eduSupabase;
+
+  if (!supabase) {
+    resultatQuiz.innerHTML +=
+      "<p>Connexion à la base de données indisponible. Ton score n'a pas été enregistré.</p>";
+    return;
+  }
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      resultatQuiz.innerHTML +=
+        "<p>Connecte-toi à ton compte pour enregistrer ton score.</p>";
+      return;
+    }
+
+    const userId = sessionData.user.id;
+    const courseId = "initiation-informatique";
+
+    const { data: existing, error: readError } = await supabase
+      .from("course_progress")
+      .select("id, progress, completed")
+      .eq("user_id", userId)
+      .eq("course_id", courseId)
+      .maybeSingle();
+
+    if (readError) throw readError;
+
+    let saveResult;
+
+    if (existing) {
+      saveResult = await supabase
+        .from("course_progress")
+        .update({
+          score: score,
+          updated_at: new Date().toISOString()
+        })
+        .eq("user_id", userId)
+        .eq("course_id", courseId);
+    } else {
+      saveResult = await supabase
+        .from("course_progress")
+        .insert({
+          user_id: userId,
+          course_id: courseId,
+          score: score,
+          progress: 0,
+          completed: false,
+          updated_at: new Date().toISOString()
+        });
+    }
+
+    if (saveResult.error) throw saveResult.error;
+
+    resultatQuiz.innerHTML +=
+      "<p>Ton score a été enregistré dans ton compte.</p>";
+
+  } catch (error) {
+    console.error("Erreur d'enregistrement du score :", error);
+    resultatQuiz.innerHTML +=
+      "<p>Le score n'a pas pu être enregistré. Réessaie plus tard.</p>";
+  }
 });
 </script>
 </body>
