@@ -222,5 +222,45 @@
       avant toute délivrance officielle.
     </p>
   </main>
+  
+<script>
+(async function chargerIdentiteApprenant() {
+  const supabase = window.eduSupabase;
+
+  const nomElement = document.getElementById("nom-apprenant");
+
+  if (!supabase || !nomElement) {
+    console.error("Connexion Supabase ou élément du nom introuvable.");
+    return;
+  }
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      nomElement.textContent = "Connexion requise";
+      return;
+    }
+
+    const user = sessionData.user;
+
+    const { data: profil, error: profilError } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profilError) throw profilError;
+
+    nomElement.textContent =
+      profil?.full_name || user.user_metadata?.full_name || "Nom non renseigné";
+
+  } catch (error) {
+    console.error("Erreur de chargement du profil :", error);
+    nomElement.textContent = "Impossible de charger le nom";
+  }
+})();
+</script>
 </body>
 </html>
