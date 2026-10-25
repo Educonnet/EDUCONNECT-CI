@@ -226,26 +226,36 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
-(async function chargerIdentiteApprenant() {
+
+<script>
+(async function verifierAttestation() {
   const supabase = window.eduSupabase;
-
   const nomElement = document.getElementById("nom-apprenant");
+  const messageElement = document.getElementById("message-attestation");
+  const contenu = document.getElementById("contenu-attestation");
+  const bouton = document.querySelector(".actions button");
 
-  if (!supabase || !nomElement) {
-    console.error("Connexion Supabase ou élément du nom introuvable.");
-    return;
+  function refuser(message) {
+    messageElement.textContent = message;
+    contenu.hidden = true;
+    bouton.hidden = true;
   }
 
   try {
-    const { data: sessionData, error: sessionError } =
-      await supabase.auth.getUser();
+    if (!supabase || !nomElement || !messageElement || !contenu) {
+      throw new Error("Éléments de la page ou connexion Supabase introuvables.");
+    }
 
-    if (sessionError || !sessionData.user) {
-      nomElement.textContent = "Connexion requise";
+    refuser("Vérification des conditions de délivrance en cours…");
+
+    const { data, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !data.user) {
+      refuser("Connecte-toi pour vérifier ton éligibilité à l’attestation.");
       return;
     }
 
-    const user = sessionData.user;
+    const user = data.user;
 
     const { data: profil, error: profilError } = await supabase
       .from("profiles")
@@ -255,12 +265,57 @@
 
     if (profilError) throw profilError;
 
-    nomElement.textContent =
-      profil?.full_name || user.user_metadata?.full_name || "Nom non renseigné";
+    const nom = profil?.full_name || user.user_metadata?.full_name;
+
+    if (!nom) {
+      refuser("Ton nom n’est pas renseigné dans ton profil.");
+      return;
+    }
+
+    nomElement.textContent = nom;
+
+    const { data: progression, error: progressionError } = await supabase
+      .from("course_progress")
+      .select("progress, completed, score")
+      .eq("user_id", user.id)
+      .eq("course_id", "informatique")
+      .maybeSingle();
+
+    if (progressionError) throw progressionError;
+
+    if (!progression) {
+      refuser("Aucune progression enregistrée pour cette formation.");
+      return;
+    }
+
+    if (progression.completed !== true || progression.progress < 100) {
+      refuser("Termine toutes les leçons avant de demander ton attestation.");
+      return;
+    }
+
+    if (progression.score !== 3) {
+      refuser("Tu dois obtenir 3 bonnes réponses sur 3 au quiz pour valider cette formation.");
+      return;
+    }
+
+    document.getElementById("date-fin").textContent =
+      new Date().toLocaleDateString("fr-FR");
+
+    document.getElementById("duree").textContent =
+      "À compléter";
+
+    document.getElementById("numero-attestation").textContent =
+      "À générer";
+
+    messageElement.textContent =
+      "Conditions vérifiées pour cette formation. Tu peux imprimer cette attestation.";
+
+    contenu.hidden = false;
+    bouton.hidden = false;
 
   } catch (error) {
-    console.error("Erreur de chargement du profil :", error);
-    nomElement.textContent = "Impossible de charger le nom";
+    console.error("Erreur de vérification de l’attestation :", error);
+    refuser("Impossible de vérifier ton éligibilité. Réessaie plus tard.");
   }
 })();
 </script>
