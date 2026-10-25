@@ -199,7 +199,7 @@ quizInformatique.addEventListener("submit", async function(event) {
     }
 
     const userId = sessionData.user.id;
-    const courseId = "initiation-informatique";
+    const courseId = "informatique";
 
     const { data: existing, error: readError } = await supabase
       .from("course_progress")
