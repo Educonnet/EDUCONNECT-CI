@@ -1,267 +1,4 @@
-```html
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nos cours | EDUCONNECT CI</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: #17324d;
-      background: #f4f8fc;
-    }
-    header, footer {
-      background: #073b70;
-      color: white;
-      padding: 22px;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 18px;
-      padding: 15px;
-      background: white;
-    }
-    nav a {
-      color: #073b70;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    main {
-      max-width: 1000px;
-      margin: auto;
-      padding: 25px 16px;
-    }
-    .liste {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 18px;
-    }
-    article {
-      background: white;
-      padding: 22px;
-      border-radius: 12px;
-      box-shadow: 0 3px 12px #0000000d;
-    }
-    h2, h3 { color: #087b55; }
-    .btn {
-      display: inline-block;
-      padding: 11px 16px;
-      background: #087b55;
-      color: white;
-      text-decoration: none;
-      border-radius: 7px;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Nos cours et formations</h1>
-    <p>Apprends à ton rythme avec EDUCONNECT CI</p>
-  </header>
-
-  <nav>
-    <a href="index.html">Accueil</a>
-    <a href="cours.html">Cours</a>
-    <a href="inscription.html">Inscription</a>
-    <a href="connexion.html">Connexion</a>
-  </nav>
-
-  <main>
-    <h2>Choisis ta formation</h2>
-    <div class="liste">
-            <article>
-        <h3>Découverte de l’informatique</h3>
-        <p>Découvre les équipements informatiques, les logiciels, les fichiers et les dossiers.</p>
-        <p><strong>Niveau :</strong> Débutant</p>
-        <a class="btn" href="#informatique">Découvrir la leçon</a>
-      </article>
-      <article>
-        <h3>HTML : créer une page Web</h3>
-        <p>Apprends les bases du HTML et la structure d'un site Web.</p>
-        <p><strong>Niveau :</strong> Débutant</p>
-        <a class="btn" href="#html">Découvrir la leçon</a>
-      </article>
-
-      <article>
-        <h3>CSS : mettre en forme un site</h3>
-        <p>Découvre les couleurs, les espacements et la mise en page.</p>
-        <p><strong>Niveau :</strong> Débutant</p>
-        <a class="btn" href="#css">Découvrir la leçon</a>
-      </article>
-
-      <article>
-        <h3>JavaScript : rendre un site interactif</h3>
-        <p>Découvre les variables, les fonctions et les interactions.</p>
-        <p><strong>Niveau :</strong> Débutant</p>
-        <a class="btn" href="#javascript">Découvrir la leçon</a>
-      </article>
-    </div>
-    <section id="informatique">
-      <h2>Leçon 1 — Découverte de l’informatique</h2>
-
-      <p>
-        Bienvenue dans cette première leçon d’EDUCONNECT CI.
-        Tu vas découvrir les bases de l’informatique et les outils
-        numériques utilisés dans la vie quotidienne et professionnelle.
-      </p>
-
-      <h3>1. Qu’est-ce que l’informatique ?</h3>
-      <p>
-        L’informatique concerne le traitement automatique de
-        l’information à l’aide d’ordinateurs et d’autres appareils
-        numériques.
-      </p>
-
-      <p>Elle permet notamment de :</p>
-      <ul>
-        <li>Rédiger des documents.</li>
-        <li>Effectuer des calculs.</li>
-        <li>Enregistrer des informations.</li>
-        <li>Communiquer et rechercher des informations sur Internet.</li>
-      </ul>
-
-      <h3>2. Les principaux équipements</h3>
-      <ul>
-        <li><strong>Ordinateur :</strong> exécuter des programmes et traiter des informations.</li>
-        <li><strong>Clavier :</strong> saisir du texte et des chiffres.</li>
-        <li><strong>Souris :</strong> sélectionner et ouvrir des éléments.</li>
-        <li><strong>Écran :</strong> afficher les informations.</li>
-        <li><strong>Imprimante :</strong> imprimer des documents.</li>
-        <li><strong>Clé USB :</strong> stocker et transporter des fichiers.</li>
-        <li><strong>Smartphone :</strong> communiquer et utiliser des applications.</li>
-      </ul>
-
-      <h3>3. Matériel et logiciels</h3>
-      <p>
-        Le matériel désigne les éléments physiques que l’on peut toucher,
-        comme le clavier, l’écran et la souris.
-      </p>
-      <p>
-        Un logiciel est un programme qui permet d’effectuer une tâche,
-        comme rédiger un texte ou consulter un site Internet.
-      </p>
-
-      <h3>4. Fichiers et dossiers</h3>
-      <p>
-        Un fichier peut contenir un texte, une image ou un tableau.
-        Un dossier sert à regrouper et organiser plusieurs fichiers.
-      </p>
-
-      <h3>5. Quiz de compréhension</h3>
-      <p>Question 1 : quel équipement sert à saisir du texte ?</p>
-      <label>
-        <input type="radio" name="q1" value="a">
-        L’écran
-      </label><br>
-      <label>
-        <input type="radio" name="q1" value="b">
-        Le clavier
-      </label><br>
-      <label>
-        <input type="radio" name="q1" value="c">
-        L’imprimante
-      </label>
-
-      <p>Question 2 : qu’est-ce qu’un logiciel ?</p>
-      <label>
-        <input type="radio" name="q2" value="a">
-        Un programme informatique
-      </label><br>
-      <label>
-        <input type="radio" name="q2" value="b">
-        Un écran
-      </label><br>
-      <label>
-        <input type="radio" name="q2" value="c">
-        Une souris
-      </label>
-
-      <p>Question 3 : à quoi sert un dossier ?</p>
-      <label>
-        <input type="radio" name="q3" value="a">
-        À imprimer
-      </label><br>
-      <label>
-        <input type="radio" name="q3" value="b">
-        À afficher une vidéo
-      </label><br>
-      <label>
-        <input type="radio" name="q3" value="c">
-        À organiser des fichiers
-      </label>
-
-      <button type="button" onclick="corrigerQuizInformatique()">
-        Corriger mon quiz
-      </button>
-
-      <p id="resultat-quiz"></p>
-
-      <button type="button"
-        onclick="terminerLecon('informatique')">
-        J’ai terminé cette leçon
-      </button>
-    </section>
-    <section id="html">
-      <h2>Leçon 1 — HTML</h2>
-      <p>HTML sert à structurer le contenu d'une page Web.</p>
-      <pre><code>&lt;h1&gt;Bonjour le monde&lt;/h1&gt;
-&lt;p&gt;Ma première page Web.&lt;/p&gt;</code></pre>
-      <button onclick="terminerLecon('html')">J’ai terminé cette leçon</button>
-    </section>
-
-    <section id="css">
-      <h2>Leçon 2 — CSS</h2>
-      <p>CSS permet de modifier l'apparence des éléments HTML.</p>
-      <pre><code>h1 {
-  color: green;
-  text-align: center;
-}</code></pre>
-            <button onclick="terminerLecon('css')">J’ai terminé cette leçon</button>
-    </section>
-
-    <section id="javascript">
-      <h2>Leçon 3 — JavaScript</h2>
-      <p>JavaScript permet d'ajouter des comportements interactifs.</p>
-      <pre><code>alert("Bienvenue sur EDUCONNECT CI !");</code></pre>
-            <button onclick="terminerLecon('javascript')">J’ai terminé cette leçon</button>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2026 EDUCONNECT CI</p>
-  </footer>
-
-<script>
-  function corrigerQuizInformatique() {
-  const reponses = {
-    q1: "b",
-    q2: "a",
-    q3: "c"
-  };
-
-  let score = 0;
-
-  for (const question in reponses) {
-    const choix = document.querySelector(
-      'input[name="' + question + '"]:checked'
-    );
-
-    if (choix && choix.value === reponses[question]) {
-      score++;
-    }
-  }
-
-  document.getElementById("resultat-quiz").textContent =
-    "Ton résultat : " + score + "/3 bonnes réponses.";
-}
+```javascript
 async function terminerLecon(courseId) {
   try {
     const supabase = window.eduSupabase;
@@ -270,13 +7,7 @@ async function terminerLecon(courseId) {
       alert("La connexion à Supabase n'est pas disponible.");
       return;
     }
-console.log("Client Supabase :", !!supabase);
 
-const { data: sessionData, error: sessionError } =
-  await supabase.auth.getSession();
-
-console.log("Session présente :", !!sessionData?.session);
-console.log("Erreur de session :", sessionError);
     const { data, error: userError } =
       await supabase.auth.getUser();
 
@@ -284,6 +15,30 @@ console.log("Erreur de session :", sessionError);
       alert("Connecte-toi pour enregistrer ta progression.");
       window.location.href = "connexion.html";
       return;
+    }
+
+    // Vérification spéciale pour Initiation à l'informatique
+    if (courseId === "informatique") {
+      const { data: progressionQuiz, error: erreurQuiz } =
+        await supabase
+          .from("course_progress")
+          .select("score")
+          .eq("user_id", data.user.id)
+          .eq("course_id", "informatique")
+          .maybeSingle();
+
+      if (erreurQuiz) {
+        console.error("Erreur de lecture du score :", erreurQuiz);
+        alert("Impossible de vérifier ton score. Réessaie.");
+        return;
+      }
+
+      if (!progressionQuiz || progressionQuiz.score !== 3) {
+        alert(
+          "Tu dois obtenir 3/3 au quiz avant de terminer cette formation."
+        );
+        return;
+      }
     }
 
     const { error } = await supabase
@@ -306,11 +61,13 @@ console.log("Erreur de session :", sessionError);
     }
 
     alert("Bravo ! Ta progression a été enregistrée.");
+
   } catch (error) {
     console.error("Erreur inattendue :", error);
     alert("Une erreur est survenue. Vérifie ta connexion puis réessaie.");
   }
 }
+```
 </script>
 </body>
 </html>
