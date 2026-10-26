@@ -300,8 +300,31 @@
     document.getElementById("date-fin").textContent =
       new Date().toLocaleDateString("fr-FR");
 
-    document.getElementById("duree").textContent =
-      "À compléter";
+    
+const secondes = Math.max(
+  0,
+  Number(progression.time_spent_seconds) || 0
+);
+
+const heures = Math.floor(secondes / 3600);
+const minutes = Math.floor((secondes % 3600) / 60);
+
+let dureeFormatee = "";
+
+if (heures > 0) {
+  dureeFormatee += heures + (heures > 1 ? " heures" : " heure");
+}
+
+if (minutes > 0) {
+  if (dureeFormatee) dureeFormatee += " ";
+  dureeFormatee += minutes + " min";
+}
+
+if (!dureeFormatee) {
+  dureeFormatee = "Moins d’une minute";
+}
+
+document.getElementById("duree").textContent = dureeFormatee;
 
     document.getElementById("numero-attestation").textContent =
       "À générer";
