@@ -41,27 +41,21 @@ async function terminerLecon(courseId) {
       }
     }
 
-    const { error } = await supabase
-      .from("course_progress")
-      .upsert(
-        {
-          user_id: data.user.id,
-          course_id: courseId,
-          progress: 100,
-          completed: true,
-          updated_at: new Date().toISOString()
-        },
-        { onConflict: "user_id,course_id" }
-      );
+    
+    const { data: resultat, error } = await supabase.rpc(
+      "terminer_formation_informatique"
+    );
 
-    if (error) {
+    if (error || resultat !== true) {
       console.error("Erreur de sauvegarde :", error);
-      alert("La sauvegarde a échoué. Vérifie ta connexion et réessaie.");
+      alert(
+        error?.message ||
+        "La formation n'a pas pu être validée. Vérifie que tu as obtenu 3/3 au quiz."
+      );
       return;
     }
 
-    alert("Bravo ! Ta progression a été enregistrée.");
-
+    alert("Bravo ! Ta formation a été validée et ta progression enregistrée.");
   } catch (error) {
     console.error("Erreur inattendue :", error);
     alert("Une erreur est survenue. Vérifie ta connexion puis réessaie.");
