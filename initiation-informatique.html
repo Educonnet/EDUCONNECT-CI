@@ -253,36 +253,25 @@ boutonTerminer.addEventListener("click", async function () {
       return;
     }
 
-    const userId = sessionData.user.id;
-    const courseId = "informatique";
+    
+const { data: formationTerminee, error: finErreur } =
+  await supabase.rpc("terminer_formation_informatique");
 
-    const { data: progression, error: lectureErreur } = await supabase
-      .from("course_progress")
-      .select("score")
-      .eq("user_id", userId)
-      .eq("course_id", courseId)
-      .maybeSingle();
+if (finErreur) {
+  if (finErreur.message.includes("3/3")) {
+    messageFinFormation.textContent =
+      "Tu dois obtenir 3/3 au quiz avant de terminer la formation.";
+    return;
+  }
 
-    if (lectureErreur) throw lectureErreur;
+  throw finErreur;
+}
 
-    if (!progression || progression.score !== 3) {
-      messageFinFormation.textContent =
-        "Tu dois obtenir 3/3 au quiz avant de terminer la formation.";
-      return;
-    }
-
-    const { error: miseAJourErreur } = await supabase
-      .from("course_progress")
-      .update({
-        progress: 100,
-        completed: true,
-        updated_at: new Date().toISOString()
-      })
-      .eq("user_id", userId)
-      .eq("course_id", courseId);
-
-    if (miseAJourErreur) throw miseAJourErreur;
-
+if (formationTerminee !== true) {
+  messageFinFormation.textContent =
+    "La formation n'a pas pu être terminée. Réessaie.";
+  return;
+}
     messageFinFormation.textContent =
       "Félicitations ! Ta formation est terminée et ta progression a été enregistrée. Tu peux maintenant consulter ton attestation.";
 
