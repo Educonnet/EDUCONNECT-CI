@@ -125,6 +125,27 @@
 
       <div id="resultat-quiz"></div>
   </form>
+      <script>
+document.getElementById("quiz-informatique").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  let score = 0;
+  const reponses = { q1: "b", q2: "a", q3: "c" };
+
+  for (const question in reponses) {
+    const choix = document.querySelector(
+      'input[name="' + question + '"]:checked'
+    );
+
+    if (choix && choix.value === reponses[question]) {
+      score++;
+    }
+  }
+
+  document.getElementById("resultat-quiz").textContent =
+    "Ton résultat : " + score + "/3";
+});
+</script>
 </section>
 
     
