@@ -171,104 +171,61 @@ document.getElementById("quiz-informatique").addEventListener("submit", function
 <script src="supabase.js"></script>
 
 <script>
-const quizInformatique = document.getElementById("quiz-informatique");
-const resultatQuiz = document.getElementById("resultat-quiz");
 
-if (quizInformatique && resultatQuiz) {
-  quizInformatique.addEventListener("submit", async function(event) {
-    event.preventDefault();
+document.getElementById("quiz-informatique").addEventListener("submit", async function(event) {
+  event.preventDefault();
 
-    const bonnesReponses = {
-      q1: "b",
-      q2: "a",
-      q3: "c"
-    };
+  const resultatQuiz = document.getElementById("resultat-quiz");
+  resultatQuiz.textContent = "";
 
-    let score = 0;
+  const supabase = window.eduSupabase;
 
-    for (const question in bonnesReponses) {
-      const choix = quizInformatique.querySelector(
-        'input[name="' + question + '"]:checked'
-      );
+  if (!supabase) {
+    resultatQuiz.textContent =
+      "Connexion à la base de données indisponible.";
+    return;
+  }
 
-      if (!choix) {
-        resultatQuiz.textContent =
-          "Réponds aux trois questions avant la correction.";
-        return;
-      }
+  const reponseQ1 = document.querySelector('input[name="q1"]:checked');
+  const reponseQ2 = document.querySelector('input[name="q2"]:checked');
+  const reponseQ3 = document.querySelector('input[name="q3"]:checked');
 
-      if (choix.value === bonnesReponses[question]) {
-        score++;
-      }
-    }
+  if (!reponseQ1 || !reponseQ2 || !reponseQ3) {
+    resultatQuiz.textContent =
+      "Réponds aux trois questions avant de valider.";
+    return;
+  }
 
-    resultatQuiz.innerHTML =
-      "<h3>Ton résultat : " + score + "/3</h3>" +
-      (score === 3
-        ? "<p>Excellent ! Tu maîtrises les bases de cette leçon.</p>"
-        : "<p>Relis la leçon et réessaie pour obtenir 3/3.</p>");
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
 
-    const supabase = window.eduSupabase;
-
-    if (!supabase) {
-      resultatQuiz.innerHTML +=
-        "<p>Connexion à la base de données indisponible.</p>";
+    if (sessionError || !sessionData.user) {
+      resultatQuiz.textContent =
+        "Connecte-toi à ton compte avant d'enregistrer ton score.";
       return;
     }
 
-    try {
-      const { data, error } = await supabase.auth.getUser();
-
-      if (error || !data.user) {
-        resultatQuiz.innerHTML +=
-          "<p>Connecte-toi pour enregistrer ton score.</p>";
-        return;
+    const { data: score, error } = await supabase.rpc(
+      "valider_quiz_informatique",
+      {
+        reponse_q1: reponseQ1.value,
+        reponse_q2: reponseQ2.value,
+        reponse_q3: reponseQ3.value
       }
+    );
 
-      const { data: ligne, error: lectureErreur } = await supabase
-        .from("course_progress")
-        .select("id")
-        .eq("user_id", data.user.id)
-        .eq("course_id", "informatique")
-        .maybeSingle();
+    if (error) throw error;
 
-      if (lectureErreur) throw lectureErreur;
+    resultatQuiz.textContent =
+      "Ton résultat : " + score + "/3. Ton score a été enregistré dans ton compte.";
 
-      let resultat;
-
-      if (ligne) {
-        resultat = await supabase
-          .from("course_progress")
-          .update({
-            score: score,
-            updated_at: new Date().toISOString()
-          })
-          .eq("user_id", data.user.id)
-          .eq("course_id", "informatique");
-      } else {
-        resultat = await supabase
-          .from("course_progress")
-          .insert({
-            user_id: data.user.id,
-            course_id: "informatique",
-            score: score,
-            progress: 0,
-            completed: false,
-            updated_at: new Date().toISOString()
-          });
-      }
-
-      if (resultat.error) throw resultat.error;
-
-      resultatQuiz.innerHTML +=
-        "<p>Ton score a été enregistré dans ton compte.</p>";
-
-    } catch (erreur) {
-      console.error("Erreur d'enregistrement du score :", erreur);
-      resultatQuiz.innerHTML +=
-        "<p>Erreur lors de l'enregistrement du score.</p>";
-    }
-  });
+  } catch (erreur) {
+    console.error("Erreur de validation du quiz :", erreur);
+    resultatQuiz.textContent =
+      "Une erreur est survenue lors de la validation. Réessaie.";
+  }
+});
 }
 </script>
 <script>
