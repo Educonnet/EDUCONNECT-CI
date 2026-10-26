@@ -379,12 +379,6 @@ if (!numeroAttestation) {
 
   numeroAttestation = numeroGenere;
 }
-    .eq("user_id", user.id)
-    .eq("course_id", "informatique");
-
-  if (numeroErreur) throw numeroErreur;
-}
-
 document.getElementById("numero-attestation").textContent =
   numeroAttestation;
 
