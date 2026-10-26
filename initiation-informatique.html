@@ -149,7 +149,107 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 
+<script>
+const quizInformatique = document.getElementById("quiz-informatique");
+const resultatQuiz = document.getElementById("resultat-quiz");
 
+if (quizInformatique && resultatQuiz) {
+  quizInformatique.addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const bonnesReponses = {
+      q1: "b",
+      q2: "a",
+      q3: "c"
+    };
+
+    let score = 0;
+
+    for (const question in bonnesReponses) {
+      const choix = quizInformatique.querySelector(
+        'input[name="' + question + '"]:checked'
+      );
+
+      if (!choix) {
+        resultatQuiz.textContent =
+          "Réponds aux trois questions avant la correction.";
+        return;
+      }
+
+      if (choix.value === bonnesReponses[question]) {
+        score++;
+      }
+    }
+
+    resultatQuiz.innerHTML =
+      "<h3>Ton résultat : " + score + "/3</h3>" +
+      (score === 3
+        ? "<p>Excellent ! Tu maîtrises les bases de cette leçon.</p>"
+        : "<p>Relis la leçon et réessaie pour obtenir 3/3.</p>");
+
+    const supabase = window.eduSupabase;
+
+    if (!supabase) {
+      resultatQuiz.innerHTML +=
+        "<p>Connexion à la base de données indisponible.</p>";
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error || !data.user) {
+        resultatQuiz.innerHTML +=
+          "<p>Connecte-toi pour enregistrer ton score.</p>";
+        return;
+      }
+
+      const { data: ligne, error: lectureErreur } = await supabase
+        .from("course_progress")
+        .select("id")
+        .eq("user_id", data.user.id)
+        .eq("course_id", "informatique")
+        .maybeSingle();
+
+      if (lectureErreur) throw lectureErreur;
+
+      let resultat;
+
+      if (ligne) {
+        resultat = await supabase
+          .from("course_progress")
+          .update({
+            score: score,
+            updated_at: new Date().toISOString()
+          })
+          .eq("user_id", data.user.id)
+          .eq("course_id", "informatique");
+      } else {
+        resultat = await supabase
+          .from("course_progress")
+          .insert({
+            user_id: data.user.id,
+            course_id: "informatique",
+            score: score,
+            progress: 0,
+            completed: false,
+            updated_at: new Date().toISOString()
+          });
+      }
+
+      if (resultat.error) throw resultat.error;
+
+      resultatQuiz.innerHTML +=
+        "<p>Ton score a été enregistré dans ton compte.</p>";
+
+    } catch (erreur) {
+      console.error("Erreur d'enregistrement du score :", erreur);
+      resultatQuiz.innerHTML +=
+        "<p>Erreur lors de l'enregistrement du score.</p>";
+    }
+  });
+}
+</script>
 <script>
 const boutonTerminer = document.getElementById("terminer-formation");
 const messageFinFormation = document.getElementById("message-fin-formation");
