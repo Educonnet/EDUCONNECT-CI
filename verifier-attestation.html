@@ -146,7 +146,7 @@
 
         
 const { data, error } = await supabase
-  .rpc("verifier_attestation", { numero: numero });
+  .rpc("verifier_attestation_details", { numero: numero });
 
 if (error) throw error;
 
