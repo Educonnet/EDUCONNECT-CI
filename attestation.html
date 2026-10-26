@@ -275,7 +275,7 @@
 
     const { data: progression, error: progressionError } = await supabase
       .from("course_progress")
-      .select("progress, completed, score, time_spent_seconds")
+      .select("progress, completed, score, time_spent_seconds, certificate_number")
       .eq("user_id", user.id)
       .eq("course_id", "informatique")
       .maybeSingle();
@@ -326,8 +326,31 @@ if (!dureeFormatee) {
 
 document.getElementById("duree").textContent = dureeFormatee;
 
-    document.getElementById("numero-attestation").textContent =
-      "À générer";
+    
+let numeroAttestation = progression.certificate_number;
+
+if (!numeroAttestation) {
+  const annee = new Date().getFullYear();
+  const identifiant = crypto.randomUUID()
+    .replace(/-/g, "")
+    .substring(0, 12)
+    .toUpperCase();
+
+  numeroAttestation = "EDUCI-" + annee + "-" + identifiant;
+
+  const { error: numeroErreur } = await supabase
+    .from("course_progress")
+    .update({
+      certificate_number: numeroAttestation
+    })
+    .eq("user_id", user.id)
+    .eq("course_id", "informatique");
+
+  if (numeroErreur) throw numeroErreur;
+}
+
+document.getElementById("numero-attestation").textContent =
+  numeroAttestation;
 
     messageElement.textContent =
       "Conditions vérifiées pour cette formation. Tu peux imprimer cette attestation.";
