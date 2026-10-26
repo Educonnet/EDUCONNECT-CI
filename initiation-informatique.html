@@ -314,48 +314,18 @@ if (formationTerminee !== true) {
     enregistrementEnCours = true;
     derniereReprise = maintenant;
 
+    
     try {
-      
-const { error: enregistrementErreur } = await supabase.rpc(
-  "enregistrer_temps_formation",
-  {
-    secondes_ajoutees: secondes,
-    formation_id: courseId
-  }
-);
+      const { error: enregistrementErreur } = await supabase.rpc(
+        "enregistrer_temps_formation",
+        {
+          secondes_ajoutees: secondes,
+          formation_id: courseId
+        }
+      );
 
-if (enregistrementErreur) {
-  throw enregistrementErreur;
-}
-
-      if (lectureErreur) throw lectureErreur;
-
-      if (ligne) {
-        const { error: updateErreur } = await supabase
-          .from("course_progress")
-          .update({
-            time_spent_seconds:
-              (ligne.time_spent_seconds || 0) + secondes,
-            updated_at: new Date().toISOString()
-          })
-          .eq("user_id", userId)
-          .eq("course_id", courseId);
-
-        if (updateErreur) throw updateErreur;
-      } else {
-        const { error: insertErreur } = await supabase
-          .from("course_progress")
-          .insert({
-            user_id: userId,
-            course_id: courseId,
-            progress: 0,
-            completed: false,
-            score: 0,
-            time_spent_seconds: secondes,
-            updated_at: new Date().toISOString()
-          });
-
-        if (insertErreur) throw insertErreur;
+      if (enregistrementErreur) {
+        throw enregistrementErreur;
       }
     } catch (erreur) {
       console.error("Erreur d'enregistrement du temps :", erreur);
