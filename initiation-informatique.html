@@ -315,12 +315,18 @@ if (formationTerminee !== true) {
     derniereReprise = maintenant;
 
     try {
-      const { data: ligne, error: lectureErreur } = await supabase
-        .from("course_progress")
-        .select("id, time_spent_seconds")
-        .eq("user_id", userId)
-        .eq("course_id", courseId)
-        .maybeSingle();
+      
+const { error: enregistrementErreur } = await supabase.rpc(
+  "enregistrer_temps_formation",
+  {
+    secondes_ajoutees: secondes,
+    formation_id: courseId
+  }
+);
+
+if (enregistrementErreur) {
+  throw enregistrementErreur;
+}
 
       if (lectureErreur) throw lectureErreur;
 
