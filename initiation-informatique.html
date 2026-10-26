@@ -127,12 +127,20 @@
   </form>
 </section>
 
-    <section>
-      <h2>Bravo pour ton apprentissage !</h2>
-      <p>Tu as terminé la présentation des bases de l’informatique.</p>
-      <a class="btn" href="cours.html">Voir les autres cours</a>
-      <a class="btn" href="index.html">Retour à l’accueil</a>
-    </section>
+    
+<section>
+  <h2>Bravo pour ton apprentissage !</h2>
+  <p>Tu as terminé la présentation des bases de l’informatique.</p>
+
+  <button type="button" class="btn" id="terminer-formation">
+    Terminer la formation
+  </button>
+
+  <p id="message-fin-formation" role="status" aria-live="polite"></p>
+
+  <a class="btn" href="cours.html">Voir les autres cours</a>
+  <a class="btn" href="index.html">Retour à l’accueil</a>
+</section>
   </main>
 
   <footer>
@@ -143,50 +151,17 @@
 
 
 <script>
-const quizInformatique = document.getElementById("quiz-informatique");
-const resultatQuiz = document.getElementById("resultat-quiz");
+const boutonTerminer = document.getElementById("terminer-formation");
+const messageFinFormation = document.getElementById("message-fin-formation");
 
-quizInformatique.addEventListener("submit", async function(event) {
-  event.preventDefault();
-
-  const bonnesReponses = {
-    q1: "b",
-    q2: "a",
-    q3: "c"
-  };
-
-  let score = 0;
-  let incompletes = 0;
-
-  for (const question in bonnesReponses) {
-    const choix = quizInformatique.querySelector(
-      'input[name="' + question + '"]:checked'
-    );
-
-    if (!choix) {
-      incompletes++;
-    } else if (choix.value === bonnesReponses[question]) {
-      score++;
-    }
-  }
-
-  if (incompletes > 0) {
-    resultatQuiz.textContent =
-      "Réponds à toutes les questions avant la correction.";
-    return;
-  }
-
-  resultatQuiz.innerHTML =
-    "<h3>Ton résultat : " + score + "/3</h3>" +
-    (score === 3
-      ? "<p>Excellent ! Tu maîtrises les bases de cette leçon.</p>"
-      : "<p>Continue tes efforts et relis la leçon pour progresser.</p>");
+boutonTerminer.addEventListener("click", async function () {
+  messageFinFormation.textContent = "";
 
   const supabase = window.eduSupabase;
 
   if (!supabase) {
-    resultatQuiz.innerHTML +=
-      "<p>Connexion à la base de données indisponible. Ton score n'a pas été enregistré.</p>";
+    messageFinFormation.textContent =
+      "Connexion à la base de données indisponible.";
     return;
   }
 
@@ -195,56 +170,56 @@ quizInformatique.addEventListener("submit", async function(event) {
       await supabase.auth.getUser();
 
     if (sessionError || !sessionData.user) {
-      resultatQuiz.innerHTML +=
-        "<p>Connecte-toi à ton compte pour enregistrer ton score.</p>";
+      messageFinFormation.textContent =
+        "Connecte-toi à ton compte avant de terminer la formation.";
       return;
     }
 
     const userId = sessionData.user.id;
     const courseId = "informatique";
 
-    const { data: existing, error: readError } = await supabase
+    const { data: progression, error: lectureErreur } = await supabase
       .from("course_progress")
-      .select("id, progress, completed")
+      .select("score")
       .eq("user_id", userId)
       .eq("course_id", courseId)
       .maybeSingle();
 
-    if (readError) throw readError;
+    if (lectureErreur) throw lectureErreur;
 
-    let saveResult;
-
-    if (existing) {
-      saveResult = await supabase
-        .from("course_progress")
-        .update({
-          score: score,
-          updated_at: new Date().toISOString()
-        })
-        .eq("user_id", userId)
-        .eq("course_id", courseId);
-    } else {
-      saveResult = await supabase
-        .from("course_progress")
-        .insert({
-          user_id: userId,
-          course_id: courseId,
-          score: score,
-          progress: 0,
-          completed: false,
-          updated_at: new Date().toISOString()
-        });
+    if (!progression || progression.score !== 3) {
+      messageFinFormation.textContent =
+        "Tu dois obtenir 3/3 au quiz avant de terminer la formation.";
+      return;
     }
 
-    if (saveResult.error) throw saveResult.error;
+    const { error: miseAJourErreur } = await supabase
+      .from("course_progress")
+      .update({
+        progress: 100,
+        completed: true,
+        updated_at: new Date().toISOString()
+      })
+      .eq("user_id", userId)
+      .eq("course_id", courseId);
 
-    resultatQuiz.innerHTML +=
-      "<p>Ton score a été enregistré dans ton compte.</p>";
+    if (miseAJourErreur) throw miseAJourErreur;
+
+    messageFinFormation.textContent =
+      "Félicitations ! Ta formation est terminée et ta progression a été enregistrée. Tu peux maintenant consulter ton attestation.";
+
+    const lienAttestation = document.createElement("a");
+    lienAttestation.href = "attestation.html";
+    lienAttestation.className = "btn";
+    lienAttestation.textContent = "Obtenir mon attestation";
+
+    messageFinFormation.appendChild(document.createElement("br"));
+    messageFinFormation.appendChild(lienAttestation);
 
   } catch (error) {
-    console.error("Erreur d'enregistrement du score :", error);
-    resultatQuiz.innerHTML +=
-      "<p>Le score n'a pas pu être enregistré. Réessaie plus tard.</p>";
+    console.error("Erreur lors de la fin de formation :", error);
+    messageFinFormation.textContent =
+      "Une erreur est survenue. Vérifie ta connexion et réessaie.";
   }
 });
 </script>
