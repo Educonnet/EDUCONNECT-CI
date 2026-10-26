@@ -165,25 +165,6 @@ resultat.textContent =
   "Formation : " + attestation.cours + ". " +
   "Numéro : " + attestation.numero_attestation + ".";
 
-
-        if (
-          !data ||
-          data.course_id !== "informatique" ||
-          data.completed !== true ||
-          data.progress < 100 ||
-          data.score !== 3
-        ) {
-          resultat.className = "invalide";
-          resultat.textContent =
-            "Aucune attestation valide n’a été trouvée pour ce numéro.";
-          return;
-        }
-
-        resultat.className = "valide";
-        resultat.textContent =
-          "Attestation retrouvée : le numéro existe et la formation a été validée. Numéro : " +
-          data.certificate_number;
-
       } catch (erreur) {
         console.error("Erreur de vérification :", erreur);
         resultat.className = "invalide";
