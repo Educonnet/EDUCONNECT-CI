@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vérifier une attestation | EDUCONNECT CI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      color: #082d5b;
+    }
+
+    .conteneur {
+      max-width: 650px;
+      margin: 40px auto;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 18px #00000012;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      margin: 22px 0 8px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #aab7c8;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 13px;
+      background: #082d5b;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #resultat {
+      margin-top: 22px;
+      padding: 14px;
+      border-radius: 6px;
+      overflow-wrap: anywhere;
+    }
+
+    .valide {
+      background: #e5f7e9;
+      color: #14532d;
+    }
+
+    .invalide {
+      background: #fff0f0;
+      color: #991b1b;
+    }
+
+    .retour {
+      display: block;
+      margin-top: 24px;
+      text-align: center;
+      color: #0b467e;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="conteneur">
+    <h1>EDUCONNECT CI</h1>
+    <h2>Vérifier une attestation</h2>
+
+    <p>
+      Saisis le numéro inscrit sur l’attestation
+      pour vérifier son authenticité.
+    </p>
+
+    <form id="formulaire-verification">
+      <label for="numero">Numéro de l’attestation</label>
+
+      <input
+        type="text"
+        id="numero"
+        placeholder="Ex. EDUCI-2026-XXXXXXXXXXXX"
+        required
+      >
+
+      <button type="submit">Vérifier l’attestation</button>
+    </form>
+
+    <div id="resultat" role="status" aria-live="polite" hidden></div>
+
+    <a class="retour" href="index.html">
+      Retour à l’accueil
+    </a>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+
+  <script>
+    const formulaire = document.getElementById("formulaire-verification");
+    const champNumero = document.getElementById("numero");
+    const resultat = document.getElementById("resultat");
+    const bouton = formulaire.querySelector("button");
+
+    formulaire.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const numero = champNumero.value.trim();
+
+      resultat.hidden = false;
+      resultat.className = "";
+      resultat.textContent = "Vérification en cours…";
+      bouton.disabled = true;
+
+      try {
+        const supabase = window.eduSupabase;
+
+        if (!supabase) {
+          throw new Error("Connexion à la base de données indisponible.");
+        }
+
+        const { data, error } = await supabase
+          .from("course_progress")
+          .select("certificate_number, course_id, completed, progress, score")
+          .eq("certificate_number", numero)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (
+          !data ||
+          data.course_id !== "informatique" ||
+          data.completed !== true ||
+          data.progress < 100 ||
+          data.score !== 3
+        ) {
+          resultat.className = "invalide";
+          resultat.textContent =
+            "Aucune attestation valide n’a été trouvée pour ce numéro.";
+          return;
+        }
+
+        resultat.className = "valide";
+        resultat.textContent =
+          "Attestation retrouvée : le numéro existe et la formation a été validée. Numéro : " +
+          data.certificate_number;
+
+      } catch (erreur) {
+        console.error("Erreur de vérification :", erreur);
+        resultat.className = "invalide";
+        resultat.textContent =
+          "La vérification est momentanément impossible. Réessaie plus tard.";
+      } finally {
+        bouton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
