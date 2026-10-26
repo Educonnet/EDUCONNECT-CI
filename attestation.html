@@ -151,6 +151,26 @@
         margin: 10mm;
       }
     }
+  
+.bloc-qr {
+  margin: 25px auto;
+  text-align: center;
+  page-break-inside: avoid;
+}
+
+#qr-attestation {
+  display: block;
+  width: 150px;
+  height: 150px;
+  margin: 12px auto;
+}
+
+@media print {
+  #qr-attestation {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}  
   </style>
 </head>
 
@@ -364,6 +384,14 @@ if (!numeroAttestation) {
 document.getElementById("numero-attestation").textContent =
   numeroAttestation;
 
+const urlVerification =
+  "https://deluxe-stardust-9679d5.netlify.app/verifier-attestation.html";
+
+const qrImage = document.getElementById("qr-attestation");
+
+qrImage.src =
+  "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+  encodeURIComponent(urlVerification + "?numero=" + numeroAttestation);
     messageElement.textContent =
       "Conditions vérifiées pour cette formation. Tu peux imprimer cette attestation.";
 
