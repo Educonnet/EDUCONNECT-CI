@@ -344,6 +344,103 @@ boutonTerminer.addEventListener("click", async function () {
   }
 });
 </script>
+  
+<script>
+(async function chronometreFormation() {
+  const supabase = window.eduSupabase;
+  if (!supabase) return;
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return;
+
+  const userId = data.user.id;
+  const courseId = "informatique";
+  let derniereReprise = null;
+  let enregistrementEnCours = false;
+
+  async function enregistrerTemps() {
+    if (derniereReprise === null || enregistrementEnCours) return;
+
+    const maintenant = Date.now();
+    const secondes = Math.floor((maintenant - derniereReprise) / 1000);
+    if (secondes <= 0) return;
+
+    enregistrementEnCours = true;
+    derniereReprise = maintenant;
+
+    try {
+      const { data: ligne, error: lectureErreur } = await supabase
+        .from("course_progress")
+        .select("id, time_spent_seconds")
+        .eq("user_id", userId)
+        .eq("course_id", courseId)
+        .maybeSingle();
+
+      if (lectureErreur) throw lectureErreur;
+
+      if (ligne) {
+        const { error: updateErreur } = await supabase
+          .from("course_progress")
+          .update({
+            time_spent_seconds:
+              (ligne.time_spent_seconds || 0) + secondes,
+            updated_at: new Date().toISOString()
+          })
+          .eq("user_id", userId)
+          .eq("course_id", courseId);
+
+        if (updateErreur) throw updateErreur;
+      } else {
+        const { error: insertErreur } = await supabase
+          .from("course_progress")
+          .insert({
+            user_id: userId,
+            course_id: courseId,
+            progress: 0,
+            completed: false,
+            score: 0,
+            time_spent_seconds: secondes,
+            updated_at: new Date().toISOString()
+          });
+
+        if (insertErreur) throw insertErreur;
+      }
+    } catch (erreur) {
+      console.error("Erreur d'enregistrement du temps :", erreur);
+    } finally {
+      enregistrementEnCours = false;
+    }
+  }
+
+  function reprendre() {
+    if (document.visibilityState === "visible" && derniereReprise === null) {
+      derniereReprise = Date.now();
+    }
+  }
+
+  document.addEventListener("visibilitychange", async function () {
+    if (document.visibilityState === "hidden") {
+      await enregistrerTemps();
+      derniereReprise = null;
+    } else {
+      reprendre();
+    }
+  });
+
+  window.addEventListener("pagehide", enregistrerTemps);
+
+  reprendre();
+
+  setInterval(async function () {
+    if (document.visibilityState === "visible") {
+      await enregistrerTemps();
+      reprendre();
+    }
+  }, 30000);
+})();
+</script>
+</body>
+</html>
 </body>
 </html>
 ```
