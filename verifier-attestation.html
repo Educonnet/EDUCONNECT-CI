@@ -144,11 +144,26 @@
           throw new Error("Connexion à la base de données indisponible.");
         }
 
-        const { data, error } = await supabase
-          .from("course_progress")
-          .select("certificate_number, course_id, completed, progress, score")
-          .eq("certificate_number", numero)
-          .maybeSingle();
+        
+const { data, error } = await supabase
+  .rpc("verifier_attestation", { numero: numero });
+
+if (error) throw error;
+
+const attestation = Array.isArray(data) ? data[0] : data;
+
+if (!attestation || attestation.valide !== true) {
+  resultat.className = "invalide";
+  resultat.textContent =
+    "Aucune attestation valide n’a été trouvée pour ce numéro.";
+  return;
+}
+
+resultat.className = "valide";
+resultat.textContent =
+  "Attestation vérifiée avec succès. " +
+  "Formation : " + attestation.cours + ". " +
+  "Numéro : " + attestation.numero_attestation + ".";
 
         if (error) throw error;
 
