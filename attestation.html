@@ -275,7 +275,7 @@
 
     const { data: progression, error: progressionError } = await supabase
       .from("course_progress")
-      ..select("progress, completed, score, time_spent_seconds")
+      .select("progress, completed, score, time_spent_seconds")
       .eq("user_id", user.id)
       .eq("course_id", "informatique")
       .maybeSingle();
