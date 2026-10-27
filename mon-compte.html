@@ -582,10 +582,34 @@ const urlVerification =
     <p class="formation">Initiation à l'informatique</p>
     <p>avec un score de <strong>3/3</strong>.</p>
     <p>Délivrée le ${dateSecurisee}</p>
-    <CodeBlock language="html" editable> <p class="numero"> Numéro d'attestation : <strong>${numeroSecurise}</strong> </p>
-<div class="zone-qr"> <p><strong>Scannez pour vérifier cette attestation</strong></p> <div id="qrcode"></div> </div> </CodeBlock>
-Puis, dans le même modèle HTML, ajoute ces styles dans la balise DIL0, ajoute :
-<CodeBlock language="html" editable> <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script> <script> const lienVerification = ${JSON.stringify(urlVerification)};
+    
+    <p class="numero">
+      Numéro d'attestation :
+      <strong>${numeroSecurise}</strong>
+    </p>
+
+    <div class="zone-qr">
+      <p><strong>Scannez pour vérifier cette attestation</strong></p>
+      <div id="qrcode"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+    <script>
+      const lienVerification = ${JSON.stringify(urlVerification)};
+      const cibleQR = document.getElementById("qrcode");
+
+      if (typeof QRCode !== "undefined" && cibleQR) {
+        new QRCode(cibleQR, {
+          text: lienVerification,
+          width: 150,
+          height: 150,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      } else if (cibleQR) {
+        cibleQR.textContent =
+          "QR code indisponible. Vérifiez votre connexion Internet.";
+      }
+    <\/script>
 if (typeof QRCode !== "undefined") { new QRCode(document.getElementById("qrcode"), { text: lienVerification, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M }); } else { document.getElementById("qrcode").textContent = "QR code indisponible. Vérifiez votre connexion Internet."; } </script> </body> </html> </CodeBlock>
     <p>Vérification : consulte le service de vérification des attestations d'EDUCONNECT CI.</p>
     <button class="bouton" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
