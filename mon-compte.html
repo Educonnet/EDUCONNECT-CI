@@ -598,7 +598,6 @@ const urlVerification =
       const lienVerification = ${JSON.stringify(urlVerification)};
       const cibleQR = document.getElementById("qrcode");
     <\/script>
-if (typeof QRCode !== "undefined") { new QRCode(document.getElementById("qrcode"), { text: lienVerification, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M }); } else { document.getElementById("qrcode").textContent = "QR code indisponible. Vérifiez votre connexion Internet."; } </script> </body> </html> </CodeBlock>
     <p>Vérification : consulte le service de vérification des attestations d'EDUCONNECT CI.</p>
     <button class="bouton" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
   </main>
