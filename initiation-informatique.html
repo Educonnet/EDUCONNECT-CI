@@ -200,31 +200,45 @@ document.getElementById("quiz-informatique").addEventListener("submit", async fu
     const { data: sessionData, error: sessionError } =
       await supabase.auth.getUser();
 
-    if (sessionError || !sessionData.user) {
-      resultatQuiz.textContent =
-        "Connecte-toi à ton compte avant d'enregistrer ton score.";
-      return;
-    }
+    
+if (sessionError || !sessionData.user) {
+  resultatQuiz.textContent =
+    "Connecte-toi à ton compte avant d'enregistrer ton score.";
+  return;
+}
 
-    const { data: score, error } = await supabase.rpc(
-      "valider_quiz_informatique",
-      {
-        reponse_q1: reponseQ1.value,
-        reponse_q2: reponseQ2.value,
-        reponse_q3: reponseQ3.value
-      }
-    );
+// Démarrer une nouvelle tentative côté serveur
+const { data: tentativeId, error: erreurTentative } =
+  await supabase.rpc("demarrer_tentative_quiz_informatique");
 
-    if (error) throw error;
+if (erreurTentative) throw erreurTentative;
 
-    resultatQuiz.textContent =
-      "Ton résultat : " + score + "/3. Ton score a été enregistré dans ton compte.";
+if (!tentativeId) {
+  throw new Error("Impossible de démarrer la tentative.");
+}
 
-  } catch (erreur) {
-    console.error("Erreur de validation du quiz :", erreur);
-    resultatQuiz.textContent =
-      "Une erreur est survenue lors de la validation. Réessaie.";
+// Envoyer les réponses avec l'identifiant de la tentative
+const { data: score, error } = await supabase.rpc(
+  "soumettre_tentative_quiz_informatique",
+  {
+    tentative_id: tentativeId,
+    reponse_q1: reponseQ1.value,
+    reponse_q2: reponseQ2.value,
+    reponse_q3: reponseQ3.value
   }
+);
+
+if (error) throw error;
+
+resultatQuiz.textContent =
+  "Ton résultat : " + score +
+  "/3. Ton score a été enregistré dans ton compte.";
+
+} catch (erreur) {
+  console.error("Erreur de validation du quiz :", erreur);
+  resultatQuiz.textContent =
+    "Une erreur est survenue lors de la validation. Réessaie.";
+}
 });
 }
 </script>
