@@ -1,48 +1,123 @@
-```html
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon compte | EDUCONNECT CI</title>
+
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       color: #17324d;
       background: #f4f8fc;
     }
+
     header {
-      padding: 22px;
+      padding: 24px 16px;
       text-align: center;
       color: white;
       background: #073b70;
     }
-    main {
-      max-width: 700px;
-      margin: 30px auto;
-      padding: 20px;
+
+    header h1 {
+      margin: 0 0 8px;
     }
+
+    main {
+      width: 100%;
+      max-width: 760px;
+      margin: 25px auto;
+      padding: 0 16px;
+    }
+
     .carte {
       padding: 22px;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       background: white;
       border-radius: 12px;
       box-shadow: 0 3px 12px #0000000d;
     }
-    a, button { color: #087b55; }
-    button {
-      padding: 12px 18px;
+
+    .carte h2 {
+      margin-top: 0;
+      color: #073b70;
+    }
+
+    .formation {
+      padding: 16px;
+      border: 1px solid #dce7f2;
+      border-radius: 10px;
+    }
+
+    .progression {
+      height: 12px;
+      margin: 12px 0;
+      overflow: hidden;
+      background: #e4edf5;
+      border-radius: 20px;
+    }
+
+    #barreProgression {
+      width: 0%;
+      height: 100%;
+      background: #087b55;
+      transition: width 0.3s ease;
+    }
+
+    .statut {
+      font-weight: bold;
+      color: #087b55;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .bouton {
+      display: inline-block;
+      padding: 12px 16px;
       border: 0;
       border-radius: 7px;
       background: #073b70;
       color: white;
-      font-size: 16px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 15px;
+      cursor: pointer;
     }
-    #message { line-height: 1.6; overflow-wrap: anywhere; }
+
+    .secondaire {
+      background: #e8eff7;
+      color: #073b70;
+    }
+
+    #message {
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .petit {
+      color: #53677a;
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #53677a;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>EDUCONNECT CI</h1>
@@ -51,79 +126,232 @@
 
   <main>
     <section class="carte">
-      <h2>Bienvenue !</h2>
-      <p><strong>Nom :</strong> <span id="nom">Chargement...</span></p>
-      <p><strong>E-mail :</strong> <span id="email">Chargement...</span></p>
-      <p id="message" role="status" aria-live="polite"></p>
-      <button id="deconnexion" type="button">Se déconnecter</button>
+      <h2>Bienvenue dans ton espace !</h2>
+
+      <p>
+        <strong>Nom :</strong>
+        <span id="nom">Chargement...</span>
+      </p>
+
+      <p>
+        <strong>E-mail :</strong>
+        <span id="email">Chargement...</span>
+      </p>
+
+      <p id="message" role="status" aria-live="polite">
+        Chargement de ton compte...
+      </p>
+
+      <button id="deconnexion" class="bouton secondaire" type="button">
+        Se déconnecter
+      </button>
     </section>
 
     <section class="carte">
       <h2>Mes formations</h2>
-      <p>Découvre les cours disponibles et poursuis ton apprentissage.</p>
-      <a href="cours.html">Consulter les cours</a>
+      <p>Retrouve ici ta progression enregistrée.</p>
+
+      <div class="formation">
+        <h3>Initiation à l'informatique</h3>
+
+        <p>
+          <strong>Progression :</strong>
+          <span id="pourcentage">Chargement...</span>
+        </p>
+
+        <div
+          class="progression"
+          role="progressbar"
+          aria-label="Progression de la formation"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          id="progressbar"
+        >
+          <div id="barreProgression"></div>
+        </div>
+
+        <p>
+          <strong>Score du quiz :</strong>
+          <span id="score">Non renseigné</span>
+        </p>
+
+        <p>
+          <strong>Statut :</strong>
+          <span id="statut" class="statut">En cours</span>
+        </p>
+
+        <p id="dateProgression" class="petit"></p>
+
+        <div class="actions">
+          <a
+            class="bouton"
+            href="initiation-informatique.html"
+          >
+            Reprendre la formation
+          </a>
+
+          <a class="bouton secondaire" href="cours.html">
+            Voir les cours
+          </a>
+        </div>
+      </div>
     </section>
 
-    <p><a href="index.html">Retour à l’accueil</a></p>
+    <p>
+      <a href="index.html">Retour à l'accueil</a>
+    </p>
   </main>
+
+  <footer>
+    EDUCONNECT CI — Apprendre, progresser et réussir.
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
+
   <script>
     async function chargerCompte() {
       const nom = document.getElementById("nom");
       const email = document.getElementById("email");
       const message = document.getElementById("message");
+      const pourcentage = document.getElementById("pourcentage");
+      const barre = document.getElementById("barreProgression");
+      const progressbar = document.getElementById("progressbar");
+      const score = document.getElementById("score");
+      const statut = document.getElementById("statut");
+      const dateProgression = document.getElementById("dateProgression");
 
-      if (!window.eduSupabase) {
-        message.textContent = "Le service de compte est indisponible.";
+      const supabase = window.eduSupabase;
+
+      if (!supabase) {
+        message.textContent =
+          "Connexion à Supabase indisponible. Vérifie le fichier supabase.js.";
         return;
       }
 
       try {
-        const { data, error } =
-          await window.eduSupabase.auth.getUser();
+        const { data: sessionData, error: userError } =
+          await supabase.auth.getUser();
 
-        if (error || !data.user) {
+        if (userError || !sessionData?.user) {
           window.location.href = "connexion.html";
           return;
         }
 
-        email.textContent = data.user.email || "Non renseigné";
+        const user = sessionData.user;
 
-        const { data: profil, error: erreurProfil } =
-          await window.eduSupabase
-            .from("profiles")
-            .select("full_name")
-            .eq("id", data.user.id)
+        email.textContent = user.email || "Non renseigné";
+        nom.textContent =
+          user.user_metadata?.full_name || "Non renseigné";
+
+        message.textContent = "Compte connecté.";
+
+        const { data: profil, error: profilError } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (profilError) {
+          console.error("Erreur du profil :", profilError);
+        } else if (profil?.full_name) {
+          nom.textContent = profil.full_name;
+        }
+
+        const { data: progression, error: progressionError } =
+          await supabase
+            .from("course_progress")
+            .select("course_id, progress, completed, score, updated_at")
+            .eq("user_id", user.id)
+            .eq("course_id", "informatique")
             .maybeSingle();
 
-        if (erreurProfil) {
-          console.error(erreurProfil);
-          nom.textContent =
-            data.user.user_metadata?.full_name || "Non renseigné";
+        if (progressionError) {
+          console.error(
+            "Erreur de lecture de la progression :",
+            progressionError
+          );
+
           message.textContent =
-            "Ton compte est connecté, mais ton profil n'a pas pu être chargé.";
+            "Compte connecté, mais impossible de charger la progression. Vérifie les autorisations SELECT de course_progress.";
+          pourcentage.textContent = "Indisponible";
+          statut.textContent = "Non vérifié";
           return;
         }
 
-        nom.textContent =
-          profil?.full_name ||
-          data.user.user_metadata?.full_name ||
-          "Nom non renseigné";
+        if (!progression) {
+          pourcentage.textContent = "0 %";
+          barre.style.width = "0%";
+          progressbar.setAttribute("aria-valuenow", "0");
+          score.textContent = "Aucun score enregistré";
+          statut.textContent = "Pas encore commencée";
+          message.textContent =
+            "Ton compte est prêt. Aucune progression n'est encore enregistrée pour cette formation.";
+          return;
+        }
+
+        const progressionValeur = Math.max(
+          0,
+          Math.min(100, Number(progression.progress) || 0)
+        );
+
+        pourcentage.textContent = progressionValeur + " %";
+        barre.style.width = progressionValeur + "%";
+        progressbar.setAttribute(
+          "aria-valuenow",
+          String(progressionValeur)
+        );
+
+        score.textContent =
+          progression.score === null || progression.score === undefined
+            ? "Aucun score enregistré"
+            : progression.score + " / 3";
+
+        if (progression.completed === true) {
+          statut.textContent = "Formation terminée";
+        } else if (progressionValeur > 0) {
+          statut.textContent = "En cours";
+        } else {
+          statut.textContent = "Pas encore commencée";
+        }
+
+        if (progression.updated_at) {
+          const date = new Date(progression.updated_at);
+
+          if (!Number.isNaN(date.getTime())) {
+            dateProgression.textContent =
+              "Dernière mise à jour : " +
+              date.toLocaleString("fr-FR");
+          }
+        }
+
+        message.textContent =
+          "Ta progression a été chargée depuis ton compte.";
+
       } catch (erreur) {
-        console.error(erreur);
-        message.textContent = "Impossible de charger ton compte.";
+        console.error("Erreur inattendue :", erreur);
+        message.textContent =
+          "Impossible de charger les informations. Vérifie ta connexion puis réessaie.";
       }
     }
 
-    document.getElementById("deconnexion")
-      .addEventListener("click", async function() {
-        const { error } =
-          await window.eduSupabase.auth.signOut();
+    document
+      .getElementById("deconnexion")
+      .addEventListener("click", async function () {
+        const supabase = window.eduSupabase;
+        const message = document.getElementById("message");
+
+        if (!supabase) {
+          message.textContent = "Service de compte indisponible.";
+          return;
+        }
+
+        const { error } = await supabase.auth.signOut();
 
         if (error) {
-          document.getElementById("message").textContent =
+          console.error("Erreur de déconnexion :", error);
+          message.textContent =
             "La déconnexion a échoué. Réessaie.";
           return;
         }
@@ -135,4 +363,3 @@
   </script>
 </body>
 </html>
-```
