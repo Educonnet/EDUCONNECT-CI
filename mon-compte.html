@@ -183,19 +183,39 @@
 
         <p id="dateProgression" class="petit"></p>
 
-        <div class="actions">
-          <a
-            class="bouton"
-            href="initiation-informatique.html"
-          >
-            Reprendre la formation
-          </a>
+       
+<div class="actions">
+  <a
+    class="bouton"
+    href="initiation-informatique.html"
+  >
+    Reprendre la formation
+  </a>
 
-          <a class="bouton secondaire" href="cours.html">
-            Voir les cours
-          </a>
-        </div>
-      </div>
+  <a class="bouton secondaire" href="cours.html">
+    Voir les cours
+  </a>
+
+  <button
+    id="obtenirAttestation"
+    class="bouton"
+    type="button"
+    hidden
+  >
+    Obtenir mon attestation
+  </button>
+</div>
+
+<div id="zoneAttestation" hidden>
+  <p>
+    <strong>Numéro d'attestation :</strong>
+    <span id="numeroAttestation"></span>
+  </p>
+  <p id="messageAttestation" role="status" aria-live="polite"></p>
+  <button id="telechargerAttestation" class="bouton" type="button" hidden>
+    Télécharger en PDF
+  </button>
+</div>
     </section>
 
     <p>
@@ -308,14 +328,24 @@
             ? "Aucun score enregistré"
             : progression.score + " / 3";
 
-        if (progression.completed === true) {
-          statut.textContent = "Formation terminée";
-        } else if (progressionValeur > 0) {
-          statut.textContent = "En cours";
-        } else {
-          statut.textContent = "Pas encore commencée";
-        }
+if (progression.completed === true) {
+  statut.textContent = "Formation terminée";
+} else if (progressionValeur > 0) {
+  statut.textContent = "En cours";
+} else {
+  statut.textContent = "Pas encore commencée";
+}
 
+const boutonAttestation =
+  document.getElementById("obtenirAttestation");
+
+if (
+  progression.completed === true &&
+  progressionValeur === 100 &&
+  progression.score === 3
+) {
+  boutonAttestation.hidden = false;
+}
         if (progression.updated_at) {
           const date = new Date(progression.updated_at);
 
@@ -359,6 +389,215 @@
         window.location.href = "connexion.html";
       });
 
+document
+  .getElementById("obtenirAttestation")
+  .addEventListener("click", async function () {
+    const bouton = this;
+    const message = document.getElementById("messageAttestation");
+    const zone = document.getElementById("zoneAttestation");
+    const numero = document.getElementById("numeroAttestation");
+    const supabase = window.eduSupabase;
+
+    if (!supabase) {
+      alert("Connexion à Supabase indisponible.");
+      return;
+    }
+
+    // Ouvrir la fenêtre pendant le clic pour limiter
+    // le risque de blocage des fenêtres sur mobile.
+    const fenetre = window.open("", "_blank");
+
+    if (!fenetre) {
+      alert(
+        "La fenêtre a été bloquée. Autorise les fenêtres surgissantes puis réessaie."
+      );
+      return;
+    }
+
+    fenetre.document.write(
+      "<p style='font-family:Arial;padding:20px'>Préparation de ton attestation...</p>"
+    );
+
+    bouton.disabled = true;
+    message.textContent = "Génération de ton attestation...";
+
+    try {
+      const { data: sessionData, error: userError } =
+        await supabase.auth.getUser();
+
+      if (userError || !sessionData?.user) {
+        fenetre.close();
+        window.location.href = "connexion.html";
+        return;
+      }
+
+      const user = sessionData.user;
+
+      // Vérifier à nouveau la réussite enregistrée.
+      const { data: progression, error: erreurProgression } =
+        await supabase
+          .from("course_progress")
+          .select("progress, completed, score")
+          .eq("user_id", user.id)
+          .eq("course_id", "informatique")
+          .maybeSingle();
+
+      if (
+        erreurProgression ||
+        !progression ||
+        progression.completed !== true ||
+        Number(progression.progress) < 100 ||
+        progression.score !== 3
+      ) {
+        fenetre.close();
+        message.textContent =
+          "Les conditions de réussite ne sont pas remplies.";
+        return;
+      }
+
+      // Générer ou récupérer le numéro déjà attribué.
+      const { data: numeroAttestation, error: erreurAttestation } =
+        await supabase.rpc("generer_attestation_informatique");
+
+      if (
+        erreurAttestation ||
+        typeof numeroAttestation !== "string" ||
+        !numeroAttestation
+      ) {
+        console.error("Erreur d'attestation :", erreurAttestation);
+        fenetre.close();
+        message.textContent =
+          "Impossible de générer l'attestation. Réessaie.";
+        return;
+      }
+
+      // Récupérer le nom du profil.
+      const { data: profil, error: erreurProfil } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (erreurProfil) {
+        console.error("Erreur du profil :", erreurProfil);
+      }
+
+      const nomApprenant =
+        profil?.full_name ||
+        user.user_metadata?.full_name ||
+        "Apprenant EDUCONNECT CI";
+
+      // Échapper les données avant de les insérer dans le document.
+      function echapper(texte) {
+        return String(texte).replace(/[&<>"']/g, function (caractere) {
+          const entites = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+          };
+          return entites[caractere];
+        });
+      }
+
+      const date = new Date().toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      });
+
+      const nomSecurise = echapper(nomApprenant);
+      const numeroSecurise = echapper(numeroAttestation);
+      const dateSecurisee = echapper(date);
+
+      zone.hidden = false;
+      numero.textContent = numeroAttestation;
+      message.textContent =
+        "Attestation générée. Utilise l'impression pour l'enregistrer en PDF.";
+
+      fenetre.document.open();
+      fenetre.document.write(`<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attestation EDUCONNECT CI</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 30px;
+    font-family: Georgia, serif;
+    color: #17324d;
+    background: #eef3f8;
+  }
+  .attestation {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 48px 35px;
+    text-align: center;
+    background: white;
+    border: 8px double #b38b35;
+  }
+  h1 { color: #073b70; font-size: 34px; }
+  h2 { margin-top: 35px; font-size: 27px; }
+  .nom {
+    margin: 25px 0;
+    font-size: 30px;
+    font-weight: bold;
+    color: #073b70;
+  }
+  .formation { font-size: 23px; font-weight: bold; }
+  .numero { margin-top: 35px; font-size: 14px; overflow-wrap: anywhere; }
+  .bouton {
+    padding: 13px 20px;
+    margin: 20px auto;
+    display: block;
+    background: #073b70;
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  @media print {
+    body { padding: 0; background: white; }
+    .attestation { margin: 0; min-height: 180mm; }
+    .bouton { display: none; }
+    @page { size: A4 landscape; margin: 10mm; }
+  }
+</style>
+</head>
+<body>
+  <main class="attestation">
+    <h1>EDUCONNECT CI</h1>
+    <p>PLATEFORME DE FORMATION EN LIGNE</p>
+    <h2>ATTESTATION DE RÉUSSITE</h2>
+    <p>La plateforme EDUCONNECT CI atteste que</p>
+    <p class="nom">${nomSecurise}</p>
+    <p>a satisfait aux conditions de réussite de la formation</p>
+    <p class="formation">Initiation à l'informatique</p>
+    <p>avec un score de <strong>3/3</strong>.</p>
+    <p>Délivrée le ${dateSecurisee}</p>
+    <p class="numero">Numéro de vérification : <strong>${numeroSecurise}</strong></p>
+    <p>Vérification : consulte le service de vérification des attestations d'EDUCONNECT CI.</p>
+    <button class="bouton" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
+  </main>
+</body>
+</html>`);
+      fenetre.document.close();
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      fenetre.close();
+      message.textContent =
+        "Une erreur est survenue. Vérifie ta connexion puis réessaie.";
+    } finally {
+      bouton.disabled = false;
+    }
+  });
+
+chargerCompte();
     chargerCompte();
   </script>
 </body>
