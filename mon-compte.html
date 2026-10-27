@@ -593,11 +593,24 @@ const urlVerification =
       <div id="qrcode"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
-    <script>
-      const lienVerification = ${JSON.stringify(urlVerification)};
-      const cibleQR = document.getElementById("qrcode");
-    <\/script>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+<script>
+  const lienVerification = ${JSON.stringify(urlVerification)};
+  const cibleQR = document.getElementById("qrcode");
+
+  if (typeof QRCode !== "undefined" && cibleQR) {
+    new QRCode(cibleQR, {
+      text: lienVerification,
+      width: 150,
+      height: 150,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } else if (cibleQR) {
+    cibleQR.textContent =
+      "QR code indisponible. Vérifiez votre connexion Internet.";
+  }
+<\/script>
     <p>Vérification : consulte le service de vérification des attestations d'EDUCONNECT CI.</p>
     <button class="bouton" onclick="window.print()">Imprimer / Enregistrer en PDF</button>
   </main>
