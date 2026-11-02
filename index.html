@@ -79,6 +79,48 @@
       color: white;
       background: #073b70;
     }
+    /* Directions commerciales EDUCONNECT CI */
+.directions {
+    padding: 45px 20px;
+    text-align: center;
+    background: #f5f8fc;
+}
+
+.directions > h2 {
+    color: #073b70;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.directions > p {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.direction-card {
+    display: inline-block;
+    vertical-align: top;
+    width: min(100%, 430px);
+    min-height: 190px;
+    box-sizing: border-box;
+    margin: 12px;
+    padding: 25px;
+    text-align: center;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 3px 14px #00000012;
+    border-top: 5px solid #087b55;
+}
+
+.direction-card h3 {
+    color: #073b70;
+    margin-bottom: 12px;
+}
+
+.direction-card p {
+    line-height: 1.7;
+    color: #555;
+}
   </style>
 </head>
 <body>
@@ -91,23 +133,60 @@
   <p>Le savoir à portée de clic</p>
 </header>
 
-  <nav>
+ <nav>
     <a href="index.html">Accueil</a>
-    <a href="cours.html">Cours</a>
+    <a href="formation.html">Formation</a>
+    <a href="technologies.html">Technologies</a>
+    <a href="services.html">Services</a>
+    <a href="securite-reseaux.html">Sécurité & Réseaux</a>
     <a href="inscription.html">Inscription</a>
     <a href="connexion.html">Connexion</a>
-  </nav>
-
+</nav>
   <section class="hero">
-    <h2>Construis ton avenir grâce au numérique</h2>
-    <p>
-      Découvre des cours et des formations en ligne,
-      développe tes compétences et progresse à ton rythme.
-    </p>
-    <a class="btn" href="cours.html">Découvrir les cours</a>
-    <a class="btn secondary" href="inscription.html">Créer un compte</a>
-  </section>
+    <h2>Bienvenue chez EDUCONNECT.CI</h2>
 
+    <p>
+      Votre partenaire pour la formation, le développement
+      numérique, les services informatiques, la sécurité
+      et les réseaux.
+    </p>
+
+    <p>
+      Découvrez nos quatre directions commerciales et
+      trouvez la solution adaptée à vos besoins.
+    </p>
+
+    <a class="btn" href="#directions">Découvrir nos activités</a>
+    <a class="btn secondary" href="inscription.html">Créer un compte</a>
+</section>
+<section id="directions" class="directions">
+    <h2>Nos quatre directions commerciales</h2>
+    <p>Découvrez l'ensemble de nos prestations.</p>
+
+    <div class="direction-card">
+        <h3>EDUCONNECT FORMATION</h3>
+        <p>Formations professionnelles et informatiques.</p>
+        <a class="btn" href="formation.html">Découvrir</a>
+    </div>
+
+    <div class="direction-card">
+        <h3>EDUCONNECT TECHNOLOGIES</h3>
+        <p>Conception de logiciels, applications et sites Internet.</p>
+        <a class="btn" href="technologies.html">Découvrir</a>
+    </div>
+
+    <div class="direction-card">
+        <h3>EDUCONNECT SERVICES</h3>
+        <p>Maintenance, assistance et dépannage informatique.</p>
+        <a class="btn" href="services.html">Découvrir</a>
+    </div>
+
+    <div class="direction-card">
+        <h3>EDUCONNECT SÉCURITÉ & RÉSEAUX</h3>
+        <p>Vidéosurveillance, réseaux et connectivité.</p>
+        <a class="btn" href="securite-reseaux.html">Découvrir</a>
+    </div>
+</section>
   <main>
     <h2 style="text-align:center">Nos domaines de formation</h2>
     <div class="courses">
