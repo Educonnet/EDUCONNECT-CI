@@ -244,6 +244,69 @@
 
   </div>
 
+  <section class="contact" id="demande-technologies">
+    <h2>Demander un devis</h2>
+    <p>Présentez-nous votre projet. Notre équipe étudiera votre besoin.</p>
+
+    <form id="form-demande-technologies">
+
+      <label for="prestation-technologies">Prestation souhaitée *</label><br>
+      <select id="prestation-technologies" required>
+        <option value="">Choisir une prestation</option>
+        <option>Conception de logiciels de gestion</option>
+        <option>Logiciels de gestion scolaire</option>
+        <option>Logiciels de gestion commerciale</option>
+        <option>Logiciels de gestion de stocks</option>
+        <option>Logiciels de gestion de caisse</option>
+        <option>Logiciels de gestion administrative</option>
+        <option>Gestion des ressources humaines</option>
+        <option>Installation et configuration de logiciels</option>
+        <option>Maintenance et mise à jour des applications</option>
+        <option>Digitalisation des procédures administratives</option>
+        <option>Création de sites vitrines</option>
+        <option>Sites de commerce électronique</option>
+        <option>Plateformes éducatives</option>
+        <option>Sites institutionnels</option>
+        <option>Applications Web</option>
+        <option>Applications mobiles</option>
+        <option>Plateformes de réservation</option>
+        <option>Portails professionnels</option>
+        <option>Hébergement et maintenance de sites Internet</option>
+        <option>Référencement et optimisation Web</option>
+      </select>
+
+      <br><br>
+
+      <label for="nom-technologies">Nom et prénom *</label><br>
+      <input type="text" id="nom-technologies" maxlength="150" required>
+
+      <br><br>
+
+      <label for="telephone-technologies">Téléphone *</label><br>
+      <input type="tel" id="telephone-technologies" maxlength="30" required>
+
+      <br><br>
+
+      <label for="email-technologies">Adresse e-mail</label><br>
+      <input type="email" id="email-technologies" maxlength="254">
+
+      <br><br>
+
+      <label for="description-technologies">Décrivez votre projet *</label><br>
+      <textarea id="description-technologies" rows="5"
+        maxlength="5000" required></textarea>
+
+      <br><br>
+
+      <button type="submit" id="bouton-envoi-technologies">
+        Envoyer ma demande de devis
+      </button>
+
+      <p id="message-technologies" role="status"></p>
+
+    </form>
+  </section>
+
   <section class="contact">
     <h2>Vous avez un projet numérique ?</h2>
     <p>Présentez-nous votre besoin pour étudier une solution adaptée.</p>
@@ -256,6 +319,98 @@
 <footer>
   <p>EDUCONNECT.CI — Le numérique au service de votre réussite.</p>
 </footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const supabase = window.eduSupabase;
+
+  const formulaire = document.getElementById(
+    "form-demande-technologies"
+  );
+
+  const message = document.getElementById(
+    "message-technologies"
+  );
+
+  const bouton = document.getElementById(
+    "bouton-envoi-technologies"
+  );
+
+  if (!supabase || !formulaire) {
+    message.textContent =
+      "Connexion au service indisponible.";
+    return;
+  }
+
+  formulaire.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours...";
+    message.textContent = "";
+
+    try {
+
+      const { data, error } = await supabase.rpc(
+        "deposer_demande_client",
+        {
+          p_direction: "technologies",
+          p_prestation: document.getElementById(
+            "prestation-technologies"
+          ).value,
+          p_nom_client: document.getElementById(
+            "nom-technologies"
+          ).value.trim(),
+          p_telephone: document.getElementById(
+            "telephone-technologies"
+          ).value.trim(),
+          p_email: document.getElementById(
+            "email-technologies"
+          ).value.trim() || null,
+          p_description: document.getElementById(
+            "description-technologies"
+          ).value.trim()
+        }
+      );
+
+      if (error) {
+        console.error("Erreur Supabase :", error);
+        message.textContent =
+          "Échec de l'envoi : " + error.message;
+        return;
+      }
+
+      message.textContent =
+        "Votre demande de devis a été envoyée avec succès. Notre équipe vous contactera.";
+
+      formulaire.reset();
+
+      console.log("Demande enregistrée :", data);
+
+    } catch (erreur) {
+
+      console.error("Erreur inattendue :", erreur);
+
+      message.textContent =
+        "Une erreur inattendue est survenue. Veuillez réessayer.";
+
+    } finally {
+
+      bouton.disabled = false;
+      bouton.textContent = "Envoyer ma demande de devis";
+
+    }
+
+  });
+
+});
+</script>
 
 </body>
 </html>

@@ -1,0 +1,672 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration | EDUCONNECT CI</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f6f9;
+      color: #222;
+    }
+
+    header {
+      background: #123b65;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    h2 {
+      color: #123b65;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+      padding: 10px;
+      margin: 5px 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    input, select, textarea {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      background: #1264a3;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .bouton-supprimer {
+      background: #b42318;
+    }
+
+    .demande {
+      border: 1px solid #ddd;
+      border-left: 5px solid #1264a3;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      background: #fff;
+    }
+
+    .demande p {
+      overflow-wrap: anywhere;
+    }
+
+    .actions-demande {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .champ-note {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .message {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>EDUCONNECT CI – Espace administrateur</h1>
+  <p id="message">Chargement de l'espace administrateur...</p>
+</header>
+
+<section id="gestion-autorisations" hidden>
+
+  <h2>Gestion des autorisations de quiz</h2>
+
+  <p>Sélectionne un apprenant et le module concerné.</p>
+
+  <form id="form-autorisation">
+
+    <label for="apprenant">Choisir un apprenant :</label><br>
+
+    <select id="apprenant" required>
+      <option value="">Chargement des apprenants...</option>
+    </select>
+
+    <br><br>
+
+    <label for="module">Choisir un module :</label><br>
+
+    <select id="module" required>
+      <option value="">Sélectionner un module</option>
+      <option value="module-1">Module 1</option>
+      <option value="module-2">Module 2</option>
+      <option value="module-3">Module 3</option>
+      <option value="module-4">Module 4</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit" id="bouton-autorisation">
+      Accorder l'autorisation
+    </button>
+
+  </form>
+
+  <p id="message-autorisation" class="message" role="status"></p>
+
+</section>
+
+<section id="gestion-demandes" hidden>
+
+  <h2>Gestion des demandes clients</h2>
+
+  <p>
+    Consulte les demandes reçues, modifie leur statut
+    ou supprime-les si nécessaire.
+  </p>
+
+  <button type="button" id="bouton-actualiser">
+    Actualiser les demandes
+  </button>
+
+  <p id="message-demandes" class="message" role="status"></p>
+
+  <div id="liste-demandes">
+    Chargement des demandes...
+  </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+
+  const message = document.getElementById("message");
+  const supabase = window.eduSupabase;
+
+  if (!supabase) {
+    message.textContent = "Connexion Supabase indisponible.";
+    return;
+  }
+
+  try {
+
+    message.textContent = "Vérification de votre accès...";
+
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      message.textContent =
+        "Vous devez vous connecter pour accéder à cet espace.";
+      return;
+    }
+
+    const utilisateur = sessionData.user;
+
+    const { data: estAdmin, error: adminError } =
+      await supabase.rpc("is_admin");
+
+    if (adminError) {
+      console.error("Erreur de vérification :", adminError);
+      message.textContent =
+        "Impossible de vérifier vos droits administrateur.";
+      return;
+    }
+
+    if (estAdmin !== true) {
+      message.textContent =
+        "Accès refusé : cet espace est réservé aux administrateurs.";
+      return;
+    }
+
+    message.textContent =
+      "Bienvenue dans votre espace administrateur EDUCONNECT CI.";
+
+    document.getElementById("gestion-autorisations").hidden = false;
+    document.getElementById("gestion-demandes").hidden = false;
+
+    // =====================================
+    // GESTION DES AUTORISATIONS DE QUIZ
+    // =====================================
+
+    const listeApprenants =
+      document.getElementById("apprenant");
+
+    const { data: profils, error: erreurProfils } =
+      await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .order("full_name", { ascending: true });
+
+    if (erreurProfils) {
+
+      console.error("Erreur profils :", erreurProfils);
+
+      listeApprenants.innerHTML =
+        '<option value="">Impossible de charger les apprenants</option>';
+
+    } else if (!profils || profils.length === 0) {
+
+      listeApprenants.innerHTML =
+        '<option value="">Aucun apprenant enregistré</option>';
+
+    } else {
+
+      listeApprenants.innerHTML =
+        '<option value="">Sélectionner un apprenant</option>';
+
+      profils.forEach(function (profil) {
+
+        const option = document.createElement("option");
+
+        option.value = profil.id;
+        option.textContent =
+          profil.full_name || "Apprenant sans nom";
+
+        listeApprenants.appendChild(option);
+
+      });
+    }
+
+    const formulaireAutorisation =
+      document.getElementById("form-autorisation");
+
+    const messageAutorisation =
+      document.getElementById("message-autorisation");
+
+    const boutonAutorisation =
+      document.getElementById("bouton-autorisation");
+
+    formulaireAutorisation.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const apprenantId = listeApprenants.value;
+        const moduleId =
+          document.getElementById("module").value;
+
+        if (!apprenantId || !moduleId) {
+          messageAutorisation.textContent =
+            "Sélectionne un apprenant et un module.";
+          return;
+        }
+
+        boutonAutorisation.disabled = true;
+        boutonAutorisation.textContent =
+          "Autorisation en cours...";
+
+        try {
+
+          const { data, error } = await supabase.rpc(
+            "autoriser_quiz_test",
+            {
+              p_user_id: apprenantId,
+              p_module_id: moduleId
+            }
+          );
+
+          if (error) {
+            console.error("Erreur d'autorisation :", error);
+
+            messageAutorisation.textContent =
+              "Impossible d'accorder l'autorisation : " +
+              error.message;
+
+            return;
+          }
+
+          messageAutorisation.textContent =
+            "Autorisation accordée avec succès. Identifiant : " +
+            data;
+
+          formulaireAutorisation.reset();
+
+        } catch (erreur) {
+
+          console.error("Erreur inattendue :", erreur);
+
+          messageAutorisation.textContent =
+            "Une erreur inattendue est survenue.";
+
+        } finally {
+
+          boutonAutorisation.disabled = false;
+          boutonAutorisation.textContent =
+            "Accorder l'autorisation";
+
+        }
+      }
+    );
+
+    // =====================================
+    // GESTION DES DEMANDES CLIENTS
+    // =====================================
+
+    const listeDemandes =
+      document.getElementById("liste-demandes");
+
+    const messageDemandes =
+      document.getElementById("message-demandes");
+
+    const boutonActualiser =
+      document.getElementById("bouton-actualiser");
+
+    function ajouterTexte(parent, balise, texte) {
+
+      const element = document.createElement(balise);
+      element.textContent = texte;
+      parent.appendChild(element);
+
+      return element;
+    }
+
+    function afficherChamp(parent, titre, valeur) {
+
+      const paragraphe = document.createElement("p");
+      const fort = document.createElement("strong");
+
+      fort.textContent = titre + " : ";
+
+      paragraphe.appendChild(fort);
+
+      const contenu = document.createTextNode(
+        valeur || "Non renseigné"
+      );
+
+      paragraphe.appendChild(contenu);
+      parent.appendChild(paragraphe);
+
+    }
+
+    async function chargerDemandes() {
+
+      listeDemandes.textContent =
+        "Chargement des demandes...";
+
+      messageDemandes.textContent = "";
+
+      const { data: demandes, error } =
+        await supabase
+          .from("demandes_clients")
+          .select(
+            "id, direction, prestation, nom_client, telephone, email, description, statut, note_admin, created_at"
+          )
+          .order("created_at", { ascending: false });
+
+      if (error) {
+
+        console.error("Erreur de chargement :", error);
+
+        listeDemandes.textContent =
+          "Impossible de charger les demandes : " +
+          error.message;
+
+        return;
+      }
+
+      listeDemandes.replaceChildren();
+
+      if (!demandes || demandes.length === 0) {
+
+        listeDemandes.textContent =
+          "Aucune demande client enregistrée pour le moment.";
+
+        return;
+      }
+
+      ajouterTexte(
+        listeDemandes,
+        "p",
+        demandes.length + " demande(s) enregistrée(s)."
+      );
+
+      demandes.forEach(function(demande) {
+
+        const carte = document.createElement("article");
+        carte.className = "demande";
+
+        const titre = ajouterTexte(
+          carte,
+          "h3",
+          demande.prestation
+        );
+
+        afficherChamp(
+          carte,
+          "Direction",
+          demande.direction
+        );
+
+        afficherChamp(
+          carte,
+          "Client",
+          demande.nom_client
+        );
+
+        afficherChamp(
+          carte,
+          "Téléphone",
+          demande.telephone
+        );
+
+        afficherChamp(
+          carte,
+          "E-mail",
+          demande.email
+        );
+
+        afficherChamp(
+          carte,
+          "Description",
+          demande.description
+        );
+
+        afficherChamp(
+          carte,
+          "Date de réception",
+          new Date(demande.created_at).toLocaleString("fr-FR")
+        );
+
+        afficherChamp(
+          carte,
+          "Statut actuel",
+          demande.statut
+        );
+
+        const statut = document.createElement("select");
+
+        const statuts = [
+          ["en_attente", "En attente"],
+          ["en_cours", "En cours"],
+          ["traitee", "Traitée"],
+          ["refusee", "Refusée"]
+        ];
+
+        statuts.forEach(function(item) {
+
+          const option = document.createElement("option");
+
+          option.value = item[0];
+          option.textContent = item[1];
+
+          statut.appendChild(option);
+
+        });
+
+        statut.value = demande.statut;
+
+        const labelStatut = document.createElement("label");
+        labelStatut.textContent = "Modifier le statut : ";
+        labelStatut.appendChild(statut);
+
+        carte.appendChild(labelStatut);
+
+        const note = document.createElement("textarea");
+
+        note.className = "champ-note";
+        note.rows = 3;
+        note.maxLength = 5000;
+        note.placeholder = "Ajouter une note administrative...";
+        note.value = demande.note_admin || "";
+
+        carte.appendChild(note);
+
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+
+        const boutonModifier =
+          document.createElement("button");
+
+        boutonModifier.type = "button";
+        boutonModifier.textContent = "Enregistrer les modifications";
+
+        boutonModifier.addEventListener(
+          "click",
+          async function() {
+
+            boutonModifier.disabled = true;
+            boutonModifier.textContent = "Enregistrement...";
+
+            try {
+
+              const { error: erreurModification } =
+                await supabase
+                  .from("demandes_clients")
+                  .update({
+                    statut: statut.value,
+                    note_admin: note.value.trim() || null,
+                    traite_par: utilisateur.id,
+                    date_traitement: new Date().toISOString()
+                  })
+                  .eq("id", demande.id);
+
+              if (erreurModification) {
+
+                console.error(
+                  "Erreur de modification :",
+                  erreurModification
+                );
+
+                messageDemandes.textContent =
+                  "Modification impossible : " +
+                  erreurModification.message;
+
+                return;
+              }
+
+              messageDemandes.textContent =
+                "Demande mise à jour avec succès.";
+
+              await chargerDemandes();
+
+            } catch(erreur) {
+
+              console.error(erreur);
+
+              messageDemandes.textContent =
+                "Une erreur est survenue pendant la modification.";
+
+            } finally {
+
+              boutonModifier.disabled = false;
+              boutonModifier.textContent =
+                "Enregistrer les modifications";
+
+            }
+
+          }
+        );
+
+        const boutonSupprimer =
+          document.createElement("button");
+
+        boutonSupprimer.type = "button";
+        boutonSupprimer.className = "bouton-supprimer";
+        boutonSupprimer.textContent = "Supprimer";
+
+        boutonSupprimer.addEventListener(
+          "click",
+          async function() {
+
+            const confirmation = window.confirm(
+              "Attention ! Voulez-vous vraiment supprimer définitivement cette demande ?"
+            );
+
+            if (!confirmation) return;
+
+            boutonSupprimer.disabled = true;
+            boutonSupprimer.textContent = "Suppression...";
+
+            try {
+
+              const { error: erreurSuppression } =
+                await supabase
+                  .from("demandes_clients")
+                  .delete()
+                  .eq("id", demande.id);
+
+              if (erreurSuppression) {
+
+                console.error(
+                  "Erreur de suppression :",
+                  erreurSuppression
+                );
+
+                messageDemandes.textContent =
+                  "Suppression impossible : " +
+                  erreurSuppression.message;
+
+                return;
+              }
+
+              messageDemandes.textContent =
+                "Demande supprimée avec succès.";
+
+              await chargerDemandes();
+
+            } catch(erreur) {
+
+              console.error(erreur);
+
+              messageDemandes.textContent =
+                "Une erreur est survenue pendant la suppression.";
+
+            } finally {
+
+              boutonSupprimer.disabled = false;
+              boutonSupprimer.textContent = "Supprimer";
+
+            }
+
+          }
+        );
+
+        actions.appendChild(boutonModifier);
+        actions.appendChild(boutonSupprimer);
+
+        carte.appendChild(actions);
+
+        listeDemandes.appendChild(carte);
+
+      });
+
+    }
+
+    boutonActualiser.addEventListener(
+      "click",
+      chargerDemandes
+    );
+
+    await chargerDemandes();
+
+  } catch (erreur) {
+
+    console.error("Erreur inattendue :", erreur);
+
+    message.textContent =
+      "Une erreur est survenue pendant la vérification.";
+
+  }
+
+});
+</script>
+
+</body>
+</html>

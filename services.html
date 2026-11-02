@@ -186,6 +186,59 @@
 
   </div>
 
+  <section class="contact" id="demande-services">
+    <h2>Demander une assistance informatique</h2>
+    <p>Décrivez votre problème. Notre équipe étudiera votre demande.</p>
+
+    <form id="form-demande-services">
+
+      <label for="prestation-services">Type d'assistance souhaitée *</label><br>
+      <select id="prestation-services" required>
+        <option value="">Choisir une prestation</option>
+        <option>Maintenance préventive des ordinateurs</option>
+        <option>Maintenance corrective des ordinateurs</option>
+        <option>Diagnostic et dépannage informatique</option>
+        <option>Installation et configuration de systèmes d'exploitation</option>
+        <option>Installation et configuration de logiciels</option>
+        <option>Réparation et optimisation des ordinateurs</option>
+        <option>Récupération et sauvegarde de données</option>
+        <option>Assistance informatique à domicile et en entreprise</option>
+        <option>Entretien des équipements informatiques</option>
+        <option>Assistance technique à distance</option>
+      </select>
+
+      <br><br>
+
+      <label for="nom-services">Nom et prénom *</label><br>
+      <input type="text" id="nom-services" maxlength="150" required>
+
+      <br><br>
+
+      <label for="telephone-services">Téléphone *</label><br>
+      <input type="tel" id="telephone-services" maxlength="30" required>
+
+      <br><br>
+
+      <label for="email-services">Adresse e-mail</label><br>
+      <input type="email" id="email-services" maxlength="254">
+
+      <br><br>
+
+      <label for="description-services">Décrivez votre problème informatique *</label><br>
+      <textarea id="description-services" rows="5"
+        maxlength="5000" required></textarea>
+
+      <br><br>
+
+      <button type="submit" id="bouton-envoi-services">
+        Envoyer ma demande d'assistance
+      </button>
+
+      <p id="message-services" role="status"></p>
+
+    </form>
+  </section>
+
   <section class="contact">
     <h2>Besoin d'une intervention informatique ?</h2>
     <p>Contactez-nous pour présenter votre problème et demander une assistance.</p>
@@ -198,6 +251,98 @@
 <footer>
   <p>EDUCONNECT.CI — Le numérique au service de votre réussite.</p>
 </footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const supabase = window.eduSupabase;
+
+  const formulaire = document.getElementById(
+    "form-demande-services"
+  );
+
+  const message = document.getElementById(
+    "message-services"
+  );
+
+  const bouton = document.getElementById(
+    "bouton-envoi-services"
+  );
+
+  if (!supabase || !formulaire) {
+    message.textContent =
+      "Connexion au service indisponible.";
+    return;
+  }
+
+  formulaire.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours...";
+    message.textContent = "";
+
+    try {
+
+      const { data, error } = await supabase.rpc(
+        "deposer_demande_client",
+        {
+          p_direction: "services",
+          p_prestation: document.getElementById(
+            "prestation-services"
+          ).value,
+          p_nom_client: document.getElementById(
+            "nom-services"
+          ).value.trim(),
+          p_telephone: document.getElementById(
+            "telephone-services"
+          ).value.trim(),
+          p_email: document.getElementById(
+            "email-services"
+          ).value.trim() || null,
+          p_description: document.getElementById(
+            "description-services"
+          ).value.trim()
+        }
+      );
+
+      if (error) {
+        console.error("Erreur Supabase :", error);
+        message.textContent =
+          "Échec de l'envoi : " + error.message;
+        return;
+      }
+
+      message.textContent =
+        "Votre demande d'assistance a été envoyée avec succès. Notre équipe vous contactera.";
+
+      formulaire.reset();
+
+      console.log("Demande enregistrée :", data);
+
+    } catch (erreur) {
+
+      console.error("Erreur inattendue :", erreur);
+
+      message.textContent =
+        "Une erreur inattendue est survenue. Veuillez réessayer.";
+
+    } finally {
+
+      bouton.disabled = false;
+      bouton.textContent = "Envoyer ma demande d'assistance";
+
+    }
+
+  });
+
+});
+</script>
 
 </body>
 </html>

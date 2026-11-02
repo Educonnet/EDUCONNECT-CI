@@ -199,6 +199,61 @@
 
 </div>
 
+  <section class="contact" id="demande-formation">
+    <h2>Demander une formation</h2>
+    <p>Remplissez ce formulaire. Notre équipe vous contactera.</p>
+
+    <form id="form-demande-formation">
+
+      <label for="prestation-formation">Formation souhaitée *</label><br>
+      <select id="prestation-formation" required>
+        <option value="">Choisir une formation</option>
+        <option>Initiation à l'informatique</option>
+        <option>Formation en bureautique</option>
+        <option>Formation en maintenance informatique</option>
+        <option>Formation en développement Web</option>
+        <option>Formation en développement d'applications</option>
+        <option>Formation en réseaux informatiques</option>
+        <option>Formation en cybersécurité</option>
+        <option>Formation en gestion des bases de données</option>
+        <option>Formation en infographie et design graphique</option>
+        <option>Formation aux outils numériques et à Internet</option>
+        <option>Formation professionnelle à distance</option>
+        <option>Formation aux logiciels de gestion</option>
+      </select>
+
+      <br><br>
+
+      <label for="nom-formation">Nom et prénom *</label><br>
+      <input type="text" id="nom-formation" maxlength="150" required>
+
+      <br><br>
+
+      <label for="telephone-formation">Téléphone *</label><br>
+      <input type="tel" id="telephone-formation" maxlength="30" required>
+
+      <br><br>
+
+      <label for="email-formation">Adresse e-mail</label><br>
+      <input type="email" id="email-formation" maxlength="254">
+
+      <br><br>
+
+      <label for="description-formation">Décrivez votre besoin *</label><br>
+      <textarea id="description-formation" rows="5"
+        maxlength="5000" required></textarea>
+
+      <br><br>
+
+      <button type="submit" id="bouton-envoi-formation">
+        Envoyer ma demande
+      </button>
+
+      <p id="message-formation" role="status"></p>
+
+    </form>
+  </section>
+
   <section class="contact">
     <h2>Vous souhaitez vous former ?</h2>
     <p>Inscrivez-vous pour découvrir nos formations.</p>
@@ -210,5 +265,98 @@
   <p>EDUCONNECT.CI — Le numérique au service de votre réussite.</p>
 </footer>
 
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const supabase = window.eduSupabase;
+
+  const formulaire = document.getElementById(
+    "form-demande-formation"
+  );
+
+  const message = document.getElementById(
+    "message-formation"
+  );
+
+  const bouton = document.getElementById(
+    "bouton-envoi-formation"
+  );
+
+  if (!supabase || !formulaire) {
+    message.textContent =
+      "Le formulaire ne peut pas se connecter au service.";
+    return;
+  }
+
+  formulaire.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    bouton.disabled = true;
+    bouton.textContent = "Envoi en cours...";
+    message.textContent = "";
+
+    try {
+
+      const { data, error } = await supabase.rpc(
+        "deposer_demande_client",
+        {
+          p_direction: "formation",
+          p_prestation: document.getElementById(
+            "prestation-formation"
+          ).value,
+          p_nom_client: document.getElementById(
+            "nom-formation"
+          ).value.trim(),
+          p_telephone: document.getElementById(
+            "telephone-formation"
+          ).value.trim(),
+          p_email: document.getElementById(
+            "email-formation"
+          ).value.trim() || null,
+          p_description: document.getElementById(
+            "description-formation"
+          ).value.trim()
+        }
+      );
+
+      if (error) {
+        console.error("Erreur Supabase :", error);
+        message.textContent =
+          "Échec de l'envoi : " + error.message;
+        return;
+      }
+
+      message.textContent =
+        "Votre demande de formation a été envoyée avec succès. Notre équipe vous contactera.";
+
+      formulaire.reset();
+
+      console.log("Demande enregistrée :", data);
+
+    } catch (erreur) {
+
+      console.error("Erreur inattendue :", erreur);
+
+      message.textContent =
+        "Une erreur inattendue est survenue. Veuillez réessayer.";
+
+    } finally {
+
+      bouton.disabled = false;
+      bouton.textContent = "Envoyer ma demande";
+
+    }
+
+  });
+
+});
+</script>
+
 </body>
 </html>
+
