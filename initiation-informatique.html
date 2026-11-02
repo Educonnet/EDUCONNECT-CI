@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -46,21 +46,60 @@
       padding: 20px;
       background: #e4ebf3;
     }
+    
+#quiz-informatique fieldset {
+  color: #222;
+  background-color: #fff;
+}
+
+#quiz-informatique legend,
+#quiz-informatique label {
+  color: #222;
+}
+
   </style>
 </head>
 <body>
   <header>
-    <h1>EDUCONNECT CI</h1>
-    <p>Formation gratuite : Initiation à l’informatique</p>
-  </header>
+    <h1>EDUCONNECT CI
 
   <main>
     <section>
       <h2>Bienvenue dans la formation</h2>
       <p>Cette formation t’aide à découvrir les bases de l’informatique, même si tu débutes.</p>
       <p><strong>Objectif :</strong> apprendre à utiliser un ordinateur et comprendre les principaux outils numériques.</p>
-      <p><strong>Prix :</strong> Gratuit</p>
+      <p><strong>Tarif :</strong> 5 000 FCFA par module</p>
+<p><strong>Modules disponibles :</strong> 4</p>
     </section>
+
+<section id="modules">
+  <h2>Les quatre modules de formation</h2>
+  <p>Chaque module coûte 5 000 FCFA.</p>
+
+  <article>
+    <h3>Module 1 — Découverte de l’ordinateur</h3>
+    <p>Découvre les composants de l’ordinateur, les périphériques et leurs rôles.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+
+  <article>
+    <h3>Module 2 — Windows et gestion des fichiers</h3>
+    <p>Apprends à utiliser le bureau, les fenêtres, les dossiers et les fichiers.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+
+  <article>
+    <h3>Module 3 — Bureautique</h3>
+    <p>Découvre la création de documents et les bases des outils bureautiques.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+
+  <article>
+    <h3>Module 4 — Internet et sécurité</h3>
+    <p>Apprends à naviguer sur Internet et à protéger tes informations personnelles.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+</section>
 
     <section>
       <h2>Leçon 1 : Découvrir l’ordinateur</h2>
@@ -125,27 +164,7 @@
 
       <div id="resultat-quiz"></div>
   </form>
-      <script>
-document.getElementById("quiz-informatique").addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  let score = 0;
-  const reponses = { q1: "b", q2: "a", q3: "c" };
-
-  for (const question in reponses) {
-    const choix = document.querySelector(
-      'input[name="' + question + '"]:checked'
-    );
-
-    if (choix && choix.value === reponses[question]) {
-      score++;
-    }
-  }
-
-  document.getElementById("resultat-quiz").textContent =
-    "Ton résultat : " + score + "/3";
-});
-</script>
+      
 </section>
 
     
@@ -206,16 +225,36 @@ document.getElementById("quiz-informatique").addEventListener("submit", async fu
       return;
     }
 
+    
+    const { data: tentativeId, error: tentativeErreur } =
+      await supabase.rpc("demarrer_tentative_quiz_informatique");
+
+    if (tentativeErreur || !tentativeId) {
+      console.error("Erreur de création de tentative :", tentativeErreur);
+      resultatQuiz.textContent =
+        "Impossible de démarrer le quiz. Réessaie.";
+      return;
+    }
+
     const { data: score, error } = await supabase.rpc(
-      "valider_quiz_informatique",
+      "soumettre_tentative_quiz_informatique",
       {
+        tentative_id: tentativeId,
         reponse_q1: reponseQ1.value,
         reponse_q2: reponseQ2.value,
         reponse_q3: reponseQ3.value
       }
     );
 
-    if (error) throw error;
+    
+    if (error) {
+      console.error("Erreur Supabase lors de la soumission du quiz :", error);
+      resultatQuiz.textContent =
+        "Erreur lors du calcul du score : " + error.message;
+      return;
+    }
+
+    console.log("Score reçu de Supabase :", score);
 
     resultatQuiz.textContent =
       "Ton résultat : " + score + "/3. Ton score a été enregistré dans ton compte.";
@@ -226,7 +265,6 @@ document.getElementById("quiz-informatique").addEventListener("submit", async fu
       "Une erreur est survenue lors de la validation. Réessaie.";
   }
 });
-}
 </script>
 <script>
 const boutonTerminer = document.getElementById("terminer-formation");
@@ -361,9 +399,41 @@ if (formationTerminee !== true) {
   }, 30000);
 })();
 </script>
-</body>
-</html>
-</body>
-</html>
-```
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const resultatQuiz = document.getElementById("resultat-quiz");
+  const supabase = window.eduSupabase;
 
+  if (!resultatQuiz || !supabase) return;
+
+  try {
+    const { data: utilisateur, error: erreurUtilisateur } =
+      await supabase.auth.getUser();
+
+    if (erreurUtilisateur || !utilisateur.user) return;
+
+    const { data: progression, error } = await supabase
+      .from("course_progress")
+      .select("score")
+      .eq("user_id", utilisateur.user.id)
+      .eq("course_id", "informatique")
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erreur de récupération du score :", error);
+      return;
+    }
+
+    if (progression && progression.score !== null) {
+      resultatQuiz.textContent =
+        "Ton dernier score enregistré : " +
+        progression.score + "/3.";
+    }
+
+  } catch (erreur) {
+    console.error("Erreur de chargement du score :", erreur);
+  }
+});
+</script>
+</body>
+</html>

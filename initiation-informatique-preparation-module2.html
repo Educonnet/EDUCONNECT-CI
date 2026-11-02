@@ -1,0 +1,1072 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Préparation Module 2 — EDUCONNECT CI</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f7fb;
+  color: #222;
+  line-height: 1.8;
+  font-size: 17px;
+}
+header {
+      background: #0756a5;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+    main {
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+  margin: 25px auto;
+  padding: 20px;
+}
+    section {
+      background: white;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #00000010;
+    }
+    h2 { color: #0756a5; }
+    .btn {
+      display: inline-block;
+      background: #0756a5;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 8px 5px 8px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #e4ebf3;
+    }
+    
+#quiz-informatique fieldset {
+  color: #222;
+  background-color: #fff;
+}
+
+#quiz-informatique legend,
+#quiz-informatique label {
+  color: #222;
+}
+
+
+    .lesson-visual {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .visual-item {
+      background: #eef5fc;
+      border: 1px solid #d5e5f5;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .visual-icon { display: block; font-size: 2.2rem; margin-bottom: 6px; }
+    .visual-item strong { display: block; color: #0756a5; }
+    .tip {
+      background: #eef8f1;
+      border-left: 4px solid #27864b;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    .practice {
+      background: #fff8e8;
+      border-left: 4px solid #d99a18;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    article.module-card {
+      border: 1px solid #dce6f0;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 14px 0;
+    }
+    @media (max-width: 600px) {
+      main { padding: 12px; margin: 12px auto; }
+      section { padding: 16px; }
+    }
+
+
+    /* Contraste renforcé : texte foncé sur fond clair */
+    body, main, section, article, p, li, label, legend, span {
+      color: #222222;
+    }
+    section, article.module-card {
+      background-color: #ffffff;
+    }
+    section h2, section h3, article h3 {
+      color: #0756a5;
+    }
+    .visual-item, .tip, .practice {
+      color: #222222;
+    }
+    .visual-item span, .tip strong, .practice strong {
+      color: #222222;
+    }
+    header, header h1 {
+      color: #ffffff;
+    }
+    .btn, .btn:visited {
+      color: #ffffff;
+    }
+    #quiz-informatique fieldset,
+    #quiz-informatique legend,
+    #quiz-informatique label {
+      color: #222222;
+      background-color: #ffffff;
+    }
+.illustration-lecon {
+    width: 100%;
+    max-width: 600px;
+        margin: 24px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.illustration-lecon img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.illustration-lecon p {
+    font-size: 15px;
+    color: #555;
+    margin-top: 10px;
+    font-style: italic;
+}
+  </style>
+</head>
+<body>
+  main p,
+main li {
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+main h2 {
+    font-size: 24px;
+}
+
+main h3 {
+    font-size: 21px;
+}
+  <header>
+    <h1>EDUCONNECT CI — VERSION DE PRÉPARATION</h1>
+  </header>
+
+  <main>
+    <section>
+      <h2>Bienvenue dans la formation</h2>
+      <p>Cette formation t’aide à découvrir les bases de l’informatique, même si tu débutes.</p>
+      <p><strong>Objectif :</strong> apprendre à utiliser un ordinateur et comprendre les principaux outils numériques.</p>
+      <p><strong>Tarif :</strong> 5 000 FCFA par module</p>
+<p><strong>Modules disponibles :</strong> 4</p>
+      <p class="practice"><strong>Version de préparation :</strong> le module 2 est ajouté pour vérification. Ne publie pas encore ce fichier aux apprenants : son accès payant et son enregistrement sécurisé dans Supabase restent à intégrer.</p>
+    </section>
+
+<section id="modules">
+  <h2>Les quatre modules de formation</h2>
+  <p>Chaque module coûte 5 000 FCFA.</p>
+
+  <article class="module-card">
+    <h3>Module 1 — Découverte de l’ordinateur</h3>
+    <p>Découvre les composants de l’ordinateur, les périphériques et leurs rôles.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+
+  <article class="module-card">
+    <h3>Module 2 — Windows et gestion des fichiers</h3>
+    <p>Apprends à utiliser le bureau, les fenêtres, les dossiers et les fichiers.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+
+  <article class="module-card">
+    <h3>Module 3 — Bureautique</h3>
+    <p>Découvre la création de documents et les bases des outils bureautiques.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+
+  <article class="module-card">
+    <h3>Module 4 — Internet et sécurité</h3>
+    <p>Apprends à naviguer sur Internet et à protéger tes informations personnelles.</p>
+    <a class="btn" href="paiement.html">Paiement bientôt disponible</a>
+  </article>
+</section>
+
+    <section id="module-1-lecons">
+      <h2>Module 1 — Découverte de l’ordinateur</h2>
+      <p>Ce module est destiné aux personnes qui débutent. Avance à ton rythme, lis les explications et réalise les exercices proposés.</p>
+
+      <h3>Leçon 1 : Qu’est-ce qu’un ordinateur ?</h3>
+      <p>Un ordinateur est un appareil électronique capable de recevoir des informations, de les traiter, de les stocker et de présenter un résultat.</p>
+      <div class="<div class="illustration-lecon">
+ 
+  <div class="illustration-lecon">
+    <img
+        src="image/ordinateur-complet.png"
+        alt="Ordinateur de bureau avec écran, clavier, souris et unité centrale"
+        loading="lazy"
+    >
+    <p>Les principaux éléments d'un ordinateur de bureau.</p>
+</div>
+    <p>Il peut servir à rédiger une lettre, effectuer des calculs, consulter Internet, communiquer, regarder des vidéos ou conserver des photos.</p>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">⌨️</span><strong>Recevoir</strong><span>On saisit des informations avec le clavier.</span></div>
+        <div class="visual-item"><span class="visual-icon">⚙️</span><strong>Traiter</strong><span>L’ordinateur effectue les opérations demandées.</span></div>
+        <div class="visual-item"><span class="visual-icon">💾</span><strong>Stocker</strong><span>Il conserve les fichiers et les données.</span></div>
+        <div class="visual-item"><span class="visual-icon">🖥️</span><strong>Restituer</strong><span>Il affiche ou imprime le résultat.</span></div>
+      </div>
+      <div class="tip"><strong>À retenir :</strong> un ordinateur aide à traiter et à conserver des informations. Il exécute les tâches selon les instructions et les logiciels utilisés.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> cite trois activités que tu pourrais réaliser avec un ordinateur.</div>
+
+      <h3>Leçon 2 : Identifier les principaux composants</h3>
+      <p>Un ordinateur de bureau comprend plusieurs éléments qui travaillent ensemble.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/composants-ordinateur-moderne.png"
+        alt="Les quatre principaux composants d'un ordinateur : écran, clavier, souris et unité centrale"
+        loading="lazy"
+    >
+   
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">🖥️</span><strong>L’écran</strong><span>Affiche les textes, images et vidéos.</span></div>
+        <div class="visual-item"><span class="visual-icon">⌨️</span><strong>Le clavier</strong><span>Permet de saisir des lettres, chiffres et caractères.</span></div>
+        <div class="visual-item"><span class="visual-icon">🖱️</span><strong>La souris</strong><span>Permet de déplacer le pointeur et de sélectionner.</span></div>
+        <div class="visual-item"><span class="visual-icon">🗄️</span><strong>L’unité centrale</strong><span>Contient notamment le processeur, la mémoire et le stockage.</span></div>
+      </div>
+      <p>L’écran montre les informations. Le clavier et la souris permettent de donner des instructions. L’unité centrale contient les composants qui exécutent les opérations.</p>
+      <div class="tip"><strong>À retenir :</strong> l’écran, le clavier, la souris et l’unité centrale ont des fonctions différentes mais complémentaires.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> devant un ordinateur, montre chaque composant et explique son rôle avec tes propres mots.</div>
+
+      <h3>Leçon 3 : Comprendre les périphériques d’entrée et de sortie</h3>
+      <p>Un périphérique est un équipement connecté à l’ordinateur pour permettre l’échange d’informations.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/peripheriques-entree-sortie.png"
+        alt="Exemples de périphériques d'entrée et de sortie d'un ordinateur"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">🎙️</span><strong>Entrée</strong><span>Microphone : transmet la voix à l’ordinateur.</span></div>
+        <div class="visual-item"><span class="visual-icon">📷</span><strong>Entrée</strong><span>Scanner : transforme un document papier en fichier numérique.</span></div>
+        <div class="visual-item"><span class="visual-icon">🖨️</span><strong>Sortie</strong><span>Imprimante : produit une version papier.</span></div>
+        <div class="visual-item"><span class="visual-icon">🔊</span><strong>Sortie</strong><span>Haut-parleurs : diffusent le son.</span></div>
+      </div>
+      <p><strong>Périphériques d’entrée :</strong> ils envoient des informations vers l’ordinateur, par exemple le clavier, la souris, le microphone et le scanner.</p>
+      <p><strong>Périphériques de sortie :</strong> ils présentent les résultats produits par l’ordinateur, par exemple l’écran, l’imprimante et les haut-parleurs.</p>
+      <p>Certains équipements, comme un écran tactile, peuvent être à la fois des périphériques d’entrée et de sortie.</p>
+      <div class="tip"><strong>À retenir :</strong> entrée signifie que l’information arrive dans l’ordinateur ; sortie signifie que l’ordinateur transmet un résultat.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> classe le clavier, le microphone, l’écran et l’imprimante en périphériques d’entrée ou de sortie.</div>
+
+      <h3>Leçon 4 : Découvrir les logiciels et le système d’exploitation</h3>
+      <p>Un logiciel est un programme qui permet à l’ordinateur d’effectuer une ou plusieurs tâches.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/logiciels-systeme-exploitation.png"
+        alt="Présentation du système d'exploitation Windows et de plusieurs logiciels"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">📄</span><strong>Traitement de texte</strong><span>Permet de rédiger et mettre en forme des documents.</span></div>
+        <div class="visual-item"><span class="visual-icon">📊</span><strong>Tableur</strong><span>Permet d’organiser des données et de faire des calculs.</span></div>
+        <div class="visual-item"><span class="visual-icon">🌐</span><strong>Navigateur</strong><span>Permet de consulter des sites Web.</span></div>
+        <div class="visual-item"><span class="visual-icon">💻</span><strong>Système</strong><span>Windows, Linux et macOS sont des systèmes d’exploitation.</span></div>
+      </div>
+      <p>Le système d’exploitation est le logiciel principal qui gère les ressources de l’ordinateur et permet d’utiliser les autres programmes.</p>
+      <div class="tip"><strong>À retenir :</strong> le système d’exploitation fait fonctionner l’environnement de l’ordinateur ; les autres logiciels servent à réaliser des tâches précises.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> donne un exemple de logiciel pour rédiger un document et un exemple de système d’exploitation.</div>
+
+      <h3>Leçon 5 : Allumer et éteindre correctement un ordinateur</h3>
+      <p><strong>Pour allumer :</strong></p>
+      <div class="illustration-lecon">
+    <img
+        src="image/allumer-utiliser-eteindre.png"
+        alt="Étapes pour allumer, utiliser et éteindre correctement un ordinateur"
+        loading="lazy"
+    >
+</div>
+      <ol>
+        <li>Vérifie que l’ordinateur est correctement branché.</li>
+        <li>Appuie sur le bouton d’alimentation.</li>
+        <li>Attends le démarrage du système.</li>
+        <li>Saisis ton mot de passe si l’ordinateur en demande un.</li>
+      </ol>
+      <p><strong>Pour éteindre :</strong></p>
+      <ol>
+        <li>Enregistre ton travail.</li>
+        <li>Ferme les applications ouvertes.</li>
+        <li>Ouvre le menu Démarrer.</li>
+        <li>Sélectionne Alimentation, puis Arrêter.</li>
+        <li>Attends que l’ordinateur soit complètement éteint.</li>
+      </ol>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">🔌</span><strong>1. Vérifier</strong><span>Contrôler l’alimentation.</span></div>
+        <div class="visual-item"><span class="visual-icon">⏻</span><strong>2. Démarrer</strong><span>Appuyer sur le bouton d’alimentation.</span></div>
+        <div class="visual-item"><span class="visual-icon">💾</span><strong>3. Enregistrer</strong><span>Ne pas perdre son travail.</span></div>
+        <div class="visual-item"><span class="visual-icon">🛑</span><strong>4. Arrêter</strong><span>Utiliser la commande Arrêter.</span></div>
+      </div>
+      <div class="tip"><strong>À retenir :</strong> n’éteins pas brutalement l’ordinateur en retirant le câble électrique pendant son fonctionnement. Enregistre d’abord ton travail et utilise la commande d’arrêt.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> avec l’aide d’un formateur si nécessaire, allume un ordinateur puis arrête-le en suivant les étapes ci-dessus.</div>
+    </section>
+
+
+<section id="quiz-module-1">
+    <h2>Quiz final – Module 1 : Initiation à l'informatique</h2>
+
+    <p>
+        Réponds aux 7 questions. Chaque bonne réponse vaut 1 point.
+        Il faut obtenir au moins 6/7 pour valider le module.
+    </p>
+
+    <form id="quiz-module-1-form">
+
+        <fieldset>
+            <legend>1. Qu'est-ce qu'un ordinateur ?</legend>
+            <label><input type="radio" name="m1q1" value="A"> A. Une machine électronique qui traite des informations</label><br>
+            <label><input type="radio" name="m1q1" value="B"> B. Un appareil uniquement destiné à jouer</label><br>
+            <label><input type="radio" name="m1q1" value="C"> C. Un appareil qui fonctionne sans énergie</label><br>
+            <label><input type="radio" name="m1q1" value="D"> D. Une machine qui sert uniquement à imprimer</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>2. Quels éléments constituent les principaux composants matériels d'un ordinateur ?</legend>
+            <label><input type="radio" name="m1q2" value="A"> A. Les logiciels et les applications</label><br>
+            <label><input type="radio" name="m1q2" value="B"> B. Les fichiers et les dossiers</label><br>
+            <label><input type="radio" name="m1q2" value="C"> C. L'unité centrale, l'écran, le clavier et la souris</label><br>
+            <label><input type="radio" name="m1q2" value="D"> D. Internet et les réseaux sociaux</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>3. À quoi sert principalement le clavier ?</legend>
+            <label><input type="radio" name="m1q3" value="A"> A. À afficher les images</label><br>
+            <label><input type="radio" name="m1q3" value="B"> B. À imprimer les documents</label><br>
+            <label><input type="radio" name="m1q3" value="C"> C. À saisir du texte et des commandes</label><br>
+            <label><input type="radio" name="m1q3" value="D"> D. À diffuser le son</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>4. Le microphone est un périphérique :</legend>
+            <label><input type="radio" name="m1q4" value="A"> A. D'entrée</label><br>
+            <label><input type="radio" name="m1q4" value="B"> B. De sortie</label><br>
+            <label><input type="radio" name="m1q4" value="C"> C. De stockage</label><br>
+            <label><input type="radio" name="m1q4" value="D"> D. D'impression</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>5. Quel est le rôle principal du système d'exploitation ?</legend>
+            <label><input type="radio" name="m1q5" value="A"> A. Remplacer le clavier</label><br>
+            <label><input type="radio" name="m1q5" value="B"> B. Fournir uniquement une connexion Internet</label><br>
+            <label><input type="radio" name="m1q5" value="C"> C. Gérer les ressources de l'ordinateur et permettre l'exécution des programmes</label><br>
+            <label><input type="radio" name="m1q5" value="D"> D. Augmenter automatiquement la mémoire</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>6. Pourquoi faut-il arrêter correctement son ordinateur ?</legend>
+            <label><input type="radio" name="m1q6" value="A"> A. Pour effacer tous les fichiers</label><br>
+            <label><input type="radio" name="m1q6" value="B"> B. Pour supprimer le système d'exploitation</label><br>
+            <label><input type="radio" name="m1q6" value="C"> C. Pour éviter les pertes de données et les problèmes du système</label><br>
+            <label><input type="radio" name="m1q6" value="D"> D. Pour désinstaller les applications</label>
+        </fieldset>
+
+        <fieldset>
+            <legend>7. Quelle est la bonne méthode pour éteindre un ordinateur ?</legend>
+            <label><input type="radio" name="m1q7" value="A"> A. Enregistrer son travail, fermer les applications puis choisir Arrêter</label><br>
+            <label><input type="radio" name="m1q7" value="B"> B. Débrancher directement le câble électrique</label><br>
+            <label><input type="radio" name="m1q7" value="C"> C. Retirer la batterie sans précaution</label><br>
+            <label><input type="radio" name="m1q7" value="D"> D. Appuyer plusieurs fois sur le clavier</label>
+        </fieldset>
+
+        <button type="submit" class="btn">
+            Valider mes réponses
+        </button>
+
+    </form>
+
+    <div id="resultat-module-1" role="status" aria-live="polite"></div>
+</section>
+    <section id="module-2-lecons">
+      <h2>Module 2 — Maîtriser Windows 10 et Windows 11</h2>
+      <p>Ce module apprend à utiliser Windows, organiser les documents, configurer l’ordinateur et adopter les bonnes pratiques de sécurité.</p>
+
+      <h3>Leçon 1 : Découvrir le bureau Windows</h3>
+      <p>Windows est un système d’exploitation développé par Microsoft. Il permet de communiquer avec l’ordinateur, de gérer ses ressources et d’utiliser des applications.</p>
+     <div class="illustration-lecon">
+    <img
+        src="image/bureau-windows.png"
+        alt="Présentation du bureau Windows et de ses principaux éléments"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">🖥️</span><strong>Bureau</strong><span>Espace principal affiché après l’ouverture de session.</span></div>
+        <div class="visual-item"><span class="visual-icon">🔖</span><strong>Icônes</strong><span>Représentent des applications, fichiers, dossiers ou raccourcis.</span></div>
+        <div class="visual-item"><span class="visual-icon">📌</span><strong>Barre des tâches</strong><span>Donne accès aux applications ouvertes ou épinglées.</span></div>
+        <div class="visual-item"><span class="visual-icon">⊞</span><strong>Menu Démarrer</strong><span>Permet de retrouver les applications et les options d’alimentation.</span></div>
+      </div>
+      <p>Une fenêtre affiche généralement une application ou un dossier. Les boutons Réduire, Agrandir et Fermer permettent de gérer son affichage.</p>
+      <div class="tip"><strong>À retenir :</strong> Windows 10 et Windows 11 ont une apparence différente, mais partagent les fonctions fondamentales du bureau, des fenêtres et du menu Démarrer.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> repère le bureau, le menu Démarrer, la barre des tâches et les icônes sur ton ordinateur.</div>
+
+      <h3>Leçon 2 : Utiliser le menu Démarrer et lancer les applications</h3>
+      <p>Le menu Démarrer permet d’accéder aux applications, aux paramètres et aux options d’alimentation. On peut l’ouvrir en cliquant sur son icône ou en appuyant sur la touche Windows.</p>
+      <p>Pour rechercher une application, ouvre le menu Démarrer, saisis son nom, puis sélectionne-la dans les résultats. Par exemple, recherche « Calculatrice » pour ouvrir la calculatrice.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/menu-demarrer-applications.png"
+        alt="Présentation du menu Démarrer et des applications Windows"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">🧮</span><strong>Calculatrice</strong><span>Effectuer des calculs.</span></div>
+        <div class="visual-item"><span class="visual-icon">📝</span><strong>Bloc-notes</strong><span>Écrire du texte simple.</span></div>
+        <div class="visual-item"><span class="visual-icon">🎨</span><strong>Paint</strong><span>Créer ou modifier des images.</span></div>
+        <div class="visual-item"><span class="visual-icon">🌐</span><strong>Navigateur</strong><span>Consulter des sites Web.</span></div>
+      </div>
+      <p>Pour passer d’une application ouverte à une autre, utilise <strong>Alt + Tab</strong>. Pour épingler une application, fais un clic droit sur son nom et choisis l’option correspondante si elle est proposée.</p>
+      <div class="tip"><strong>À retenir :</strong> la recherche du menu Démarrer aide à retrouver rapidement un logiciel ; Alt + Tab permet de passer d’une fenêtre à une autre.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> ouvre la Calculatrice et le Bloc-notes, puis utilise Alt + Tab pour passer de l’une à l’autre.</div>
+
+      <h3>Leçon 3 : Gérer les fichiers et les dossiers</h3>
+      <p>Un fichier est un document numérique (texte, image, vidéo, audio, etc.). Un dossier sert à ranger des fichiers et d’autres dossiers.</p>
+      <p>L’Explorateur de fichiers permet de parcourir les emplacements comme Documents, Images, Téléchargements, Bureau et Ce PC. Ouvre-le avec <strong>Windows + E</strong>.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/gestion-fichiers-dossiers.png"
+        alt="Présentation de l'Explorateur de fichiers Windows et de la gestion des dossiers"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">📁</span><strong>Dossier</strong><span>Regroupe et organise des éléments.</span></div>
+        <div class="visual-item"><span class="visual-icon">📄</span><strong>Fichier</strong><span>Contient un document ou des données.</span></div>
+        <div class="visual-item"><span class="visual-icon">🗂️</span><strong>Documents</strong><span>Emplacement courant pour les documents.</span></div>
+        <div class="visual-item"><span class="visual-icon">🗑️</span><strong>Corbeille</strong><span>Conserve généralement les éléments supprimés.</span></div>
+      </div>
+      <p>Pour créer un dossier : ouvre l’emplacement, fais un clic droit dans un espace vide, choisis Nouveau puis Dossier, saisis son nom et appuie sur Entrée.</p>
+      <p>Raccourcis utiles : <strong>Ctrl + C</strong> copier, <strong>Ctrl + X</strong> couper, <strong>Ctrl + V</strong> coller, <strong>F2</strong> renommer et <strong>Suppr</strong> supprimer.</p>
+      <div class="tip"><strong>À retenir :</strong> copier conserve l’original ; couper puis coller déplace l’élément. Les fichiers supprimés sont généralement placés dans la Corbeille.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> crée un dossier « EDUCONNECT CI », puis un sous-dossier « MES COURS » et entraîne-toi à renommer un fichier.</div>
+
+      <h3>Leçon 4 : Configurer son ordinateur</h3>
+      <p>Les paramètres Windows permettent de personnaliser le fonctionnement de l’ordinateur. Utilise <strong>Windows + I</strong> pour les ouvrir.</p>
+      <p>Pour se connecter au Wi-Fi, ouvre les paramètres réseau ou le panneau rapide, active le Wi-Fi, sélectionne le réseau, puis saisis son mot de passe.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/configuration-ordinateur.png"
+        alt="Présentation des paramètres Windows et de la configuration de l'ordinateur"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">📶</span><strong>Wi-Fi</strong><span>Connecter l’ordinateur à un réseau sans fil.</span></div>
+        <div class="visual-item"><span class="visual-icon">🔊</span><strong>Son</strong><span>Régler le volume et choisir la sortie audio.</span></div>
+        <div class="visual-item"><span class="visual-icon">☀️</span><strong>Écran</strong><span>Ajuster la luminosité si l’appareil le permet.</span></div>
+        <div class="visual-item"><span class="visual-icon">⌨️</span><strong>Clavier</strong><span>Choisir une disposition comme AZERTY ou QWERTY.</span></div>
+      </div>
+      <p>Le raccourci <strong>Windows + Espace</strong> permet de basculer entre les dispositions de clavier installées. Les paramètres d’affichage permettent notamment de régler la résolution et la taille du texte.</p>
+      <div class="tip"><strong>À retenir :</strong> Windows + I ouvre les paramètres. La langue d’affichage et la disposition du clavier sont deux réglages différents.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> ouvre les paramètres, repère les réglages réseau, son, affichage et langue sans modifier les paramètres dont tu ne connais pas l’effet.</div>
+
+      <h3>Leçon 5 : Entretenir et protéger Windows</h3>
+      <p>L’entretien informatique aide à conserver un ordinateur stable et sécurisé. Les mises à jour corrigent des erreurs et peuvent renforcer la sécurité.</p>
+      <p>Pour rechercher des mises à jour, ouvre les paramètres, sélectionne Windows Update, puis recherche les mises à jour. Suis les instructions et évite d’éteindre brutalement l’ordinateur pendant une installation.</p>
+      <div class="illustration-lecon">
+    <img
+        src="image/entretien-protection-windows.png"
+        alt="Entretien et protection de Windows : sécurité, mises à jour et nettoyage"
+        loading="lazy"
+    >
+</div>
+      <div class="lesson-visual">
+        <div class="visual-item"><span class="visual-icon">🔄</span><strong>Mises à jour</strong><span>Corriger et améliorer le système.</span></div>
+        <div class="visual-item"><span class="visual-icon">🛡️</span><strong>Antivirus</strong><span>Détecter et bloquer des programmes malveillants.</span></div>
+        <div class="visual-item"><span class="visual-icon">⚠️</span><strong>Hameçonnage</strong><span>Messages trompeurs visant à voler des informations.</span></div>
+        <div class="visual-item"><span class="visual-icon">💾</span><strong>Sauvegarde</strong><span>Conserver une copie des fichiers importants.</span></div>
+      </div>
+      <p>Windows intègre Microsoft Defender Antivirus. On peut consulter son état dans l’application Sécurité Windows, rubrique Protection contre les virus et menaces.</p>
+      <p>Ne clique pas sur les liens suspects, ne partage jamais ton mot de passe et télécharge les logiciels depuis des sources fiables. Sauvegarde régulièrement tes documents sur une clé USB, un disque externe ou un espace en ligne.</p>
+      <p><strong>Information importante :</strong> le support standard de Windows 10 a pris fin le 14 octobre 2025. Il faut vérifier les possibilités de mises à jour de sécurité encore disponibles pour son appareil.</p>
+      <div class="tip"><strong>À retenir :</strong> protéger un ordinateur demande des mises à jour, de la prudence face aux messages suspects et des sauvegardes régulières.</div>
+      <div class="practice"><strong>Exercice pratique :</strong> ouvre Sécurité Windows, consulte l’état de la protection et identifie un emplacement où sauvegarder tes documents.</div>
+    </section>
+
+    <section id="quiz-module-2">
+      <h2>Évaluation du module 2 — Windows</h2>
+      <p>7 questions à choix multiples. Chaque bonne réponse vaut 1 point. Il faut obtenir au moins 6/7 pour valider le module.</p>
+      <p class="tip"><strong>État technique :</strong> le questionnaire est intégré pour vérification visuelle. Son envoi à Supabase n’est pas encore activé. Ne considère pas ce formulaire comme une validation officielle.</p>
+      <form id="quiz-module-2-form">
+        <fieldset><legend>1. Quel est le rôle principal d’un système d’exploitation comme Windows ?</legend>
+          <label><input type="radio" name="m2q1" value="A"> Gérer le fonctionnement de l’ordinateur et ses ressources</label><br>
+          <label><input type="radio" name="m2q1" value="B"> Remplacer tous les logiciels installés</label><br>
+          <label><input type="radio" name="m2q1" value="C"> Créer automatiquement tous les documents</label><br>
+          <label><input type="radio" name="m2q1" value="D"> Augmenter physiquement la mémoire</label>
+        </fieldset>
+        <fieldset><legend>2. Quel raccourci ouvre directement les paramètres Windows ?</legend>
+          <label><input type="radio" name="m2q2" value="A"> Windows + E</label><br>
+          <label><input type="radio" name="m2q2" value="B"> Windows + I</label><br>
+          <label><input type="radio" name="m2q2" value="C"> Ctrl + C</label><br>
+          <label><input type="radio" name="m2q2" value="D"> Alt + Tab</label>
+        </fieldset>
+        <fieldset><legend>3. À quoi sert principalement l’Explorateur de fichiers ?</legend>
+          <label><input type="radio" name="m2q3" value="A"> Protéger automatiquement le réseau Wi-Fi</label><br>
+          <label><input type="radio" name="m2q3" value="B"> Créer des comptes utilisateurs en ligne</label><br>
+          <label><input type="radio" name="m2q3" value="C"> Organiser et gérer les fichiers et les dossiers</label><br>
+          <label><input type="radio" name="m2q3" value="D"> Installer obligatoirement tous les pilotes</label>
+        </fieldset>
+        <fieldset><legend>4. Quel raccourci permet de copier un fichier sélectionné ?</legend>
+          <label><input type="radio" name="m2q4" value="A"> Ctrl + X</label><br>
+          <label><input type="radio" name="m2q4" value="B"> Ctrl + V</label><br>
+          <label><input type="radio" name="m2q4" value="C"> Ctrl + A</label><br>
+          <label><input type="radio" name="m2q4" value="D"> Ctrl + C</label>
+        </fieldset>
+        <fieldset><legend>5. Quel raccourci permet de passer d’une application ouverte à une autre ?</legend>
+          <label><input type="radio" name="m2q5" value="A"> Alt + Tab</label><br>
+          <label><input type="radio" name="m2q5" value="B"> Windows + E</label><br>
+          <label><input type="radio" name="m2q5" value="C"> Windows + I</label><br>
+          <label><input type="radio" name="m2q5" value="D"> F2</label>
+        </fieldset>
+        <fieldset><legend>6. Quel est l’intérêt principal d’une sauvegarde de fichiers ?</legend>
+          <label><input type="radio" name="m2q6" value="A"> Augmenter la vitesse du processeur</label><br>
+          <label><input type="radio" name="m2q6" value="B"> Conserver une copie pour récupérer ses données en cas de perte</label><br>
+          <label><input type="radio" name="m2q6" value="C"> Supprimer automatiquement les virus</label><br>
+          <label><input type="radio" name="m2q6" value="D"> Remplacer les mises à jour Windows</label>
+        </fieldset>
+        <fieldset><legend>7. Un courriel inattendu demande ton mot de passe via un lien. Quelle est la meilleure réaction ?</legend>
+          <label><input type="radio" name="m2q7" value="A"> Cliquer immédiatement</label><br>
+          <label><input type="radio" name="m2q7" value="B"> Transmettre le mot de passe à l’expéditeur</label><br>
+          <label><input type="radio" name="m2q7" value="C"> Ne pas cliquer et vérifier la demande par un canal officiel</label><br>
+          <label><input type="radio" name="m2q7" value="D"> Télécharger toutes les pièces jointes</label>
+        </fieldset>
+        <button type="submit" class="btn">Valider mes réponses</button>
+      </form>
+      <div id="resultat-module-2" role="status"></div>
+    </section>
+
+
+   
+    <section id="quiz-historique">
+      <h2>Ancien questionnaire de la formation</h2>
+      <p>Ce questionnaire historique est conservé temporairement pour préserver le fonctionnement actuel de l’enregistrement des scores et des attestations. Le nouveau quiz sécurisé de 7 questions par module sera intégré après adaptation des fonctions Supabase.</p>
+    </section>
+
+    <section id="quiz">
+  <form id="quiz-informatique">
+      <h2>Questionnaire historique — 3 questions</h2>
+      <p>Choisis une réponse pour chaque question, puis vérifie ton résultat.</p>
+
+      <fieldset>
+        <legend>1. Quel élément permet de saisir du texte ?</legend>
+        <label><input type="radio" name="q1" value="a"> L’écran</label><br>
+        <label><input type="radio" name="q1" value="b"> Le clavier</label><br>
+        <label><input type="radio" name="q1" value="c"> L’imprimante</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Quel logiciel permet de visiter des sites Web ?</legend>
+        <label><input type="radio" name="q2" value="a"> Un navigateur Web</label><br>
+        <label><input type="radio" name="q2" value="b"> Une calculatrice</label><br>
+        <label><input type="radio" name="q2" value="c"> Un dossier</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Pourquoi faut-il protéger ses mots de passe ?</legend>
+        <label><input type="radio" name="q3" value="a"> Pour décorer son écran</label><br>
+        <label><input type="radio" name="q3" value="b"> Pour accélérer le clavier</label><br>
+        <label><input type="radio" name="q3" value="c"> Pour protéger ses comptes et ses informations</label>
+      </fieldset>
+      <button type="submit" class="btn">
+        Corriger mes réponses
+      </button>
+
+      <div id="resultat-quiz"></div>
+  </form>
+    <div id="resultat-module-2" role="status" aria-live="polite"></div>  
+</section>
+
+    
+<section>
+  <h2>Bravo pour ton apprentissage !</h2>
+  <p>Tu as terminé la présentation des bases de l’informatique.</p>
+
+  <button type="submit" class="btn">Valider mes réponses</button>
+
+  <p id="message-fin-formation" role="status" aria-live="polite"></p>
+
+  <a class="btn" href="cours.html">Voir les autres cours</a>
+  <a class="btn" href="index.html">Retour à l’accueil</a>
+</section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 EDUCONNECT CI — Tous droits réservés.</p>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+
+document.getElementById("quiz-informatique").addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const resultatQuiz = document.getElementById("resultat-quiz");
+  resultatQuiz.textContent = "";
+
+  const supabase = window.eduSupabase;
+
+  if (!supabase) {
+    resultatQuiz.textContent =
+      "Connexion à la base de données indisponible.";
+    return;
+  }
+
+  const reponseQ1 = document.querySelector('input[name="q1"]:checked');
+  const reponseQ2 = document.querySelector('input[name="q2"]:checked');
+  const reponseQ3 = document.querySelector('input[name="q3"]:checked');
+
+  if (!reponseQ1 || !reponseQ2 || !reponseQ3) {
+    resultatQuiz.textContent =
+      "Réponds aux trois questions avant de valider.";
+    return;
+  }
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      resultatQuiz.textContent =
+        "Connecte-toi à ton compte avant d'enregistrer ton score.";
+      return;
+    }
+
+    
+    const { data: tentativeId, error: tentativeErreur } =
+      await supabase.rpc("demarrer_tentative_quiz_informatique");
+
+    if (tentativeErreur || !tentativeId) {
+      console.error("Erreur de création de tentative :", tentativeErreur);
+      resultatQuiz.textContent =
+        "Impossible de démarrer le quiz. Réessaie.";
+      return;
+    }
+
+    const { data: score, error } = await supabase.rpc(
+      "soumettre_tentative_quiz_informatique",
+      {
+        tentative_id: tentativeId,
+        reponse_q1: reponseQ1.value,
+        reponse_q2: reponseQ2.value,
+        reponse_q3: reponseQ3.value
+      }
+    );
+
+    
+    if (error) {
+      console.error("Erreur Supabase lors de la soumission du quiz :", error);
+      resultatQuiz.textContent =
+        "Erreur lors du calcul du score : " + error.message;
+      return;
+    }
+
+    console.log("Score reçu de Supabase :", score);
+
+    resultatQuiz.textContent =
+      "Ton résultat : " + score + "/3. Ton score a été enregistré dans ton compte.";
+
+  } catch (erreur) {
+    console.error("Erreur de validation du quiz :", erreur);
+    resultatQuiz.textContent =
+      "Une erreur est survenue lors de la validation. Réessaie.";
+  }
+});
+</script>
+<script>
+const boutonTerminer = document.getElementById("terminer-formation");
+const messageFinFormation = document.getElementById("message-fin-formation");
+
+boutonTerminer?.addEventListener("click", async function () {  messageFinFormation.textContent = "";
+
+  const supabase = window.eduSupabase;
+
+  if (!supabase) {
+    messageFinFormation.textContent =
+      "Connexion à la base de données indisponible.";
+    return;
+  }
+
+  try {
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      messageFinFormation.textContent =
+        "Connecte-toi à ton compte avant de terminer la formation.";
+      return;
+    }
+
+    
+const { data: formationTerminee, error: finErreur } =
+  await supabase.rpc("terminer_formation_informatique");
+
+if (finErreur) {
+  if (finErreur.message.includes("3/3")) {
+    messageFinFormation.textContent =
+      "Tu dois obtenir 3/3 au quiz avant de terminer la formation.";
+    return;
+  }
+
+  throw finErreur;
+}
+
+if (formationTerminee !== true) {
+  messageFinFormation.textContent =
+    "La formation n'a pas pu être terminée. Réessaie.";
+  return;
+}
+    messageFinFormation.textContent =
+      "Félicitations ! Ta formation est terminée et ta progression a été enregistrée. Tu peux maintenant consulter ton attestation.";
+
+    const lienAttestation = document.createElement("a");
+    lienAttestation.href = "attestation.html";
+    lienAttestation.className = "btn";
+    lienAttestation.textContent = "Obtenir mon attestation";
+
+    messageFinFormation.appendChild(document.createElement("br"));
+    messageFinFormation.appendChild(lienAttestation);
+
+  } catch (error) {
+    console.error("Erreur lors de la fin de formation :", error);
+    messageFinFormation.textContent =
+      "Une erreur est survenue. Vérifie ta connexion et réessaie.";
+  }
+});
+</script>
+  
+<script>
+(async function chronometreFormation() {
+  const supabase = window.eduSupabase;
+  if (!supabase) return;
+
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return;
+
+  const userId = data.user.id;
+  const courseId = "informatique";
+  let derniereReprise = null;
+  let enregistrementEnCours = false;
+
+  async function enregistrerTemps() {
+    if (derniereReprise === null || enregistrementEnCours) return;
+
+    const maintenant = Date.now();
+    const secondes = Math.floor((maintenant - derniereReprise) / 1000);
+    if (secondes <= 0) return;
+
+    enregistrementEnCours = true;
+    derniereReprise = maintenant;
+
+    
+    try {
+      const { error: enregistrementErreur } = await supabase.rpc(
+        "enregistrer_temps_formation",
+        {
+          secondes_ajoutees: secondes,
+          formation_id: courseId
+        }
+      );
+
+      if (enregistrementErreur) {
+        throw enregistrementErreur;
+      }
+    } catch (erreur) {
+      console.error("Erreur d'enregistrement du temps :", erreur);
+    } finally {
+      enregistrementEnCours = false;
+    }
+  }
+
+  function reprendre() {
+    if (document.visibilityState === "visible" && derniereReprise === null) {
+      derniereReprise = Date.now();
+    }
+  }
+
+  document.addEventListener("visibilitychange", async function () {
+    if (document.visibilityState === "hidden") {
+      await enregistrerTemps();
+      derniereReprise = null;
+    } else {
+      reprendre();
+    }
+  });
+
+  window.addEventListener("pagehide", enregistrerTemps);
+
+  reprendre();
+
+  setInterval(async function () {
+    if (document.visibilityState === "visible") {
+      await enregistrerTemps();
+      reprendre();
+    }
+  }, 30000);
+})();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const resultatQuiz = document.getElementById("resultat-quiz");
+  const supabase = window.eduSupabase;
+
+  if (!resultatQuiz || !supabase) return;
+
+  try {
+    const { data: utilisateur, error: erreurUtilisateur } =
+      await supabase.auth.getUser();
+
+    if (erreurUtilisateur || !utilisateur.user) return;
+
+    const { data: progression, error } = await supabase
+      .from("course_progress")
+      .select("score")
+      .eq("user_id", utilisateur.user.id)
+      .eq("course_id", "informatique")
+      .maybeSingle();
+
+    if (error) {
+      console.error("Erreur de récupération du score :", error);
+      return;
+    }
+
+    if (progression && progression.score !== null) {
+      resultatQuiz.textContent =
+        "Ton dernier score enregistré : " +
+        progression.score + "/3.";
+    }
+
+  } catch (erreur) {
+    console.error("Erreur de chargement du score :", erreur);
+  }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formulaireModule1 = document.getElementById("quiz-module-1-form");
+  const resultatModule1 = document.getElementById("resultat-module-1");
+  const supabaseModule1 = window.eduSupabase;
+
+  if (!formulaireModule1 || !resultatModule1 || !supabaseModule1) {
+    console.error("Quiz du module 1 ou connexion Supabase introuvable.");
+    return;
+  }
+
+  formulaireModule1.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    resultatModule1.textContent = "Vérification de tes réponses...";
+
+    try {
+      const reponsesModule1 = [];
+
+      for (let i = 1; i <= 7; i++) {
+        const choix = formulaireModule1.querySelector(
+          'input[name="m1q' + i + '"]:checked'
+        );
+
+        if (!choix) {
+          resultatModule1.textContent =
+            "Réponds aux 7 questions avant de valider.";
+          return;
+        }
+
+        reponsesModule1.push(choix.value);
+      }
+
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabaseModule1.auth.getUser();
+
+      if (erreurUtilisateur || !utilisateur.user) {
+        resultatModule1.textContent =
+          "Connecte-toi à ton compte avant de passer le questionnaire.";
+        return;
+      }
+
+      const { data: tentativeId, error: erreurDemarrage } =
+        await supabaseModule1.rpc("demarrer_quiz_module", {
+          p_module_id: "module-1"
+        });
+
+      if (erreurDemarrage || !tentativeId) {
+        console.error("Erreur de démarrage :", erreurDemarrage);
+        resultatModule1.textContent =
+          "Impossible de démarrer le questionnaire. Vérifie que ton accès est autorisé.";
+        return;
+      }
+
+      const parametresModule1 = {
+        p_tentative_id: tentativeId
+      };
+
+      reponsesModule1.forEach((reponse, index) => {
+        parametresModule1["p_reponse_q" + (index + 1)] = reponse;
+      });
+
+      const { data, error } = await supabaseModule1.rpc(
+        "soumettre_quiz_module",
+        parametresModule1
+      );
+
+      if (error) {
+        console.error("Erreur de soumission :", error);
+        resultatModule1.textContent =
+          "Une erreur est survenue pendant la validation. Réessaie.";
+        return;
+      }
+
+      const resultatServeur = Array.isArray(data) ? data[0] : data;
+
+      if (!resultatServeur) {
+        resultatModule1.textContent =
+          "Aucun résultat n'a été retourné par le serveur.";
+        return;
+      }
+
+      resultatModule1.textContent =
+        "Résultat : " + resultatServeur.score + "/7. " +
+        resultatServeur.message;
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      resultatModule1.textContent =
+        "Une erreur inattendue est survenue. Réessaie.";
+    }
+
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formulaire = document.getElementById("quiz-module-2-form");
+  const resultat = document.getElementById("resultat-module-2");
+  const supabase = window.eduSupabase;
+
+  if (!formulaire || !resultat || !supabase) {
+    console.error("Formulaire ou connexion Supabase introuvable.");
+    return;
+  }
+
+  formulaire.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    resultat.textContent = "Vérification de tes réponses...";
+
+    try {
+
+      const reponses = [];
+
+      for (let i = 1; i <= 7; i++) {
+        const choix = formulaire.querySelector(
+          'input[name="m2q' + i + '"]:checked'
+        );
+
+        if (!choix) {
+          resultat.textContent =
+            "Réponds aux 7 questions avant de valider.";
+          return;
+        }
+
+        reponses.push(choix.value);
+      }
+
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabase.auth.getUser();
+
+      if (erreurUtilisateur || !utilisateur.user) {
+        resultat.textContent =
+          "Connecte-toi à ton compte avant de passer le questionnaire.";
+        return;
+      }
+
+      const { data: tentativeId, error: erreurDemarrage } =
+        await supabase.rpc("demarrer_quiz_module", {
+          p_module_id: "module-2"
+        });
+
+      if (erreurDemarrage || !tentativeId) {
+        console.error(erreurDemarrage);
+        resultat.textContent =
+          "Impossible de démarrer le questionnaire. Vérifie que le module précédent est validé et que ton accès est autorisé.";
+        return;
+      }
+
+      const parametres = {
+        p_tentative_id: tentativeId
+      };
+
+      reponses.forEach((reponse, index) => {
+        parametres["p_reponse_q" + (index + 1)] = reponse;
+      });
+
+      const { data, error } = await supabase.rpc(
+        "soumettre_quiz_module",
+        parametres
+      );
+
+      if (error) {
+        console.error("Erreur de soumission :", error);
+        resultat.textContent =
+          "Une erreur est survenue pendant la validation. Réessaie.";
+        return;
+      }
+
+      const resultatServeur = Array.isArray(data) ? data[0] : data;
+
+      if (!resultatServeur) {
+        resultat.textContent =
+          "Aucun résultat n'a été retourné par le serveur.";
+        return;
+      }
+
+      resultat.textContent =
+        "Résultat : " + resultatServeur.score + "/7. " +
+        resultatServeur.message;
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      resultat.textContent =
+        "Une erreur inattendue est survenue. Réessaie.";
+    }
+
+  });
+
+});
+</script>
+</body>
+</html>
