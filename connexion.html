@@ -74,10 +74,18 @@
              autocomplete="current-password" required>
 
       <button id="boutonConnexion" type="submit">
-        Se connecter
-      </button>
-    </form>
+  Se connecter
+</button>
 
+<p style="text-align:center; margin-top:15px;">
+  <a href="#" id="motDePasseOublie">
+    Mot de passe oublié ?
+  </a>
+</p>
+
+<p id="message-reinitialisation"></p>
+
+</form>
     <p id="message" role="status" aria-live="polite"></p>
     <p>Pas encore de compte ?
       <a href="inscription.html">Créer un compte</a>
@@ -90,6 +98,37 @@
   <script>
     const formulaire = document.getElementById("formConnexion");
     const message = document.getElementById("message");
+    const lienMotDePasseOublie = document.getElementById("motDePasseOublie");
+const messageReinitialisation = document.getElementById("message-reinitialisation");
+
+lienMotDePasseOublie.addEventListener("click", async function(event) {
+  event.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+
+  if (!email) {
+    messageReinitialisation.textContent =
+      "Saisis d'abord ton adresse e-mail.";
+    return;
+  }
+
+  try {
+    messageReinitialisation.textContent = "Envoi en cours...";
+
+    const { error } = await window.eduSupabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://educonnect-ci.net/reinitialiser-mot-de-passe.html"
+    });
+
+    if (error) throw error;
+
+    messageReinitialisation.textContent =
+      "Si cette adresse est enregistrée, un e-mail de réinitialisation va être envoyé.";
+  } catch (erreur) {
+    console.error("Erreur de réinitialisation :", erreur);
+    messageReinitialisation.textContent =
+      "Impossible d'envoyer le lien. Réessaie plus tard.";
+  }
+});
     const bouton = document.getElementById("boutonConnexion");
 
     formulaire.addEventListener("submit", async function(event) {

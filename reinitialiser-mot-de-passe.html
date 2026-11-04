@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réinitialiser mon mot de passe - EDUCONNECT CI</title>
+</head>
+
+<body>
+  <h1>Réinitialiser mon mot de passe</h1>
+  <p>Définis un nouveau mot de passe pour ton compte EDUCONNECT CI.</p>
+
+  <form id="formReinitialisation">
+    <label for="nouveauMotDePasse">Nouveau mot de passe</label>
+    <input
+      type="password"
+      id="nouveauMotDePasse"
+      minlength="8"
+      autocomplete="new-password"
+      required
+    >
+
+    <br><br>
+
+    <label for="confirmerMotDePasse">Confirmer le mot de passe</label>
+    <input
+      type="password"
+      id="confirmerMotDePasse"
+      minlength="8"
+      autocomplete="new-password"
+      required
+    >
+
+    <br><br>
+
+    <button type="submit" id="boutonReinitialisation">
+      Enregistrer mon nouveau mot de passe
+    </button>
+  </form>
+
+  <p id="message"></p>
+
+  <p>
+    <a href="connexion.html">Retour à la connexion</a>
+  </p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+
+  <script>
+    const form = document.getElementById("formReinitialisation");
+    const message = document.getElementById("message");
+    const bouton = document.getElementById("boutonReinitialisation");
+
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
+
+      const nouveauMotDePasse =
+        document.getElementById("nouveauMotDePasse").value;
+
+      const confirmerMotDePasse =
+        document.getElementById("confirmerMotDePasse").value;
+
+      if (nouveauMotDePasse.length < 8) {
+        message.textContent =
+          "Le mot de passe doit contenir au moins 8 caractères.";
+        return;
+      }
+
+      if (nouveauMotDePasse !== confirmerMotDePasse) {
+        message.textContent =
+          "Les deux mots de passe ne correspondent pas.";
+        return;
+      }
+
+      if (!window.eduSupabase) {
+        message.textContent =
+          "Service indisponible. Réessaie plus tard.";
+        return;
+      }
+
+      bouton.disabled = true;
+      message.textContent = "Mise à jour du mot de passe en cours...";
+
+      try {
+        const { error } = await window.eduSupabase.auth.updateUser({
+          password: nouveauMotDePasse
+        });
+
+        if (error) throw error;
+
+        message.textContent =
+          "Ton mot de passe a été modifié avec succès. Tu peux maintenant te connecter.";
+
+        form.reset();
+      } catch (erreur) {
+        console.error("Erreur de réinitialisation :", erreur);
+        message.textContent =
+          "Impossible de modifier le mot de passe. Le lien est peut-être expiré. Demande un nouveau lien.";
+      } finally {
+        bouton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

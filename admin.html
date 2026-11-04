@@ -100,6 +100,23 @@
     [hidden] {
       display: none !important;
     }
+  
+
+    .devis-ligne {
+      display: grid;
+      grid-template-columns: minmax(180px, 2fr) minmax(90px, .7fr) minmax(120px, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      margin: 8px 0;
+    }
+    .devis-ligne input { width: 100%; }
+    .devis-total { font-size: 1.05rem; font-weight: bold; margin-top: 12px; }
+    .aide { color: #555; font-size: .92rem; }
+    @media (max-width: 650px) {
+      .devis-ligne { grid-template-columns: 1fr 1fr; }
+      .devis-ligne input:first-child { grid-column: 1 / -1; }
+    }
+
   </style>
 </head>
 
@@ -168,6 +185,50 @@
   </div>
 
 </section>
+
+
+
+<section id="gestion-devis" hidden>
+  <h2>Gestion des devis</h2>
+  <p>Crée un devis détaillé à partir d'une demande client. Le devis sera enregistré en brouillon : il ne sera pas encore visible par le client.</p>
+  <p class="aide">Associe uniquement le compte dont l'identité a été vérifiée avec le client. La sélection d'un compte est obligatoire pour lui permettre de consulter ensuite son devis.</p>
+  <form id="form-devis">
+    <label for="devis-demande">Demande client :</label><br>
+    <select id="devis-demande" required style="width:100%">
+      <option value="">Chargement des demandes...</option>
+    </select><br>
+    <label for="devis-client">Compte client vérifié :</label><br>
+    <select id="devis-client" required style="width:100%">
+      <option value="">Chargement des comptes...</option>
+    </select>
+    <p class="aide">Le nom et l'identifiant du compte sont affichés pour éviter toute attribution par simple ressemblance d'adresse e-mail.</p>
+    <label for="devis-validite">Date limite de validité :</label><br>
+    <input type="date" id="devis-validite" required><br>
+    <label for="devis-delai">Délai d'exécution :</label><br>
+    <input type="text" id="devis-delai" maxlength="250" placeholder="Ex. : 5 jours ouvrables" style="width:100%"><br>
+    <label for="devis-conditions">Conditions particulières :</label><br>
+    <textarea id="devis-conditions" rows="3" maxlength="5000" style="width:100%" placeholder="Conditions de paiement, modalités, précisions..."></textarea>
+    <h3>Prestations et prix</h3>
+    <div id="devis-lignes"></div>
+    <button type="button" id="ajouter-ligne-devis">Ajouter une ligne</button>
+    <div class="devis-total">Total HT : <span id="devis-total-ht">0</span> F CFA</div>
+    <label for="devis-remise">Remise (F CFA) :</label><br>
+    <input type="number" id="devis-remise" min="0" step="1" value="0"><br>
+    <div class="devis-total">Total net : <span id="devis-total-net">0</span> F CFA</div>
+    <button type="submit" id="bouton-creer-devis">Enregistrer le devis en brouillon</button>
+  </form>
+  <p id="message-devis" class="message" role="status"></p>
+</section>
+
+
+<section id="liste-devis-admin" hidden>
+  <h2>Consultation et validation des devis</h2>
+  <p>Consulte les devis enregistrés. La publication rend le devis visible dans l'espace du compte client associé ; elle n'envoie pas encore de notification par e-mail.</p>
+  <button type="button" id="bouton-actualiser-devis">Actualiser les devis</button>
+  <p id="message-liste-devis" class="message" role="status"></p>
+  <div id="contenu-liste-devis">Chargement des devis...</div>
+</section>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
@@ -556,6 +617,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
               await chargerDemandes();
 
+
+
+
             } catch(erreur) {
 
               console.error(erreur);
@@ -648,6 +712,366 @@ document.addEventListener("DOMContentLoaded", async function () {
       });
 
     }
+
+    // =====================================
+    // CREATION DES DEVIS (EN BROUILLON)
+    // =====================================
+    const sectionDevis = document.getElementById("gestion-devis");
+    sectionDevis.hidden = false;
+    const selectDemandeDevis = document.getElementById("devis-demande");
+    const selectClientDevis = document.getElementById("devis-client");
+    const conteneurLignesDevis = document.getElementById("devis-lignes");
+    const messageDevis = document.getElementById("message-devis");
+    const remiseDevis = document.getElementById("devis-remise");
+    const boutonCreerDevis = document.getElementById("bouton-creer-devis");
+
+    function formaterXof(valeur) {
+      return Math.round(valeur).toLocaleString("fr-FR");
+    }
+
+    function lireLignesDevis() {
+      return Array.from(conteneurLignesDevis.querySelectorAll(".devis-ligne")).map(function(ligne) {
+        const designation = ligne.querySelector(".ligne-designation").value.trim();
+        const quantite = Number(ligne.querySelector(".ligne-quantite").value);
+        const prix = Number(ligne.querySelector(".ligne-prix").value);
+        return { designation, quantite, prix, montant: Math.round(quantite * prix) };
+      });
+    }
+
+    function actualiserTotauxDevis() {
+      const lignes = lireLignesDevis();
+      const total = lignes.reduce((somme, ligne) => somme + (Number.isFinite(ligne.montant) ? ligne.montant : 0), 0);
+      const remise = Math.max(0, Number(remiseDevis.value) || 0);
+      document.getElementById("devis-total-ht").textContent = formaterXof(total);
+      document.getElementById("devis-total-net").textContent = formaterXof(Math.max(0, total - remise));
+    }
+
+    function ajouterLigneDevis() {
+      const ligne = document.createElement("div");
+      ligne.className = "devis-ligne";
+      const designation = document.createElement("input");
+      designation.className = "ligne-designation";
+      designation.type = "text";
+      designation.required = true;
+      designation.maxLength = 500;
+      designation.placeholder = "Désignation de la prestation";
+      const quantite = document.createElement("input");
+      quantite.className = "ligne-quantite";
+      quantite.type = "number";
+      quantite.required = true;
+      quantite.min = "0.01";
+      quantite.step = "0.01";
+      quantite.value = "1";
+      quantite.title = "Quantité";
+      const prix = document.createElement("input");
+      prix.className = "ligne-prix";
+      prix.type = "number";
+      prix.required = true;
+      prix.min = "0";
+      prix.step = "1";
+      prix.value = "0";
+      prix.placeholder = "Prix unitaire (F CFA)";
+      prix.title = "Prix unitaire en F CFA";
+      const supprimer = document.createElement("button");
+      supprimer.type = "button";
+      supprimer.className = "bouton-supprimer";
+      supprimer.textContent = "Retirer";
+      supprimer.addEventListener("click", function() {
+        ligne.remove();
+        actualiserTotauxDevis();
+      });
+      [designation, quantite, prix].forEach(function(champ) {
+        champ.addEventListener("input", actualiserTotauxDevis);
+        ligne.appendChild(champ);
+      });
+      ligne.appendChild(supprimer);
+      conteneurLignesDevis.appendChild(ligne);
+    }
+
+    document.getElementById("ajouter-ligne-devis").addEventListener("click", ajouterLigneDevis);
+    remiseDevis.addEventListener("input", actualiserTotauxDevis);
+    ajouterLigneDevis();
+
+    const [resultatDemandesDevis, resultatProfilsDevis] = await Promise.all([
+      supabase.from("demandes_clients").select("id, direction, prestation, nom_client, telephone, email, created_at").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("id, full_name").order("full_name", { ascending: true })
+    ]);
+
+    if (resultatDemandesDevis.error) {
+      selectDemandeDevis.innerHTML = '<option value="">Erreur de chargement des demandes</option>';
+      messageDevis.textContent = "Demandes indisponibles : " + resultatDemandesDevis.error.message;
+    } else {
+      selectDemandeDevis.innerHTML = '<option value="">Sélectionner une demande client</option>';
+      (resultatDemandesDevis.data || []).forEach(function(demande) {
+        const option = document.createElement("option");
+        option.value = demande.id;
+        option.textContent = demande.prestation + " — " + demande.nom_client + " — " + demande.telephone;
+        selectDemandeDevis.appendChild(option);
+      });
+    }
+
+    if (resultatProfilsDevis.error) {
+      selectClientDevis.innerHTML = '<option value="">Erreur de chargement des comptes</option>';
+      messageDevis.textContent += " Comptes indisponibles : " + resultatProfilsDevis.error.message;
+    } else {
+      selectClientDevis.innerHTML = '<option value="">Sélectionner le compte vérifié du client</option>';
+      (resultatProfilsDevis.data || []).forEach(function(profil) {
+        const option = document.createElement("option");
+        option.value = profil.id;
+        option.textContent = (profil.full_name || "Compte sans nom") + " — " + profil.id;
+        selectClientDevis.appendChild(option);
+      });
+    }
+
+    document.getElementById("form-devis").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      messageDevis.textContent = "";
+      const demandeId = selectDemandeDevis.value;
+      const clientId = selectClientDevis.value;
+      const dateValidite = document.getElementById("devis-validite").value;
+      const lignes = lireLignesDevis();
+      const remise = Number(remiseDevis.value);
+      const totalHt = lignes.reduce((somme, ligne) => somme + ligne.montant, 0);
+      const totalNet = totalHt - remise;
+
+      if (!demandeId || !clientId || !dateValidite) {
+        messageDevis.textContent = "Sélectionne une demande, le compte vérifié du client et une date de validité.";
+        return;
+      }
+      if (!lignes.length || lignes.some(l => !l.designation || !Number.isFinite(l.quantite) || l.quantite <= 0 || !Number.isSafeInteger(l.prix) || l.prix < 0)) {
+        messageDevis.textContent = "Vérifie chaque désignation, quantité et prix unitaire.";
+        return;
+      }
+      if (!Number.isSafeInteger(remise) || remise < 0 || remise > totalHt || totalNet < 0) {
+        messageDevis.textContent = "La remise doit être un montant entier compris entre 0 et le total HT.";
+        return;
+      }
+      if (dateValidite < new Date().toISOString().slice(0, 10)) {
+        messageDevis.textContent = "La date de validité ne peut pas être dans le passé.";
+        return;
+      }
+
+      boutonCreerDevis.disabled = true;
+      boutonCreerDevis.textContent = "Enregistrement...";
+      let devisCreeId = null;
+      try {
+        const numero = "DEV-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+        const { data: devisCree, error: erreurDevis } = await supabase
+          .from("devis")
+          .insert({
+            numero_devis: numero,
+            demande_id: demandeId,
+            client_user_id: clientId,
+            admin_user_id: utilisateur.id,
+            statut: "brouillon",
+            date_emission: new Date().toISOString().slice(0, 10),
+            date_validite: dateValidite,
+            montant_ht_xof: totalHt,
+            remise_xof: remise,
+            montant_total_xof: totalNet,
+            conditions: document.getElementById("devis-conditions").value.trim() || null,
+            delai_execution: document.getElementById("devis-delai").value.trim() || null
+          })
+          .select("id")
+          .single();
+
+        if (erreurDevis) throw erreurDevis;
+        devisCreeId = devisCree.id;
+        const lignesAInserer = lignes.map(function(ligne) {
+          return {
+            devis_id: devisCreeId,
+            designation: ligne.designation,
+            quantite: ligne.quantite,
+            prix_unitaire_xof: ligne.prix,
+            montant_ligne_xof: ligne.montant
+          };
+        });
+        const { error: erreurLignes } = await supabase.from("lignes_devis").insert(lignesAInserer);
+        if (erreurLignes) {
+          await supabase.from("devis").delete().eq("id", devisCreeId);
+          devisCreeId = null;
+          throw erreurLignes;
+        }
+        messageDevis.textContent = "Devis " + numero + " enregistré en brouillon. Il n'est pas encore visible par le client.";
+        document.getElementById("form-devis").reset();
+        conteneurLignesDevis.replaceChildren();
+        ajouterLigneDevis();
+        actualiserTotauxDevis();
+      } catch (erreur) {
+        console.error("Erreur de création du devis :", erreur);
+        messageDevis.textContent = "Création impossible : " + (erreur.message || "erreur inconnue");
+      } finally {
+        boutonCreerDevis.disabled = false;
+        boutonCreerDevis.textContent = "Enregistrer le devis en brouillon";
+      }
+    });
+
+
+    // =====================================
+    // CONSULTATION ET PUBLICATION DES DEVIS
+    // =====================================
+    const sectionListeDevis = document.getElementById("liste-devis-admin");
+    sectionListeDevis.hidden = false;
+
+    const contenuListeDevis = document.getElementById("contenu-liste-devis");
+    const messageListeDevis = document.getElementById("message-liste-devis");
+    const boutonActualiserDevis = document.getElementById("bouton-actualiser-devis");
+
+    function libelleStatutDevis(statut) {
+      const libelles = {
+        brouillon: "Brouillon",
+        envoye: "Publié dans l'espace client",
+        accepte: "Accepté par le client",
+        refuse: "Refusé par le client",
+        expire: "Expiré"
+      };
+      return libelles[statut] || statut;
+    }
+
+    async function chargerListeDevis() {
+      contenuListeDevis.textContent = "Chargement des devis...";
+      messageListeDevis.textContent = "";
+
+      try {
+        const { data: devis, error } = await supabase
+          .from("devis")
+          .select("id, numero_devis, demande_id, client_user_id, statut, date_emission, date_validite, reponse_client_at, montant_ht_xof, remise_xof, montant_total_xof, conditions, delai_execution, created_at")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        contenuListeDevis.replaceChildren();
+
+        if (!devis || devis.length === 0) {
+          contenuListeDevis.textContent = "Aucun devis enregistré pour le moment.";
+          return;
+        }
+
+        const demandeIds = [...new Set(devis.map(d => d.demande_id).filter(Boolean))];
+        const clientIds = [...new Set(devis.map(d => d.client_user_id).filter(Boolean))];
+        const devisIds = devis.map(d => d.id);
+
+        const [resultatDemandes, resultatProfils, resultatLignes] = await Promise.all([
+          demandeIds.length
+            ? supabase.from("demandes_clients").select("id, nom_client, telephone, prestation").in("id", demandeIds)
+            : Promise.resolve({ data: [], error: null }),
+          clientIds.length
+            ? supabase.from("profiles").select("id, full_name").in("id", clientIds)
+            : Promise.resolve({ data: [], error: null }),
+          devisIds.length
+            ? supabase.from("lignes_devis").select("id, devis_id, designation, quantite, prix_unitaire_xof, montant_ligne_xof").in("devis_id", devisIds)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+
+        if (resultatDemandes.error) throw resultatDemandes.error;
+        if (resultatProfils.error) throw resultatProfils.error;
+        if (resultatLignes.error) throw resultatLignes.error;
+
+        const demandesParId = new Map((resultatDemandes.data || []).map(x => [x.id, x]));
+        const profilsParId = new Map((resultatProfils.data || []).map(x => [x.id, x]));
+        const lignesParDevis = new Map();
+
+        (resultatLignes.data || []).forEach(ligne => {
+          if (!lignesParDevis.has(ligne.devis_id)) lignesParDevis.set(ligne.devis_id, []);
+          lignesParDevis.get(ligne.devis_id).push(ligne);
+        });
+
+        devis.forEach(d => {
+          const carte = document.createElement("article");
+          carte.className = "demande";
+
+          const demande = demandesParId.get(d.demande_id);
+          const profil = profilsParId.get(d.client_user_id);
+
+          ajouterTexte(carte, "h3", d.numero_devis || "Devis sans numéro");
+          afficherChamp(carte, "Client", (profil && profil.full_name) || (demande && demande.nom_client) || "Compte non identifié");
+          afficherChamp(carte, "Prestation demandée", (demande && demande.prestation) || "Non renseignée");
+          afficherChamp(carte, "Statut", libelleStatutDevis(d.statut));
+          afficherChamp(carte, "Date d'émission", d.date_emission || "Non renseignée");
+          afficherChamp(carte, "Date de validité", d.date_validite || "Non renseignée");
+          afficherChamp(carte, "Date de réponse du client", d.reponse_client_at ? new Date(d.reponse_client_at).toLocaleString("fr-FR") : "Aucune réponse enregistrée");
+          afficherChamp(carte, "Total HT", formaterXof(d.montant_ht_xof) + " F CFA");
+          afficherChamp(carte, "Remise", formaterXof(d.remise_xof) + " F CFA");
+          afficherChamp(carte, "Total net", formaterXof(d.montant_total_xof) + " F CFA");
+          afficherChamp(carte, "Délai d'exécution", d.delai_execution || "Non renseigné");
+          afficherChamp(carte, "Conditions", d.conditions || "Aucune condition particulière");
+
+          const listeLignes = lignesParDevis.get(d.id) || [];
+          ajouterTexte(carte, "h4", "Détail des prestations");
+          if (listeLignes.length === 0) {
+            ajouterTexte(carte, "p", "Aucune ligne de prestation trouvée.");
+          } else {
+            listeLignes.forEach(l => {
+              ajouterTexte(
+                carte,
+                "p",
+                l.designation + " — Qté : " + l.quantite +
+                " — Prix unitaire : " + formaterXof(l.prix_unitaire_xof) +
+                " F CFA — Montant : " + formaterXof(l.montant_ligne_xof) + " F CFA"
+              );
+            });
+          }
+
+          if (d.statut === "brouillon") {
+            const boutonPublier = document.createElement("button");
+            boutonPublier.type = "button";
+            boutonPublier.textContent = "Valider et rendre visible au client";
+
+            boutonPublier.addEventListener("click", async function() {
+              if (!d.client_user_id) {
+                messageListeDevis.textContent = "Publication impossible : aucun compte client n'est associé à ce devis.";
+                return;
+              }
+
+              const confirmation = window.confirm(
+                "Confirmer la publication du devis " + d.numero_devis +
+                " dans l'espace personnel du client ? Cette action le rendra visible au client."
+              );
+              if (!confirmation) return;
+
+              boutonPublier.disabled = true;
+              boutonPublier.textContent = "Publication en cours...";
+
+              try {
+                const { error: erreurPublication } = await supabase
+                  .from("devis")
+                  .update({
+                    statut: "envoye",
+                    date_emission: d.date_emission || new Date().toISOString().slice(0, 10),
+                    updated_at: new Date().toISOString()
+                  })
+                  .eq("id", d.id)
+                  .eq("statut", "brouillon");
+
+                if (erreurPublication) throw erreurPublication;
+
+                messageListeDevis.textContent =
+                  "Le devis " + d.numero_devis +
+                  " est maintenant visible dans l'espace du client. Aucune notification e-mail n'a été envoyée.";
+                await chargerListeDevis();
+              } catch (erreur) {
+                console.error("Erreur de publication du devis :", erreur);
+                messageListeDevis.textContent = "Publication impossible : " + (erreur.message || "erreur inconnue");
+                boutonPublier.disabled = false;
+                boutonPublier.textContent = "Valider et rendre visible au client";
+              }
+            });
+
+            carte.appendChild(boutonPublier);
+          }
+
+          contenuListeDevis.appendChild(carte);
+        });
+
+        messageListeDevis.textContent = devis.length + " devis chargé(s).";
+      } catch (erreur) {
+        console.error("Erreur de chargement des devis :", erreur);
+        contenuListeDevis.textContent = "Impossible de charger les devis : " + (erreur.message || "erreur inconnue");
+      }
+    }
+
+    boutonActualiserDevis.addEventListener("click", chargerListeDevis);
+    await chargerListeDevis();
 
     boutonActualiser.addEventListener(
       "click",

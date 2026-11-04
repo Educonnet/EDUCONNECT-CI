@@ -1,3 +1,4 @@
+window.eduSupabase
 
 // Configuration Supabase pour EDUCONNECT CI.
 
