@@ -1,0 +1,340 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement des modules | EDUCONNECT CI</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: #17324d;
+      background: #f4f8fc;
+    }
+
+    header {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background: #073b70;
+    }
+
+    main {
+      width: min(650px, 94%);
+      margin: 28px auto;
+    }
+
+    .carte {
+      background: white;
+      padding: 22px;
+      margin-bottom: 18px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 7px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #bdcbd8;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      border: 0;
+      border-radius: 7px;
+      background: #087b55;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .prix {
+      padding: 14px;
+      border-radius: 8px;
+      background: #edf6ff;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    #message {
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .liens {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    a { color: #087b55; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EDUCONNECT CI</h1>
+    <p>Paiement des modules de formation</p>
+  </header>
+
+  <main>
+    <section class="carte">
+      <h2>Initiation à l’informatique</h2>
+      
+<p>Deux formations sont proposées. Chaque module coûte 5 000 FCFA.</p>
+
+<label for="formation">Choisir une formation</label>
+<select id="formation">
+  <option value="informatique">Initiation à l’informatique</option>
+  <option value="web">Initiation au développement Web</option>
+</select>
+<label for="module-visible">Modules disponibles</label>
+<select id="module-visible"></select>
+
+<p id="description-modules">
+  4 modules disponibles à 5 000 FCFA chacun.
+</p>
+
+      <p>Choisis le module que tu souhaites acheter.</p>
+
+<div class="carte">
+  <h2>Paiement bientôt disponible</h2>
+  <p>
+    EDUCONNECT CI prépare actuellement ses moyens de paiement
+    professionnels Orange Money et Wave.
+  </p>
+  <p>
+    Le tarif prévu est de <strong>5 000 FCFA par module</strong>.
+  </p>
+  <p>
+    Les paiements seront accessibles dès que le service sera opérationnel.
+    Merci pour ta patience.
+  </p>
+  <a href="cours.html">Retour aux formations</a>
+</div>
+
+      <form id="formulaire-paiement" hidden>
+        <label for="module">Module à acheter</label>
+       
+<select id="module" required>
+  <option value="module-1">Module 1 — Découverte de l’ordinateur</option>
+  <option value="module-2">Module 2 — Windows et gestion des fichiers</option>
+  <option value="module-3">Module 3 — Bureautique</option>
+  <option value="module-4">Module 4 — Internet et sécurité</option>
+</select>
+
+<p id="description-modules">
+  Initiation à l’informatique : 4 modules disponibles à 5 000 FCFA chacun.
+</p>
+
+
+        <p class="prix">Prix du module : 5 000 FCFA</p>
+
+        <label for="operateur">Opérateur Mobile Money</label>
+        <select id="operateur" required>
+          <option value="">Choisir un opérateur</option>
+          <option value="Orange Money">Orange Money</option>
+          <option value="MTN MoMo">MTN MoMo</option>
+          <option value="Moov Money">Moov Money</option>
+          <option value="Wave">Wave</option>
+          <option value="Autre">Autre</option>
+        </select>
+
+        <label for="numero-payeur">Numéro utilisé pour le transfert</label>
+        <input
+          id="numero-payeur"
+          type="tel"
+          autocomplete="tel"
+          placeholder="Ex. : 07 XX XX XX XX"
+          required
+        >
+
+        <label for="reference">Référence de la transaction</label>
+        <input
+          id="reference"
+          type="text"
+          maxlength="100"
+          placeholder="Référence figurant sur le reçu"
+          required
+        >
+
+        <p>
+          Effectue d’abord le transfert vers le numéro officiel
+          communiqué par EDUCONNECT CI. Conserve ton reçu.
+          Ne saisis pas ton code secret Mobile Money.
+        </p>
+
+        <button id="bouton-envoi" type="submit">
+          Envoyer ma demande de vérification
+        </button>
+      </form>
+
+      <p id="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <nav class="liens">
+      <a href="cours.html">Retour aux formations</a>
+      <a href="mon-compte.html">Mon compte</a>
+    </nav>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+
+  <script>
+    const formulaire = document.getElementById("formulaire-paiement");
+    
+const selectionFormation = document.getElementById("formation");
+const selectionModule = document.getElementById("module-visible");
+const descriptionModules = document.getElementById("description-modules");
+
+const modulesParFormation = {
+  informatique: [
+    ["module-1", "Module 1 — Découverte de l’ordinateur"],
+    ["module-2", "Module 2 — Windows et gestion des fichiers"],
+    ["module-3", "Module 3 — Bureautique"],
+    ["module-4", "Module 4 — Internet et sécurité"]
+  ],
+  web: [
+    ["module-1", "Module 1 — Les bases du HTML"],
+    ["module-2", "Module 2 — Mise en forme avec CSS"],
+    ["module-3", "Module 3 — Introduction à JavaScript"],
+    ["module-4", "Module 4 — Création d’un site Web"]
+  ]
+};
+
+function actualiserModules() {
+  const formation = selectionFormation.value;
+  const modules = modulesParFormation[formation];
+
+  selectionModule.replaceChildren();
+
+  modules.forEach(function (module) {
+    const option = document.createElement("option");
+    option.value = module[0];
+    option.textContent = module[1];
+    selectionModule.appendChild(option);
+  });
+
+  descriptionModules.textContent =
+    (formation === "web"
+      ? "Initiation au développement Web"
+      : "Initiation à l’informatique") +
+    " : 4 modules disponibles à 5 000 FCFA chacun.";
+}
+
+selectionFormation.addEventListener("change", actualiserModules);
+actualiserModules();
+
+    const message = document.getElementById("message");
+    const bouton = document.getElementById("bouton-envoi");
+
+    formulaire.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const supabase = window.eduSupabase;
+
+      if (!supabase) {
+        message.textContent =
+          "Le service de compte est indisponible. Réessaie plus tard.";
+        return;
+      }
+
+      const operateur = document.getElementById("operateur").value;
+      const numeroPayeur =
+        document.getElementById("numero-payeur").value.trim();
+      const reference =
+        document.getElementById("reference").value.trim();
+      const moduleId = document.getElementById("module").value;
+
+      if (!operateur || !numeroPayeur || !reference) {
+        message.textContent = "Remplis tous les champs obligatoires.";
+        return;
+      }
+
+      bouton.disabled = true;
+      message.textContent = "Envoi de la demande en cours...";
+
+      try {
+        const { data: resultat, error: erreurAuth } =
+          await supabase.auth.getUser();
+
+        if (erreurAuth || !resultat.user) {
+          message.textContent =
+            "Connecte-toi à ton compte avant d’envoyer ta demande.";
+          return;
+        }
+
+       
+const nomsModules = {
+  "module-1": "Module 1 — Découverte de l’ordinateur",
+  "module-2": "Module 2 — Windows et gestion des fichiers",
+  "module-3": "Module 3 — Bureautique",
+  "module-4": "Module 4 — Internet et sécurité"
+};
+
+const { error } = await supabase
+  .from("paiements")
+  .insert({
+    user_id: resultat.user.id,
+    course_id: "informatique",
+    course_title:
+      "Initiation à l’informatique — " + nomsModules[moduleId],
+    amount_xof: 5000,
+    payment_method: operateur,
+    transaction_reference: reference,
+
+    status: "pending",
+    montant: 5000,
+    formation_id: "informatique",
+    module_id: moduleId,
+    operateur: operateur,
+    numero_payeur: numeroPayeur,
+    reference_transaction: reference
+  });
+
+
+        if (error) {
+          console.error("Erreur lors de la demande de paiement :", error);
+          message.textContent =
+            "La demande n’a pas pu être enregistrée. Vérifie ta connexion " +
+            "ou contacte l’administrateur si le problème persiste.";
+          return;
+        }
+
+        message.textContent =
+          "Demande enregistrée. Ton paiement reste en attente de " +
+          "vérification par EDUCONNECT CI. L’accès au module n’est pas " +
+          "encore confirmé.";
+
+        formulaire.reset();
+      } catch (erreur) {
+        console.error("Erreur inattendue :", erreur);
+        message.textContent =
+          "Une erreur est survenue. Réessaie plus tard.";
+      } finally {
+        bouton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
