@@ -245,98 +245,6 @@
         message.textContent = "Connecte-toi pour consulter tes devis.";
         return;
       }
-async function chargerMesPaiements() {
-  const message = document.getElementById("message-paiements");
-  const liste = document.getElementById("liste-paiements");
-
-  if (!utilisateurConnecte) {
-    message.textContent = "Connecte-toi pour consulter tes paiements.";
-    return;
-  }
-
-  message.textContent = "Chargement de tes paiements...";
-  liste.replaceChildren();
-
-  try {
-    const { data, error } = await window.eduSupabase
-      .from("paiements")
-      .select(`
-        id,
-        course_id,
-        course_title,
-        amount_xof,
-        payment_method,
-        transaction_reference,
-        status,
-        admin_note,
-        created_at,
-        reviewed_at
-      `)
-      .eq("user_id", utilisateurConnecte.id)
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-
-    if (!data || data.length === 0) {
-      message.textContent = "Tu n'as encore aucun paiement enregistré.";
-      return;
-    }
-
-    data.forEach((paiement) => {
-      const carte = document.createElement("div");
-      carte.className = "carte-paiement";
-
-      const titre = document.createElement("h3");
-      titre.textContent = paiement.course_title || paiement.course_id || "Formation";
-
-      const montant = document.createElement("p");
-      montant.textContent =
-        "Montant : " +
-        Number(paiement.amount_xof || 0).toLocaleString("fr-FR") +
-        " FCFA";
-
-      const statut = document.createElement("p");
-      const statuts = {
-        pending: "En attente de validation",
-        approved: "Paiement approuvé",
-        rejected: "Paiement rejeté"
-      };
-      statut.textContent = "Statut : " +
-        (statuts[paiement.status] || paiement.status || "Non renseigné");
-
-      const methode = document.createElement("p");
-      methode.textContent = "Mode de paiement : " +
-        (paiement.payment_method || "Non renseigné");
-
-      const reference = document.createElement("p");
-      reference.textContent = "Référence : " +
-        (paiement.transaction_reference || "Non renseignée");
-
-      const date = document.createElement("p");
-      date.textContent = "Date : " +
-        (paiement.created_at
-          ? new Date(paiement.created_at).toLocaleString("fr-FR")
-          : "Non renseignée");
-
-      carte.append(titre, montant, statut, methode, reference, date);
-
-      if (paiement.admin_note) {
-        const note = document.createElement("p");
-        note.textContent = "Note de l'administration : " + paiement.admin_note;
-        carte.appendChild(note);
-      }
-
-      liste.appendChild(carte);
-    });
-
-    message.textContent = data.length + " paiement(s) trouvé(s).";
-
-  } catch (erreur) {
-    console.error("Erreur chargement paiements :", erreur);
-    message.textContent =
-      "Impossible de charger tes paiements. Réessaie plus tard.";
-  }
-}
       bouton.disabled = true;
       message.textContent = "Chargement de tes devis...";
       liste.replaceChildren();
@@ -478,6 +386,99 @@ async function chargerMesPaiements() {
         bouton.disabled = false;
       }
     }
+
+    async function chargerMesPaiements() {
+  const message = document.getElementById("message-paiements");
+  const liste = document.getElementById("liste-paiements");
+
+  if (!utilisateurConnecte) {
+    message.textContent = "Connecte-toi pour consulter tes paiements.";
+    return;
+  }
+
+  message.textContent = "Chargement de tes paiements...";
+  liste.replaceChildren();
+
+  try {
+    const { data, error } = await window.eduSupabase
+      .from("paiements")
+      .select(`
+        id,
+        course_id,
+        course_title,
+        amount_xof,
+        payment_method,
+        transaction_reference,
+        status,
+        admin_note,
+        created_at,
+        reviewed_at
+      `)
+      .eq("user_id", utilisateurConnecte.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      message.textContent = "Tu n'as encore aucun paiement enregistré.";
+      return;
+    }
+
+    data.forEach((paiement) => {
+      const carte = document.createElement("div");
+      carte.className = "carte-paiement";
+
+      const titre = document.createElement("h3");
+      titre.textContent = paiement.course_title || paiement.course_id || "Formation";
+
+      const montant = document.createElement("p");
+      montant.textContent =
+        "Montant : " +
+        Number(paiement.amount_xof || 0).toLocaleString("fr-FR") +
+        " FCFA";
+
+      const statut = document.createElement("p");
+      const statuts = {
+        pending: "En attente de validation",
+        approved: "Paiement approuvé",
+        rejected: "Paiement rejeté"
+      };
+      statut.textContent = "Statut : " +
+        (statuts[paiement.status] || paiement.status || "Non renseigné");
+
+      const methode = document.createElement("p");
+      methode.textContent = "Mode de paiement : " +
+        (paiement.payment_method || "Non renseigné");
+
+      const reference = document.createElement("p");
+      reference.textContent = "Référence : " +
+        (paiement.transaction_reference || "Non renseignée");
+
+      const date = document.createElement("p");
+      date.textContent = "Date : " +
+        (paiement.created_at
+          ? new Date(paiement.created_at).toLocaleString("fr-FR")
+          : "Non renseignée");
+
+      carte.append(titre, montant, statut, methode, reference, date);
+
+      if (paiement.admin_note) {
+        const note = document.createElement("p");
+        note.textContent = "Note de l'administration : " + paiement.admin_note;
+        carte.appendChild(note);
+      }
+
+      liste.appendChild(carte);
+    });
+
+    message.textContent = data.length + " paiement(s) trouvé(s).";
+
+  } catch (erreur) {
+    console.error("Erreur chargement paiements :", erreur);
+    message.textContent =
+      "Impossible de charger tes paiements. Réessaie plus tard.";
+  }
+}
 
     function telechargerDevisPDF(devis, lignes) {
       // Génération sans bibliothèque externe : le navigateur ouvre une page imprimable.
@@ -639,7 +640,6 @@ document.getElementById("actualiser-paiements")
       });
 
     chargerCompte();
-     chargerCompte();
   </script>
 </body>
 </html>
