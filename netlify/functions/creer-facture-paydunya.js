@@ -30,7 +30,7 @@ exports.handler = async function (event) {
 
   let reservationId = null;
 let factureCreee = false;
-
+let etape = "initialisation";
   try {
     const {
       SUPABASE_URL,
@@ -99,7 +99,7 @@ let factureCreee = false;
         })
       }
     );
-
+etape = "reservation_supabase";
     const reservationData = await reservationResponse.json();
 
     if (!reservationResponse.ok) {
@@ -148,7 +148,7 @@ let factureCreee = false;
     );
 
     const facture = await paydunyaResponse.json();
-
+etape = "creation_facture_paydunya";
     if (
       !paydunyaResponse.ok ||
       facture.response_code !== "00" ||
@@ -159,7 +159,25 @@ let factureCreee = false;
       throw new Error("PayDunya n'a pas pu créer la facture.");
     }
     factureCreee = true;
+// Diagnostic sécurisé du format de la facture
+try {
+  const urlFacture = new URL(facture.response_text);
+  const segments = urlFacture.pathname.split("/").filter(Boolean);
+  const dernierSegment = segments[segments.length - 1];
 
+  console.log("Diagnostic URL PayDunya :", {
+    protocole: urlFacture.protocol,
+    domaine: urlFacture.hostname,
+    chemin: urlFacture.pathname.replace(
+      /[^/]+$/,
+      "[JETON_MASQUE]"
+    ),
+    jetonPresent: Boolean(facture.token),
+    jetonCorrespond: dernierSegment === facture.token
+  });
+} catch (erreur) {
+  console.error("URL PayDunya non analysable :", erreur.message);
+}
     // 3. Associer la facture à la réservation.
     const associationResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/rpc/associer_facture_paydunya`,
@@ -178,7 +196,7 @@ let factureCreee = false;
     );
 
     const associationData = await associationResponse.json();
-
+etape = "association_supabase";
     if (!associationResponse.ok) {
       console.error("Association facture :", associationData);
       throw new Error(
@@ -193,7 +211,13 @@ let factureCreee = false;
 
   } catch (error) {
   console.error("Erreur création facture :", error);
-
+return reponse(500, {
+  success: false,
+  etape,
+  error: factureCreee
+    ? "Facture créée, mais association à vérifier auprès de l'administration."
+    : "La création de la facture a échoué. Réessaie plus tard."
+});
   // Ne jamais clôturer une réservation si une facture existe déjà.
   if (reservationId && !factureCreee) {
     try {
