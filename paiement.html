@@ -116,78 +116,20 @@
 
       <p>Choisis le module que tu souhaites acheter.</p>
 
-<div class="carte">
-  <h2>Paiement bientôt disponible</h2>
+<form id="formulaire-paiement">
+  <p class="prix">Prix du module : 5 000 FCFA</p>
+
   <p>
-    EDUCONNECT CI prépare actuellement ses moyens de paiement
-    professionnels Orange Money et Wave.
+    Tu seras redirigé vers PayDunya pour effectuer ton paiement
+    en toute sécurité.
   </p>
-  <p>
-    Le tarif prévu est de <strong>5 000 FCFA par module</strong>.
-  </p>
-  <p>
-    Les paiements seront accessibles dès que le service sera opérationnel.
-    Merci pour ta patience.
-  </p>
-  <a href="cours.html">Retour aux formations</a>
-</div>
 
-      <form id="formulaire-paiement" hidden>
-        <label for="module">Module à acheter</label>
-       
-<select id="module" required>
-  <option value="module-1">Module 1 — Découverte de l’ordinateur</option>
-  <option value="module-2">Module 2 — Windows et gestion des fichiers</option>
-  <option value="module-3">Module 3 — Bureautique</option>
-  <option value="module-4">Module 4 — Internet et sécurité</option>
-</select>
+  <button id="bouton-envoi" type="submit">
+    Payer avec PayDunya
+  </button>
+</form>
 
-<p id="description-modules">
-  Initiation à l’informatique : 4 modules disponibles à 5 000 FCFA chacun.
-</p>
-
-
-        <p class="prix">Prix du module : 5 000 FCFA</p>
-
-        <label for="operateur">Opérateur Mobile Money</label>
-        <select id="operateur" required>
-          <option value="">Choisir un opérateur</option>
-          <option value="Orange Money">Orange Money</option>
-          <option value="MTN MoMo">MTN MoMo</option>
-          <option value="Moov Money">Moov Money</option>
-          <option value="Wave">Wave</option>
-          <option value="Autre">Autre</option>
-        </select>
-
-        <label for="numero-payeur">Numéro utilisé pour le transfert</label>
-        <input
-          id="numero-payeur"
-          type="tel"
-          autocomplete="tel"
-          placeholder="Ex. : 07 XX XX XX XX"
-          required
-        >
-
-        <label for="reference">Référence de la transaction</label>
-        <input
-          id="reference"
-          type="text"
-          maxlength="100"
-          placeholder="Référence figurant sur le reçu"
-          required
-        >
-
-        <p>
-          Effectue d’abord le transfert vers le numéro officiel
-          communiqué par EDUCONNECT CI. Conserve ton reçu.
-          Ne saisis pas ton code secret Mobile Money.
-        </p>
-
-        <button id="bouton-envoi" type="submit">
-          Envoyer ma demande de vérification
-        </button>
-      </form>
-
+<p id="message" role="status" aria-live="polite"></p>
       <p id="message" role="status" aria-live="polite"></p>
     </section>
 
@@ -201,140 +143,141 @@
   <script src="supabase.js"></script>
 
   <script>
-    const formulaire = document.getElementById("formulaire-paiement");
-    
-const selectionFormation = document.getElementById("formation");
-const selectionModule = document.getElementById("module-visible");
-const descriptionModules = document.getElementById("description-modules");
+  const formulaire = document.getElementById("formulaire-paiement");
+  const selectionFormation = document.getElementById("formation");
+  const selectionModule = document.getElementById("module-visible");
+  const descriptionModules = document.getElementById("description-modules");
+  const message = document.getElementById("message");
+  const bouton = document.getElementById("bouton-envoi");
 
-const modulesParFormation = {
-  informatique: [
-    ["module-1", "Module 1 — Découverte de l’ordinateur"],
-    ["module-2", "Module 2 — Windows et gestion des fichiers"],
-    ["module-3", "Module 3 — Bureautique"],
-    ["module-4", "Module 4 — Internet et sécurité"]
-  ],
-  web: [
-    ["module-1", "Module 1 — Les bases du HTML"],
-    ["module-2", "Module 2 — Mise en forme avec CSS"],
-    ["module-3", "Module 3 — Introduction à JavaScript"],
-    ["module-4", "Module 4 — Création d’un site Web"]
-  ]
-};
+  const modulesParFormation = {
+    informatique: [
+      ["module-1", "Module 1 — Découverte de l’ordinateur"],
+      ["module-2", "Module 2 — Windows et gestion des fichiers"],
+      ["module-3", "Module 3 — Bureautique"],
+      ["module-4", "Module 4 — Internet et sécurité"]
+    ],
+    web: [
+      ["module-1", "Module 1 — Les bases du HTML"],
+      ["module-2", "Module 2 — Mise en forme avec CSS"],
+      ["module-3", "Module 3 — Introduction à JavaScript"],
+      ["module-4", "Module 4 — Création d’un site Web"]
+    ]
+  };
 
-function actualiserModules() {
-  const formation = selectionFormation.value;
-  const modules = modulesParFormation[formation];
+  function actualiserModules() {
+    const formation = selectionFormation.value;
+    const modules = modulesParFormation[formation];
 
-  selectionModule.replaceChildren();
+    selectionModule.replaceChildren();
 
-  modules.forEach(function (module) {
-    const option = document.createElement("option");
-    option.value = module[0];
-    option.textContent = module[1];
-    selectionModule.appendChild(option);
-  });
+    modules.forEach(function (module) {
+      const option = document.createElement("option");
+      option.value = module[0];
+      option.textContent = module[1];
+      selectionModule.appendChild(option);
+    });
 
-  descriptionModules.textContent =
-    (formation === "web"
-      ? "Initiation au développement Web"
-      : "Initiation à l’informatique") +
-    " : 4 modules disponibles à 5 000 FCFA chacun.";
+    descriptionModules.textContent =
+      (formation === "web"
+        ? "Initiation au développement Web"
+        : "Initiation à l’informatique") +
+      " : 4 modules disponibles à 5 000 FCFA chacun.";
+
+    message.textContent = "";
+  }
+
+  selectionFormation.addEventListener("change", actualiserModules);
+  actualiserModules();
+
+  formulaire.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const supabase = window.eduSupabase;
+
+    if (!supabase) {
+      message.textContent =
+        "Le service de compte est indisponible. Réessaie plus tard.";
+      return;
+    }
+
+    const courseId = selectionFormation.value;
+    const moduleId = selectionModule.value;
+
+    if (courseId !== "informatique") {
+      message.textContent =
+        "Le paiement de la formation Web sera disponible après son activation.";
+      return;
+    }
+
+    bouton.disabled = true;
+    message.textContent = "Préparation de ta facture PayDunya Sandbox...";
+
+    try {
+      const { data: resultatAuth, error: erreurAuth } =
+        await supabase.auth.getUser();
+
+      if (erreurAuth || !resultatAuth.user) {
+        message.textContent =
+          "Connecte-toi à ton compte avant de procéder au paiement.";
+        return;
+      }
+
+      const { data: sessionData, error: sessionError } =
+  await supabase.auth.getSession();
+
+if (sessionError || !sessionData.session) {
+  throw new Error("Ta session a expiré. Reconnecte-toi.");
 }
 
-selectionFormation.addEventListener("change", actualiserModules);
-actualiserModules();
+const response = await fetch(
+  "/.netlify/functions/creer-facture-paydunya",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${sessionData.session.access_token}`
+    },
+    body: JSON.stringify({
+      course_id: courseId,
+      module_id: moduleId
+    })
+  }
+);
 
-    const message = document.getElementById("message");
-    const bouton = document.getElementById("bouton-envoi");
+const data = await response.json();
 
-    formulaire.addEventListener("submit", async function (event) {
-      event.preventDefault();
-
-      const supabase = window.eduSupabase;
-
-      if (!supabase) {
-        message.textContent =
-          "Le service de compte est indisponible. Réessaie plus tard.";
-        return;
+if (!response.ok) {
+  throw new Error(
+    data.error || "Impossible de préparer le paiement."
+  );
+}
+      if (error) {
+        console.error("Erreur Edge Function PayDunya :", error);
+        throw new Error(
+          "Impossible de contacter le service de paiement."
+        );
       }
 
-      const operateur = document.getElementById("operateur").value;
-      const numeroPayeur =
-        document.getElementById("numero-payeur").value.trim();
-      const reference =
-        document.getElementById("reference").value.trim();
-      const moduleId = document.getElementById("module").value;
-
-      if (!operateur || !numeroPayeur || !reference) {
-        message.textContent = "Remplis tous les champs obligatoires.";
-        return;
+      if (!data || !data.success || !data.payment_url) {
+        console.error("Réponse PayDunya :", data);
+        throw new Error(
+          data?.error || "La facture PayDunya n'a pas pu être créée."
+        );
       }
 
-      bouton.disabled = true;
-      message.textContent = "Envoi de la demande en cours...";
+      message.textContent =
+        "Facture créée. Redirection vers PayDunya...";
 
-      try {
-        const { data: resultat, error: erreurAuth } =
-          await supabase.auth.getUser();
+      window.location.assign(data.payment_url);
 
-        if (erreurAuth || !resultat.user) {
-          message.textContent =
-            "Connecte-toi à ton compte avant d’envoyer ta demande.";
-          return;
-        }
-
-       
-const nomsModules = {
-  "module-1": "Module 1 — Découverte de l’ordinateur",
-  "module-2": "Module 2 — Windows et gestion des fichiers",
-  "module-3": "Module 3 — Bureautique",
-  "module-4": "Module 4 — Internet et sécurité"
-};
-
-const { error } = await supabase
-  .from("paiements")
-  .insert({
-    user_id: resultat.user.id,
-    course_id: "informatique",
-    course_title:
-      "Initiation à l’informatique — " + nomsModules[moduleId],
-    amount_xof: 5000,
-    payment_method: operateur,
-    transaction_reference: reference,
-
-    status: "pending",
-    montant: 5000,
-    formation_id: "informatique",
-    module_id: moduleId,
-    operateur: operateur,
-    numero_payeur: numeroPayeur,
-    reference_transaction: reference
+    } catch (erreur) {
+      console.error("Erreur paiement :", erreur);
+      message.textContent =
+        erreur.message || "Une erreur est survenue. Réessaie plus tard.";
+      bouton.disabled = false;
+    }
   });
-
-
-        if (error) {
-          console.error("Erreur lors de la demande de paiement :", error);
-          message.textContent =
-            "La demande n’a pas pu être enregistrée. Vérifie ta connexion " +
-            "ou contacte l’administrateur si le problème persiste.";
-          return;
-        }
-
-        message.textContent =
-          "Demande enregistrée. Ton paiement reste en attente de " +
-          "vérification par EDUCONNECT CI. L’accès au module n’est pas " +
-          "encore confirmé.";
-
-        formulaire.reset();
-      } catch (erreur) {
-        console.error("Erreur inattendue :", erreur);
-        message.textContent =
-          "Une erreur est survenue. Réessaie plus tard.";
-      } finally {
-        bouton.disabled = false;
-      }
-    });
-  </script>
+</script>
 </body>
 </html>
