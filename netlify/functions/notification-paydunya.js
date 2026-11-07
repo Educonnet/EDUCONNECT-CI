@@ -120,7 +120,7 @@ if (!notification.hash || !notification.status || !notification.invoice) {
 
     // 3. Demander confirmation directement à PayDunya.
     const confirmationResponse = await fetch(
-      `https://app.paydunya.com/sandbox-api/v1/checkout-invoice/confirm/${encodeURIComponent(token)}`,
+            `https://app.paydunya.com/sandbox-api/v1/checkout-invoice/confirm/${encodeURIComponent(token)}`,
       {
         method: "GET",
         headers: {
