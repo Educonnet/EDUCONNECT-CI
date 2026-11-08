@@ -241,12 +241,13 @@ exports.handler = async function (event) {
       : associationData;
 
     if (
-      !association ||
-      association.status !== "invoice_created" ||
-      !association.payment_id
-    ) {
+  !association ||
+  association.reservation_status !== "invoice_created" ||
+  !association.payment_id
+) 
+    {
       console.error("Association à vérifier :", {
-        status: association?.status || null,
+        status: association.reservation_status || null,
         paymentPresent: Boolean(association?.payment_id)
       });
 
