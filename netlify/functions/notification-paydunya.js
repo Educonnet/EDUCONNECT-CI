@@ -12,7 +12,10 @@ function reponse(statusCode, contenu) {
 }
 
 function hashValide(hash, masterKey) {
-  if (typeof hash !== "string" || !/^[a-f0-9]{128}$/i.test(hash)) {
+  if (
+    typeof hash !== "string" ||
+    !/^[a-f0-9]{128}$/i.test(hash)
+  ) {
     return false;
   }
 
@@ -52,51 +55,63 @@ exports.handler = async function (event) {
       throw new Error("Configuration serveur incorrecte.");
     }
 
-    // 1. Lire la notification PayDunya.
+    // 1. Lire la notification PayDunya
     const corps = event.isBase64Encoded
       ? Buffer.from(event.body || "", "base64").toString("utf8")
       : event.body || "";
 
     const formulaire = new URLSearchParams(corps);
-let notification = {};
+    let notification = {};
 
-const donneesBrutes = formulaire.get("data");
+    const donneesBrutes = formulaire.get("data");
 
-if (donneesBrutes) {
-  try {
-    notification = JSON.parse(donneesBrutes);
-  } catch {
-    return reponse(400, {
-      success: false,
-      error: "Format de notification invalide."
-    });
-  }
-} else {
-  for (const [cle, valeur] of formulaire.entries()) {
-    const correspondance = cle.match(/^data\[([^\]]+)\](?:\[([^\]]+)\])?$/);
-
-    if (!correspondance) continue;
-
-    const parent = correspondance[1];
-    const enfant = correspondance[2];
-
-    if (enfant) {
-      if (!notification[parent]) notification[parent] = {};
-      notification[parent][enfant] = valeur;
+    if (donneesBrutes) {
+      try {
+        notification = JSON.parse(donneesBrutes);
+      } catch {
+        return reponse(400, {
+          success: false,
+          error: "Format de notification invalide."
+        });
+      }
     } else {
-      notification[parent] = valeur;
+      for (const [cle, valeur] of formulaire.entries()) {
+        const correspondance = cle.match(
+          /^data\[([^\]]+)\](?:\[([^\]]+)\])?$/
+        );
+
+        if (!correspondance) continue;
+
+        const parent = correspondance[1];
+        const enfant = correspondance[2];
+
+        if (enfant) {
+          if (
+            !notification[parent] ||
+            typeof notification[parent] !== "object"
+          ) {
+            notification[parent] = {};
+          }
+
+          notification[parent][enfant] = valeur;
+        } else {
+          notification[parent] = valeur;
+        }
+      }
     }
-  }
-}
 
-if (!notification.hash || !notification.status || !notification.invoice) {
-  return reponse(400, {
-    success: false,
-    error: "Notification incomplète."
-  });
-}
+    if (
+      !notification.hash ||
+      !notification.status ||
+      !notification.invoice
+    ) {
+      return reponse(400, {
+        success: false,
+        error: "Notification incomplète."
+      });
+    }
 
-    // 2. Vérifier le hash de la notification.
+    // 2. Vérifier l'authenticité de la notification
     if (!hashValide(notification.hash, PAYDUNYA_MASTER_KEY)) {
       return reponse(401, { success: false });
     }
@@ -110,7 +125,7 @@ if (!notification.hash || !notification.status || !notification.invoice) {
       return reponse(400, { success: false });
     }
 
-    // Une facture non terminée ne donne aucun accès.
+    // Aucun accès si le paiement n'est pas terminé
     if (notification.status !== "completed") {
       return reponse(200, {
         success: true,
@@ -118,9 +133,9 @@ if (!notification.hash || !notification.status || !notification.invoice) {
       });
     }
 
-    // 3. Demander confirmation directement à PayDunya.
+    // 3. Confirmer directement la facture auprès de PayDunya
     const confirmationResponse = await fetch(
-            `https://app.paydunya.com/sandbox-api/v1/checkout-invoice/confirm/${encodeURIComponent(token)}`,
+      `https://app.paydunya.com/sandbox-api/v1/checkout-invoice/confirm/${encodeURIComponent(token)}`,
       {
         method: "GET",
         headers: {
@@ -138,11 +153,12 @@ if (!notification.hash || !notification.status || !notification.invoice) {
 
     const confirmation = await confirmationResponse.json();
 
-    // 4. Vérifier la confirmation, le hash, le statut et le montant.
+    // 4. Vérifier toutes les données de confirmation
     if (
       confirmation.response_code !== "00" ||
       confirmation.status !== "completed" ||
       !hashValide(confirmation.hash, PAYDUNYA_MASTER_KEY) ||
+      confirmation.invoice?.token !== token ||
       confirmation.invoice?.total_amount === undefined
     ) {
       throw new Error("Confirmation du paiement invalide.");
@@ -150,18 +166,22 @@ if (!notification.hash || !notification.status || !notification.invoice) {
 
     const montant = Number(confirmation.invoice.total_amount);
 
-    if (!Number.isSafeInteger(montant) || montant !== 5000) {
+    if (
+      !Number.isSafeInteger(montant) ||
+      montant !== 5000
+    ) {
       throw new Error("Montant du paiement incorrect.");
     }
 
-    // 5. Valider le paiement dans Supabase.
+    // 5. Valider le paiement dans Supabase
     const validationResponse = await fetch(
       `${SUPABASE_URL}/rest/v1/rpc/valider_paiement_paydunya`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "apikey": SUPABASE_SECRET_KEY
+          "apikey": SUPABASE_SECRET_KEY,
+          "Authorization": `Bearer ${SUPABASE_SECRET_KEY}`
         },
         body: JSON.stringify({
           p_invoice_token: token,
@@ -172,7 +192,9 @@ if (!notification.hash || !notification.status || !notification.invoice) {
 
     if (!validationResponse.ok) {
       const erreur = await validationResponse.text();
+
       console.error("Validation Supabase refusée :", erreur);
+
       throw new Error("Validation Supabase impossible.");
     }
 
