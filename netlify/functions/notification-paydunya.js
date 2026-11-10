@@ -28,7 +28,23 @@ function hashValide(hash, masterKey) {
 
   return crypto.timingSafeEqual(attendu, recu);
 }
+// Interrompt les requêtes externes trop longues.
+async function fetchAvecDelai(url, options = {}, delaiMs = 10000) {
+  const controleur = new AbortController();
 
+  const temporisateur = setTimeout(() => {
+    controleur.abort();
+  }, delaiMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controleur.signal
+    });
+  } finally {
+    clearTimeout(temporisateur);
+  }
+}
 function lireNotification(corps) {
   const formulaire = new URLSearchParams(corps);
   const donneesBrutes = formulaire.get("data");
@@ -55,7 +71,7 @@ function lireNotification(corps) {
 
   for (const [cle, valeur] of formulaire.entries()) {
     const correspondance = cle.match(
-      /^data((?:\[[^\]]+\])+)$/
+     /^data((?:\[[^\]]+\])+)$/
     );
 
     if (!correspondance) continue;
@@ -132,6 +148,17 @@ exports.handler = async function (event) {
     }
 
     // 1. Lire la notification reçue.
+    const tailleMaximale = 64 * 1024; // 64 Ko
+
+if (
+  typeof event.body !== "string" ||
+  Buffer.byteLength(event.body, "utf8") > tailleMaximale
+) {
+  return reponse(413, {
+    success: false,
+    error: "Notification trop volumineuse."
+  });
+}
     const corps = event.isBase64Encoded
       ? Buffer.from(event.body || "", "base64").toString("utf8")
       : event.body || "";
@@ -160,7 +187,6 @@ exports.handler = async function (event) {
         error: "Notification non authentifiée."
       });
     }
-
     const token = notification.invoice.token;
 
     if (
@@ -182,19 +208,19 @@ exports.handler = async function (event) {
     }
 
     // 4. Confirmer directement la facture auprès de PayDunya.
-    const confirmationResponse = await fetch(
-      `https://app.paydunya.com/sandbox-api/v1/checkout-invoice/confirm/${encodeURIComponent(token)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "PAYDUNYA-MASTER-KEY": PAYDUNYA_MASTER_KEY,
-          "PAYDUNYA-PRIVATE-KEY": PAYDUNYA_PRIVATE_KEY,
-          "PAYDUNYA-TOKEN": PAYDUNYA_TOKEN
-        }
-      }
-    );
-
+const confirmationResponse = await fetchAvecDelai(
+ `https://app.paydunya.com/sandbox-api/v1/checkout-invoice/confirm/${encodeURIComponent(token)}`,
+  {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "PAYDUNYA-MASTER-KEY": PAYDUNYA_MASTER_KEY,
+      "PAYDUNYA-PRIVATE-KEY": PAYDUNYA_PRIVATE_KEY,
+      "PAYDUNYA-TOKEN": PAYDUNYA_TOKEN
+    }
+  },
+  10000
+);
     if (!confirmationResponse.ok) {
       throw new Error("Confirmation PayDunya indisponible.");
     }
@@ -223,34 +249,30 @@ exports.handler = async function (event) {
       throw new Error("Montant du paiement incorrect.");
     }
 
-    // 6. Valider le paiement dans Supabase.
-    const validationResponse = await fetch(
-      `${SUPABASE_URL}/rest/v1/rpc/valider_paiement_paydunya`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_SECRET_KEY,
-          "Authorization": `Bearer ${SUPABASE_SECRET_KEY}`
-        },
-        body: JSON.stringify({
-          p_invoice_token: token,
-          p_confirmed_amount: montant
-        })
-      }
-    );
-
+   // 6. Valider le paiement dans Supabase.
+const validationResponse = await fetchAvecDelai(
+  `${SUPABASE_URL}/rest/v1/rpc/valider_paiement_paydunya`,
+  {
+    method: "POST",
+    headers: {
+  "Content-Type": "application/json",
+  "apikey": SUPABASE_SECRET_KEY
+},
+    body: JSON.stringify({
+      p_invoice_token: token,
+      p_confirmed_amount: montant
+    })
+  },
+  15000
+);
     if (!validationResponse.ok) {
-      const erreur = await validationResponse.text();
+  console.error(
+    "Validation Supabase refusée. Code HTTP :",
+    validationResponse.status
+  );
 
-      console.error(
-        "Validation Supabase refusée :",
-        erreur
-      );
-
-      throw new Error("Validation Supabase impossible.");
-    }
-
+  throw new Error("Validation Supabase impossible.");
+}
     const autorisationId = await validationResponse.json();
 
     if (!autorisationId) {
@@ -265,11 +287,9 @@ exports.handler = async function (event) {
     });
 
   } catch (erreur) {
-    console.error(
-      "Notification PayDunya :",
-      erreur.message
-    );
-
+  console.error(
+    "Échec du traitement de la notification PayDunya."
+  );
     return reponse(500, {
       success: false,
       error: "Traitement du paiement impossible."

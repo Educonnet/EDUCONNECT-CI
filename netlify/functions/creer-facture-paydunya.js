@@ -209,22 +209,22 @@ exports.handler = async function (event) {
     // 4. Associer la facture à la réservation
     etape = "association_supabase";
 
-    const associationResponse = await fetch(
-      `${SUPABASE_URL}/rest/v1/rpc/associer_facture_paydunya`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": SUPABASE_SECRET_KEY,
-          "Authorization": `Bearer ${SUPABASE_SECRET_KEY}`
-        },
-        body: JSON.stringify({
-          p_reservation_id: reservationId,
-          p_invoice_token: facture.token,
-          p_invoice_url: facture.response_text
-        })
-      }
-    );
+   
+const associationResponse = await fetch(
+  `${SUPABASE_URL}/rest/v1/rpc/associer_facture_paydunya`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_SECRET_KEY
+    },
+    body: JSON.stringify({
+      p_reservation_id: reservationId,
+      p_invoice_token: facture.token,
+      p_invoice_url: facture.response_text
+    })
+  }
+);
 
     const associationData = await associationResponse.json();
 
@@ -274,12 +274,10 @@ exports.handler = async function (event) {
           `${process.env.SUPABASE_URL}/rest/v1/rpc/echouer_reservation_paydunya`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "apikey": process.env.SUPABASE_SECRET_KEY,
-              "Authorization":
-                `Bearer ${process.env.SUPABASE_SECRET_KEY}`
-            },
+           headers: {
+  "Content-Type": "application/json",
+  "apikey": process.env.SUPABASE_SECRET_KEY
+},
             body: JSON.stringify({
               p_reservation_id: reservationId,
               p_error_note:
