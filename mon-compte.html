@@ -42,6 +42,195 @@
     }
     button:disabled { opacity: .6; cursor: not-allowed; }
     #message, .message-devis { line-height: 1.6; overflow-wrap: anywhere; }
+    
+    
+/* BADGES DE STATUT DES PAIEMENTS */
+
+.badge-statut-paiement {
+  display: inline-block;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+/* DESIGN DES CARTES DE PAIEMENT */
+
+.carte-paiement {
+  background: #fbfdff;
+  border: 1px solid #dce7f2;
+  border-left: 5px solid #073b70;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+  box-shadow: 0 3px 10px #00000008;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carte-paiement:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px #00000012;
+}
+
+.carte-paiement h3 {
+  color: #073b70;
+  font-size: 17px;
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.carte-paiement p {
+  color: #43576b;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  margin: 9px 0;
+}
+
+/* FIN DU DESIGN DES CARTES DE PAIEMENT */
+
+.paiement-approuve {
+  background: #e5f7ed;
+  color: #147a45;
+  border: 1px solid #a9dfbf;
+}
+
+.paiement-attente {
+  background: #fff4db;
+  color: #986500;
+  border: 1px solid #f1d38b;
+}
+
+.paiement-rejete {
+  background: #fde8e8;
+  color: #a52828;
+  border: 1px solid #efb2b2;
+}
+
+/* FIN DES BADGES DE PAIEMENT */
+
+
+/* ACCES DIRECT AUX MODULES */
+
+.liens-modules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.liens-modules a {
+  display: block;
+  padding: 15px;
+  background: #073b70;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 9px;
+  text-align: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.liens-modules a:hover {
+  background: #087b55;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 560px) {
+  .liens-modules {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* FIN ACCES DIRECT AUX MODULES */
+
+/* TABLEAU DE BORD - MA PROGRESSION */
+
+.resume-progression {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.indicateur-progression {
+  padding: 18px;
+  background: #f0f5fb;
+  border: 1px solid #dce7f2;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.indicateur-progression strong {
+  font-size: 28px;
+  color: #073b70;
+}
+
+.indicateur-progression span {
+  color: #526579;
+  font-size: 13px;
+}
+
+.barre-progression-fond {
+  width: 100%;
+  height: 13px;
+  background: #e4eaf0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 12px 0 25px;
+}
+
+#barre-progression-remplissage {
+  width: 0;
+  height: 100%;
+  background: #16a36a;
+  border-radius: 20px;
+  transition: width 0.6s ease;
+}
+
+.carte-module-progression {
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid #dce7f2;
+  border-left: 5px solid #16a36a;
+  border-radius: 10px;
+  background: #fbfdff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.carte-module-progression:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #00000010;
+}
+
+.carte-module-progression h3 {
+  color: #073b70;
+  margin-top: 0;
+}
+
+.carte-module-progression p {
+  line-height: 1.5;
+  margin: 7px 0;
+}
+
+#actualiser-progression {
+  margin-top: 12px;
+}
+
+@media (max-width: 560px) {
+  .resume-progression {
+    grid-template-columns: 1fr;
+  }
+
+  .indicateur-progression strong {
+    font-size: 24px;
+  }
+}
+
+/* FIN DU TABLEAU DE BORD */
+
     .devis-carte {
       border: 1px solid #d9e4ef;
       border-radius: 10px;
@@ -105,13 +294,49 @@
   </header>
 
   <main>
-    <section class="carte">
-      <h2>Bienvenue !</h2>
-      <p><strong>Nom :</strong> <span id="nom">Chargement...</span></p>
-      <p><strong>E-mail :</strong> <span id="email">Chargement...</span></p>
-      <p id="message" role="status" aria-live="polite"></p>
-      <button id="deconnexion" type="button">Se déconnecter</button>
-    </section>
+    
+<section class="carte" id="section-mon-profil">
+  <h2>Mon profil</h2>
+
+  <p><strong>Nom :</strong> <span id="nom">Chargement...</span></p>
+
+  <p><strong>Email :</strong> <span id="email">Chargement...</span></p>
+
+  <p id="message" role="status" aria-live="polite"></p>
+</section>
+
+<section class="carte" id="section-mes-formations">
+  <h2>Mes formations</h2>
+
+  <p>
+    Accède directement aux modules de la formation
+    Initiation à l'informatique.
+  </p>
+
+  <div class="liens-modules">
+
+    <a href="educonnect-ci-principal-travail-SECURISE-modules1-2-test.html?module=module-1">
+      Module 1 — Découverte de l'ordinateur
+    </a>
+
+    <a href="educonnect-ci-principal-travail-SECURISE-modules1-2-test.html?module=module-2">
+      Module 2 — Windows
+    </a>
+
+    <a href="educonnect-ci-principal-travail-SECURISE-modules1-2-test.html?module=module-3">
+      Module 3 — Bureautique
+    </a>
+
+    <a href="educonnect-ci-principal-travail-SECURISE-modules1-2-test.html?module=module-4">
+      Module 4 — Internet et sécurité
+    </a>
+
+  </div>
+
+  <p>
+    <a href="cours.html">Voir toutes les formations</a>
+  </p>
+</section>
 
     <section class="carte">
       <h2>Mes formations</h2>
@@ -132,6 +357,59 @@
     Actualiser mes paiements
   </button>
 </section>
+<!-- RUBRIQUE MA PROGRESSION -->
+
+<section class="carte" id="section-ma-progression">
+
+  <h2>Ma progression</h2>
+
+  <p>
+    Suis ton évolution dans la formation
+    Initiation à l'informatique.
+  </p>
+
+  <div class="resume-progression">
+
+    <div class="indicateur-progression">
+      <strong id="pourcentage-progression">0 %</strong>
+      <span>Progression globale</span>
+    </div>
+
+    <div class="indicateur-progression">
+      <strong id="modules-valides">0/4</strong>
+      <span>Modules validés</span>
+    </div>
+
+  </div>
+
+  <div class="barre-progression-fond"
+       role="progressbar"
+       aria-label="Progression globale"
+       aria-valuemin="0"
+       aria-valuemax="100"
+       aria-valuenow="0"
+       id="barre-progression-globale">
+
+    <div id="barre-progression-remplissage"></div>
+
+  </div>
+
+  <h3>Résultats par module</h3>
+
+  <p id="message-progression"
+     role="status"
+     aria-live="polite">
+    Chargement de ta progression...
+  </p>
+
+  <div id="liste-progression"></div>
+
+  <button id="actualiser-progression" type="button">
+    Actualiser ma progression
+  </button>
+
+</section>
+<!-- FIN RUBRIQUE MA PROGRESSION -->
     <section class="carte" id="section-mes-devis">
       <h2>Mes devis</h2>
       <p>Consulte les propositions qui te sont adressées et réponds directement depuis ton espace.</p>
@@ -181,6 +459,89 @@
       return libelles[statut] || statut || "Statut non précisé";
     }
 
+async function chargerMaProgression() {
+  const message = document.getElementById("message-progression");
+  const liste = document.getElementById("liste-progression");
+  const pourcentage = document.getElementById("pourcentage-progression");
+  const modulesValides = document.getElementById("modules-valides");
+  const barre = document.getElementById("barre-progression-remplissage");
+  const barreGlobale = document.getElementById("barre-progression-globale");
+
+  if (!message || !liste || !window.eduSupabase) return;
+
+  message.textContent = "Chargement de ta progression...";
+  liste.replaceChildren();
+
+  try {
+    const { data, error } = await window.eduSupabase.rpc(
+      "consulter_ma_progression"
+    );
+
+    if (error) throw error;
+
+    const nomsModules = {
+      "module-1": "Module 1",
+      "module-2": "Module 2",
+      "module-3": "Module 3",
+      "module-4": "Module 4"
+    };
+
+    const ordreModules = ["module-1", "module-2", "module-3", "module-4"];
+
+    const resultats = data || [];
+
+    const progression = ordreModules.map(function (moduleId) {
+      return resultats.find(function (element) {
+        return element.module_id === moduleId;
+      });
+    });
+
+    const nombreValides = progression.filter(function (element) {
+      return element && element.completed === true;
+    }).length;
+
+    const taux = Math.round((nombreValides / 4) * 100);
+
+    pourcentage.textContent = taux + " %";
+    modulesValides.textContent = nombreValides + "/4";
+    barre.style.width = taux + "%";
+    barreGlobale.setAttribute("aria-valuenow", String(taux));
+
+    message.textContent = "Voici tes résultats enregistrés :";
+
+    progression.forEach(function (element, index) {
+      const carte = document.createElement("div");
+      carte.className = "carte-module-progression";
+
+      const titre = document.createElement("h3");
+      titre.textContent = nomsModules[ordreModules[index]];
+
+      const score = document.createElement("p");
+      score.textContent = element && element.score !== null
+        ? "Score : " + element.score + "/7"
+        : "Score : Aucun résultat";
+
+      const statut = document.createElement("p");
+      statut.textContent = element && element.completed
+        ? "✓ Module validé"
+        : "En attente de validation";
+
+      const date = document.createElement("p");
+      date.textContent = element && element.updated_at
+        ? "Dernière mise à jour : " +
+          new Date(element.updated_at).toLocaleDateString("fr-FR")
+        : "Aucune activité enregistrée";
+
+      carte.append(titre, score, statut, date);
+      liste.appendChild(carte);
+    });
+
+  } catch (erreur) {
+    console.error("Erreur de chargement de la progression :", erreur);
+    message.textContent =
+      "Impossible de charger ta progression. Réessaie plus tard.";
+  }
+}
     async function chargerCompte() {
       const nom = document.getElementById("nom");
       const email = document.getElementById("email");
@@ -227,8 +588,10 @@
           data.user.user_metadata?.full_name ||
           "Client EDUCONNECT CI";
 
-        await chargerMesDevis();
-      } catch (erreur) {
+        await chargerMaProgression();
+await chargerMesDevis();
+await chargerMesPaiements();     
+ } catch (erreur) {
         console.error(erreur);
         message.textContent = "Impossible de charger ton compte.";
         document.getElementById("message-devis").textContent =
@@ -437,28 +800,41 @@
         Number(paiement.amount_xof || 0).toLocaleString("fr-FR") +
         " FCFA";
 
-      const statut = document.createElement("p");
-      const statuts = {
-        pending: "En attente de validation",
-        approved: "Paiement approuvé",
-        rejected: "Paiement rejeté"
-      };
-      statut.textContent = "Statut : " +
-        (statuts[paiement.status] || paiement.status || "Non renseigné");
+      
+const statut = document.createElement("span");
 
-      const methode = document.createElement("p");
-      methode.textContent = "Mode de paiement : " +
-        (paiement.payment_method || "Non renseigné");
+const statuts = {
+  pending: "En attente de validation",
+  approved: "Paiement approuvé",
+  rejected: "Paiement rejeté"
+};
 
-      const reference = document.createElement("p");
-      reference.textContent = "Référence : " +
-        (paiement.transaction_reference || "Non renseignée");
+statut.textContent =
+  statuts[paiement.status] || paiement.status || "Non renseigné";
 
-      const date = document.createElement("p");
-      date.textContent = "Date : " +
-        (paiement.created_at
-          ? new Date(paiement.created_at).toLocaleString("fr-FR")
-          : "Non renseignée");
+statut.className = "badge-statut-paiement";
+
+if (paiement.status === "approved") {
+  statut.classList.add("paiement-approuve");
+} else if (paiement.status === "pending") {
+  statut.classList.add("paiement-attente");
+} else if (paiement.status === "rejected") {
+  statut.classList.add("paiement-rejete");
+}
+
+const methode = document.createElement("p");
+methode.textContent = "Mode de paiement : " +
+  (paiement.payment_method || "Non renseigné");
+
+const reference = document.createElement("p");
+reference.textContent = "Référence : " +
+  (paiement.transaction_reference || "Non renseignée");
+
+const date = document.createElement("p");
+date.textContent = "Date : " +
+  (paiement.created_at
+    ? new Date(paiement.created_at).toLocaleString("fr-FR")
+    : "Non renseignée");
 
       carte.append(titre, montant, statut, methode, reference, date);
 
@@ -620,12 +996,23 @@ await chargerMesPaiements();
       }
     }
 
-    document.getElementById("actualiser-devis")
-      .addEventListener("click", chargerMesDevis);
-document.getElementById("actualiser-paiements")
-  .addEventListener("click", chargerMesPaiements);
-    document.getElementById("deconnexion")
-      .addEventListener("click", async function() {
+    const boutonActualiserDevis =
+  document.getElementById("actualiser-devis");
+
+if (boutonActualiserDevis) {
+  boutonActualiserDevis.addEventListener("click", chargerMesDevis);
+}
+
+const boutonActualiserPaiements =
+  document.getElementById("actualiser-paiements");
+
+if (boutonActualiserPaiements) {
+  boutonActualiserPaiements.addEventListener("click", chargerMesPaiements);
+}
+    const boutonDeconnexion = document.getElementById("deconnexion");
+
+if (boutonDeconnexion) {
+  boutonDeconnexion.addEventListener("click", async function() {
         if (!window.eduSupabase) return;
 
         const { error } = await window.eduSupabase.auth.signOut();
@@ -637,8 +1024,8 @@ document.getElementById("actualiser-paiements")
         }
 
         window.location.href = "connexion.html";
-      });
-
+       });
+}
     chargerCompte();
   </script>
 </body>
