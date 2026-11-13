@@ -41,6 +41,14 @@
       cursor: pointer;
     }
     button:disabled { opacity: .6; cursor: not-allowed; }
+    .bouton-deconnexion {
+      display: inline-block;
+      margin-top: 12px;
+      background: #a52836;
+      color: #fff;
+      font-weight: bold;
+    }
+    .bouton-deconnexion:hover { background: #84202c; }
     #message, .message-devis { line-height: 1.6; overflow-wrap: anywhere; }
     
     
@@ -301,6 +309,10 @@
   <p><strong>Nom :</strong> <span id="nom">Chargement...</span></p>
 
   <p><strong>Email :</strong> <span id="email">Chargement...</span></p>
+
+  <button id="deconnexion" class="bouton-deconnexion" type="button">
+    Déconnexion
+  </button>
 
   <p id="message" role="status" aria-live="polite"></p>
 </section>
