@@ -147,6 +147,7 @@ lienMotDePasseOublie.addEventListener("click", async function(event) {
       bouton.disabled = true;
       bouton.textContent = "Connexion en cours...";
 
+     
       try {
         const { data, error } =
           await window.eduSupabase.auth.signInWithPassword({
@@ -156,22 +157,35 @@ lienMotDePasseOublie.addEventListener("click", async function(event) {
 
         if (error) throw error;
 
-      if (data.user) {
-  const { data: estAdmin, error: roleError } =
-    await window.eduSupabase.rpc("is_admin");
+        if (data.user) {
+          const { data: estAdmin, error: roleError } =
+            await window.eduSupabase.rpc("is_admin");
 
-  if (roleError) {
-    console.error("Erreur vérification administrateur :", roleError);
-    message.textContent = "Impossible de vérifier les droits du compte.";
-    return;
-  }
+          if (roleError) {
+            console.error("Erreur vérification administrateur :", roleError);
+            message.textContent =
+              "Impossible de vérifier les droits du compte.";
+            return;
+          }
 
-  if (estAdmin === true) {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "mon-compte.html";
-  }
-};
+          if (estAdmin === true) {
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "mon-compte.html";
+          }
+        }
+
+      } catch (erreur) {
+        console.error("Erreur de connexion :", erreur);
+        message.textContent =
+          "Connexion impossible. Vérifie ton e-mail et ton mot de passe, ou confirme ton adresse e-mail si nécessaire.";
+
+      } finally {
+        bouton.disabled = false;
+        bouton.textContent = "Se connecter";
+      }
+    });
+
   </script>
 </body>
 </html
