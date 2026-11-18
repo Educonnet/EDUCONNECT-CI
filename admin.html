@@ -97,6 +97,10 @@
       margin-top: 10px;
     }
 
+
+    nav a { color:#123b65; font-weight:bold; text-decoration:none; padding:8px 10px; background:white; border-radius:6px; }
+    nav a:hover { text-decoration:underline; }
+    #gestion-questions input:not([type=checkbox]), #gestion-questions select, #gestion-questions textarea { width:100%; }
     [hidden] {
       display: none !important;
     }
@@ -138,6 +142,16 @@
     <button type="button" id="bouton-deconnexion" class="bouton-deconnexion" hidden>Se déconnecter</button>
   </div>
 </header>
+
+<nav class="actions-entete" aria-label="Navigation administration" style="background:#e8eef5;padding:12px;border-radius:10px;margin-bottom:20px">
+  <a href="#gestion-autorisations">Autorisations</a>
+  <a href="#gestion-demandes">Demandes</a>
+  <a href="#gestion-devis">Devis</a>
+  <a href="#gestion-commandes">Commandes</a>
+  <a href="#gestion-justificatifs">Justificatifs</a>
+  <a href="#gestion-travaux-pratiques">Correction des travaux</a>
+  <a href="#gestion-questions">Gestion des exercices</a>
+</nav>
 
 <section id="gestion-autorisations" hidden>
 
@@ -294,6 +308,69 @@
   </div>
   <p id="message-justificatifs" class="message" role="status"></p>
   <div id="liste-justificatifs">Chargement des justificatifs...</div>
+</section>
+
+
+<section id="gestion-travaux-pratiques" hidden>
+  <h2>Correction des travaux pratiques</h2>
+  <p class="aide">Consulte les fichiers envoyés par les apprenants, puis valide ou rejette chaque dépôt. La décision est enregistrée par la fonction sécurisée examiner_depot_lecon.</p>
+  <div class="actions-entete">
+    <input type="search" id="recherche-travaux" placeholder="Rechercher un apprenant, module ou leçon" style="flex:1;min-width:220px">
+    <select id="filtre-travaux">
+      <option value="pending">En attente</option>
+      <option value="approved">Validés</option>
+      <option value="rejected">Rejetés</option>
+      <option value="">Tous les dépôts</option>
+    </select>
+    <button type="button" id="actualiser-travaux">Actualiser les dépôts</button>
+  </div>
+  <p id="message-travaux" class="message" role="status"></p>
+  <div id="liste-travaux">Chargement des travaux pratiques...</div>
+</section>
+
+<section id="gestion-questions" hidden>
+  <h2>Gestion des exercices et quiz des leçons</h2>
+  <p class="aide">Crée, modifie, active/désactive ou supprime les questions enregistrées dans lesson_questions. Les questions existantes restent conservées.</p>
+  <form id="form-question">
+    <label for="question-module">Module</label><br>
+    <select id="question-module" required>
+      <option value="module-1">Module 1</option><option value="module-2">Module 2</option>
+      <option value="module-3">Module 3</option><option value="module-4">Module 4</option>
+    </select><br>
+    <label for="question-lecon">Leçon (identifiant, ex. lecon-1)</label><br>
+    <input id="question-lecon" required maxlength="100" placeholder="lecon-1" style="width:100%"><br>
+    <label for="question-texte">Énoncé de la question</label><br>
+    <textarea id="question-texte" required maxlength="5000" rows="3" style="width:100%"></textarea><br>
+    <div class="devis-ligne">
+      <input id="option-a" required maxlength="1000" placeholder="Réponse A">
+      <input id="option-b" required maxlength="1000" placeholder="Réponse B">
+      <input id="option-c" required maxlength="1000" placeholder="Réponse C">
+      <input id="option-d" required maxlength="1000" placeholder="Réponse D">
+    </div>
+    <label for="bonne-reponse">Bonne réponse</label><br>
+    <select id="bonne-reponse" required>
+      <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+    </select><br>
+    <label for="explication-question">Explication (facultative)</label><br>
+    <textarea id="explication-question" maxlength="3000" rows="2" style="width:100%"></textarea><br>
+    <label><input type="checkbox" id="question-active" checked> Question active</label><br>
+    <div class="actions-entete">
+      <button type="submit" id="enregistrer-question">Ajouter la question</button>
+      <button type="button" id="annuler-modification-question" class="bouton-deconnexion" hidden>Annuler la modification</button>
+    </div>
+  </form>
+  <p id="message-questions" class="message" role="status"></p>
+  <hr>
+  <div class="actions-entete">
+    <select id="filtre-questions-module">
+      <option value="">Tous les modules</option>
+      <option value="module-1">Module 1</option><option value="module-2">Module 2</option>
+      <option value="module-3">Module 3</option><option value="module-4">Module 4</option>
+    </select>
+    <input type="search" id="recherche-questions" placeholder="Rechercher une question ou une leçon" style="flex:1;min-width:220px">
+    <button type="button" id="actualiser-questions">Actualiser les questions</button>
+  </div>
+  <div id="liste-questions">Chargement des questions...</div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1879,6 +1956,315 @@ if (d.statut === "brouillon") {
     boutonActualiserJustificatifs.addEventListener("click", chargerJustificatifs);
     rechercheJustificatifs.addEventListener("input", afficherJustificatifs);
     await chargerJustificatifs();
+
+
+
+    // =====================================
+    // CORRECTION DES TRAVAUX PRATIQUES
+    // =====================================
+    const sectionTravaux = document.getElementById("gestion-travaux-pratiques");
+    const listeTravaux = document.getElementById("liste-travaux");
+    const messageTravaux = document.getElementById("message-travaux");
+    const rechercheTravaux = document.getElementById("recherche-travaux");
+    const filtreTravaux = document.getElementById("filtre-travaux");
+    let travauxCharges = [];
+    sectionTravaux.hidden = false;
+
+    function libelleDecisionTravail(statut) {
+      return ({ pending: "En attente de correction", approved: "Validé", rejected: "Rejeté" })[statut] || statut;
+    }
+
+    function afficherTravaux() {
+      const terme = rechercheTravaux.value.trim().toLowerCase();
+      const statut = filtreTravaux.value;
+      const resultats = travauxCharges.filter(t =>
+        (!statut || t.review_status === statut) &&
+        (!terme || [t.nom_apprenant, t.module_id, t.lesson_id, t.original_filename]
+          .some(v => String(v || "").toLowerCase().includes(terme)))
+      );
+      listeTravaux.replaceChildren();
+      if (!resultats.length) {
+        listeTravaux.textContent = "Aucun dépôt ne correspond aux critères.";
+        return;
+      }
+      ajouterTexte(listeTravaux, "p", resultats.length + " dépôt(s) affiché(s).");
+      resultats.forEach(t => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", t.nom_apprenant || "Apprenant non identifié");
+        afficherChamp(carte, "Module", t.module_id);
+        afficherChamp(carte, "Leçon", t.lesson_id);
+        afficherChamp(carte, "Fichier", t.original_filename);
+        afficherChamp(carte, "Type", t.mime_type);
+        afficherChamp(carte, "Taille", Math.round(Number(t.file_size_bytes || 0) / 1024) + " Ko");
+        afficherChamp(carte, "Date d'envoi", t.submitted_at ? new Date(t.submitted_at).toLocaleString("fr-FR") : "Non renseignée");
+        afficherChamp(carte, "Statut", libelleDecisionTravail(t.review_status));
+        if (t.feedback) afficherChamp(carte, "Commentaire existant", t.feedback);
+
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+        const ouvrir = document.createElement("button");
+        ouvrir.type = "button";
+        ouvrir.textContent = "Ouvrir le fichier";
+        ouvrir.addEventListener("click", async () => {
+          ouvrir.disabled = true;
+          try {
+            const { data, error } = await supabase.storage.from(t.bucket_id).createSignedUrl(t.object_path, 120);
+            if (error) throw error;
+            if (!data || !data.signedUrl) throw new Error("Lien temporaire indisponible.");
+            window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+          } catch (e) {
+            messageTravaux.textContent = "Ouverture impossible : " + (e.message || "erreur inconnue");
+          } finally { ouvrir.disabled = false; }
+        });
+        actions.appendChild(ouvrir);
+
+        if (t.review_status === "pending") {
+          const commentaire = document.createElement("textarea");
+          commentaire.className = "champ-note";
+          commentaire.maxLength = 1000;
+          commentaire.rows = 2;
+          commentaire.placeholder = "Commentaire destiné à l'apprenant (facultatif, 1000 caractères maximum)";
+          carte.appendChild(commentaire);
+
+          [["approved", "Valider le travail"], ["rejected", "Rejeter le travail"]].forEach(([decision, libelle]) => {
+            const bouton = document.createElement("button");
+            bouton.type = "button";
+            bouton.textContent = libelle;
+            if (decision === "rejected") bouton.className = "bouton-supprimer";
+            bouton.addEventListener("click", async () => {
+              const confirmation = decision === "approved"
+                ? "Confirmer la validation de ce travail pratique ?"
+                : "Confirmer le rejet de ce travail pratique ?";
+              if (!window.confirm(confirmation)) return;
+              bouton.disabled = true;
+              try {
+                const { data, error } = await supabase.rpc("examiner_depot_lecon", {
+                  p_submission_id: t.id,
+                  p_decision: decision,
+                  p_feedback: commentaire.value.trim() || null
+                });
+                if (error) throw error;
+                messageTravaux.textContent = decision === "approved"
+                  ? "Travail validé. La leçon sera terminée si le score de l'évaluation atteint au moins 80 %."
+                  : "Travail rejeté. L'apprenant devra corriger puis soumettre à nouveau son travail.";
+                await chargerTravaux();
+              } catch (e) {
+                console.error("Correction du travail impossible :", e);
+                messageTravaux.textContent = "Correction impossible : " + (e.message || "erreur inconnue");
+              } finally { bouton.disabled = false; }
+            });
+            actions.appendChild(bouton);
+          });
+        }
+        carte.appendChild(actions);
+        listeTravaux.appendChild(carte);
+      });
+    }
+
+    async function chargerTravaux() {
+      listeTravaux.textContent = "Chargement des dépôts...";
+      messageTravaux.textContent = "";
+      try {
+        const { data, error } = await supabase.from("lesson_submissions")
+          .select("id, progress_id, user_id, module_id, lesson_id, bucket_id, object_path, original_filename, mime_type, file_size_bytes, submission_number, review_status, feedback, submitted_at")
+          .order("submitted_at", { ascending: false });
+        if (error) throw error;
+        const rows = data || [];
+        const userIds = [...new Set(rows.map(x => x.user_id).filter(Boolean))];
+        const profils = userIds.length
+          ? await supabase.from("profiles").select("id, full_name").in("id", userIds)
+          : { data: [], error: null };
+        if (profils.error) throw profils.error;
+        const noms = new Map((profils.data || []).map(x => [x.id, x.full_name || "Apprenant sans nom"]));
+        travauxCharges = rows.map(x => ({ ...x, nom_apprenant: noms.get(x.user_id) || "Apprenant non identifié" }));
+        afficherTravaux();
+        messageTravaux.textContent = travauxCharges.length + " dépôt(s) chargé(s).";
+      } catch (e) {
+        console.error("Chargement des travaux impossible :", e);
+        listeTravaux.textContent = "Impossible de charger les dépôts : " + (e.message || "erreur inconnue");
+      }
+    }
+    document.getElementById("actualiser-travaux").addEventListener("click", chargerTravaux);
+    rechercheTravaux.addEventListener("input", afficherTravaux);
+    filtreTravaux.addEventListener("change", afficherTravaux);
+    await chargerTravaux();
+
+    // =====================================
+    // GESTION DES QUESTIONS DES LEÇONS
+    // =====================================
+    const sectionQuestions = document.getElementById("gestion-questions");
+    const formQuestion = document.getElementById("form-question");
+    const messageQuestions = document.getElementById("message-questions");
+    const listeQuestions = document.getElementById("liste-questions");
+    const filtreQuestionsModule = document.getElementById("filtre-questions-module");
+    const rechercheQuestions = document.getElementById("recherche-questions");
+    const boutonEnregistrerQuestion = document.getElementById("enregistrer-question");
+    const boutonAnnulerQuestion = document.getElementById("annuler-modification-question");
+    let questionsChargees = [];
+    let questionEnEdition = null;
+    sectionQuestions.hidden = false;
+
+    function viderFormQuestion() {
+      questionEnEdition = null;
+      formQuestion.reset();
+      document.getElementById("question-active").checked = true;
+      boutonEnregistrerQuestion.textContent = "Ajouter la question";
+      boutonAnnulerQuestion.hidden = true;
+    }
+
+    function afficherQuestions() {
+      const module = filtreQuestionsModule.value;
+      const terme = rechercheQuestions.value.trim().toLowerCase();
+      const resultats = questionsChargees.filter(q =>
+        (!module || q.module_id === module) &&
+        (!terme || [q.question_text, q.lesson_id, q.module_id].some(v => String(v || "").toLowerCase().includes(terme)))
+      );
+      listeQuestions.replaceChildren();
+      if (!resultats.length) {
+        listeQuestions.textContent = "Aucune question ne correspond aux critères.";
+        return;
+      }
+      resultats.forEach(q => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", q.module_id + " — " + q.lesson_id + " — Question " + q.question_order);
+        ajouterTexte(carte, "p", q.question_text);
+        [["A",q.option_a],["B",q.option_b],["C",q.option_c],["D",q.option_d]].forEach(([lettre, valeur]) =>
+          afficherChamp(carte, "Option " + lettre, valeur));
+        afficherChamp(carte, "Bonne réponse", q.correct_option);
+        if (q.explanation) afficherChamp(carte, "Explication", q.explanation);
+        afficherChamp(carte, "État", q.active ? "Active" : "Désactivée");
+
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+        const modifier = document.createElement("button");
+        modifier.type = "button";
+        modifier.textContent = "Modifier";
+        modifier.addEventListener("click", () => {
+          questionEnEdition = q.id;
+          document.getElementById("question-module").value = q.module_id;
+          document.getElementById("question-lecon").value = q.lesson_id;
+          document.getElementById("question-texte").value = q.question_text;
+          document.getElementById("option-a").value = q.option_a;
+          document.getElementById("option-b").value = q.option_b;
+          document.getElementById("option-c").value = q.option_c;
+          document.getElementById("option-d").value = q.option_d;
+          document.getElementById("bonne-reponse").value = q.correct_option;
+          document.getElementById("explication-question").value = q.explanation || "";
+          document.getElementById("question-active").checked = q.active !== false;
+          boutonEnregistrerQuestion.textContent = "Enregistrer les modifications";
+          boutonAnnulerQuestion.hidden = false;
+          formQuestion.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        actions.appendChild(modifier);
+
+        const bascule = document.createElement("button");
+        bascule.type = "button";
+        bascule.textContent = q.active ? "Désactiver" : "Activer";
+        bascule.addEventListener("click", async () => {
+          bascule.disabled = true;
+          try {
+            const { error } = await supabase.from("lesson_questions").update({ active: !q.active }).eq("id", q.id);
+            if (error) throw error;
+            await chargerQuestions();
+            messageQuestions.textContent = q.active ? "Question désactivée." : "Question activée.";
+          } catch (e) {
+            messageQuestions.textContent = "Modification impossible : " + (e.message || "erreur inconnue");
+          } finally { bascule.disabled = false; }
+        });
+        actions.appendChild(bascule);
+
+        const supprimer = document.createElement("button");
+        supprimer.type = "button";
+        supprimer.className = "bouton-supprimer";
+        supprimer.textContent = "Supprimer";
+        supprimer.addEventListener("click", async () => {
+          if (!window.confirm("Supprimer définitivement cette question ?")) return;
+          supprimer.disabled = true;
+          try {
+            const { error } = await supabase.from("lesson_questions").delete().eq("id", q.id);
+            if (error) throw error;
+            await chargerQuestions();
+            messageQuestions.textContent = "Question supprimée.";
+            if (questionEnEdition === q.id) viderFormQuestion();
+          } catch (e) {
+            messageQuestions.textContent = "Suppression impossible : " + (e.message || "erreur inconnue");
+          } finally { supprimer.disabled = false; }
+        });
+        actions.appendChild(supprimer);
+        carte.appendChild(actions);
+        listeQuestions.appendChild(carte);
+      });
+    }
+
+    async function chargerQuestions() {
+      listeQuestions.textContent = "Chargement des questions...";
+      try {
+        const { data, error } = await supabase.from("lesson_questions")
+          .select("id, course_id, module_id, lesson_id, question_order, question_text, option_a, option_b, option_c, option_d, correct_option, explanation, active, created_at")
+          .order("module_id", { ascending: true })
+          .order("lesson_id", { ascending: true })
+          .order("question_order", { ascending: true });
+        if (error) throw error;
+        questionsChargees = data || [];
+        afficherQuestions();
+      } catch (e) {
+        console.error("Chargement des questions impossible :", e);
+        listeQuestions.textContent = "Impossible de charger les questions : " + (e.message || "erreur inconnue");
+      }
+    }
+
+    formQuestion.addEventListener("submit", async event => {
+      event.preventDefault();
+      const moduleId = document.getElementById("question-module").value;
+      const lessonId = document.getElementById("question-lecon").value.trim();
+      const questionText = document.getElementById("question-texte").value.trim();
+      const payload = {
+        course_id: "informatique",
+        module_id: moduleId,
+        lesson_id: lessonId,
+        question_text: questionText,
+        option_a: document.getElementById("option-a").value.trim(),
+        option_b: document.getElementById("option-b").value.trim(),
+        option_c: document.getElementById("option-c").value.trim(),
+        option_d: document.getElementById("option-d").value.trim(),
+        correct_option: document.getElementById("bonne-reponse").value,
+        explanation: document.getElementById("explication-question").value.trim() || null,
+        active: document.getElementById("question-active").checked
+      };
+      if (!payload.question_text || !lessonId || [payload.option_a,payload.option_b,payload.option_c,payload.option_d].some(v => !v)) {
+        messageQuestions.textContent = "Renseigne l'énoncé, l'identifiant de leçon et les quatre options.";
+        return;
+      }
+      boutonEnregistrerQuestion.disabled = true;
+      try {
+        if (questionEnEdition) {
+          const { error } = await supabase.from("lesson_questions").update(payload).eq("id", questionEnEdition);
+          if (error) throw error;
+          messageQuestions.textContent = "Question mise à jour.";
+        } else {
+          const { data: existantes, error: erreurExistantes } = await supabase.from("lesson_questions")
+            .select("question_order").eq("course_id", "informatique").eq("module_id", moduleId).eq("lesson_id", lessonId)
+            .order("question_order", { ascending: false }).limit(1);
+          if (erreurExistantes) throw erreurExistantes;
+          payload.question_order = (existantes && existantes.length ? Number(existantes[0].question_order) : 0) + 1;
+          const { error } = await supabase.from("lesson_questions").insert(payload);
+          if (error) throw error;
+          messageQuestions.textContent = "Question ajoutée. Numéro d'ordre : " + payload.question_order + ".";
+        }
+        viderFormQuestion();
+        await chargerQuestions();
+      } catch (e) {
+        console.error("Enregistrement de la question impossible :", e);
+        messageQuestions.textContent = "Enregistrement impossible : " + (e.message || "erreur inconnue");
+      } finally { boutonEnregistrerQuestion.disabled = false; }
+    });
+    boutonAnnulerQuestion.addEventListener("click", viderFormQuestion);
+    document.getElementById("actualiser-questions").addEventListener("click", chargerQuestions);
+    filtreQuestionsModule.addEventListener("change", afficherQuestions);
+    rechercheQuestions.addEventListener("input", afficherQuestions);
+    await chargerQuestions();
 
 
     boutonActualiser.addEventListener(
