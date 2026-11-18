@@ -239,7 +239,6 @@
 
 /* FIN DU TABLEAU DE BORD */
 
-
     .bloc-depot-recu {
       margin-top: 20px;
       padding: 16px;
@@ -307,7 +306,7 @@
       font-size: 13px;
       font-weight: bold;
     }
-    .devis-carte {
+.devis-carte {
       border: 1px solid #d9e4ef;
       border-radius: 10px;
       padding: 17px;
@@ -418,11 +417,6 @@
   </p>
 </section>
 
-    <section class="carte">
-      <h2>Mes formations</h2>
-      <p>Découvre les cours disponibles et poursuis ton apprentissage.</p>
-      <a href="cours.html">Consulter les cours</a>
-    </section>
 <section class="carte" id="section-mes-paiements">
   <h2>Mes paiements</h2>
   <p>Consulte l'historique de tes paiements et leur statut.</p>
@@ -529,7 +523,7 @@
       <button id="actualiser-commandes-client" type="button">Actualiser mes commandes</button>
     </section>
 
-    <section class="carte" id="section-mes-devis">
+<section class="carte" id="section-mes-devis">
       <h2>Mes devis</h2>
       <p>Consulte les propositions qui te sont adressées et réponds directement depuis ton espace.</p>
       <p id="message-devis" class="message-devis" role="status" aria-live="polite">Chargement de tes devis...</p>
@@ -712,7 +706,7 @@ async function chargerMaProgression() {
         await chargerMesPaiements();
         await chargerMesRecus();
         await chargerMesCommandes();
- } catch (erreur) {
+} catch (erreur) {
         console.error(erreur);
         message.textContent = "Impossible de charger ton compte.";
         document.getElementById("message-devis").textContent =
@@ -1560,7 +1554,6 @@ const boutonActualiserPaiements =
 if (boutonActualiserPaiements) {
   boutonActualiserPaiements.addEventListener("click", chargerMesPaiements);
 }
-
 const formulaireDepotRecu = document.getElementById("form-depot-recu");
 if (formulaireDepotRecu) {
   formulaireDepotRecu.addEventListener("submit", deposerMonRecu);
@@ -1571,7 +1564,7 @@ if (boutonActualiserRecus) {
   boutonActualiserRecus.addEventListener("click", chargerMesRecus);
 }
 
-    const boutonDeconnexion = document.getElementById("deconnexion");
+const boutonDeconnexion = document.getElementById("deconnexion");
 
 if (boutonDeconnexion) {
   boutonDeconnexion.addEventListener("click", async function() {
