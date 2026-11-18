@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Formations — Les quatre modules | EDUCONNECT CI</title>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f7fb;
+  color: #222;
+  line-height: 1.8;
+  font-size: 17px;
+}
+header {
+      background: #0756a5;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+    main {
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+  margin: 25px auto;
+  padding: 20px;
+}
+    section {
+      background: white;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #00000010;
+    }
+    h2 { color: #0756a5; }
+    .btn {
+      display: inline-block;
+      background: #0756a5;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 8px 5px 8px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #e4ebf3;
+    }
+    
+#quiz-informatique fieldset {
+  color: #222;
+  background-color: #fff;
+}
+
+#quiz-informatique legend,
+#quiz-informatique label {
+  color: #222;
+}
+
+
+    .lesson-visual {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .visual-item {
+      background: #eef5fc;
+      border: 1px solid #d5e5f5;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .visual-icon { display: block; font-size: 2.2rem; margin-bottom: 6px; }
+    .visual-item strong { display: block; color: #0756a5; }
+    .tip {
+      background: #eef8f1;
+      border-left: 4px solid #27864b;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    .practice {
+      background: #fff8e8;
+      border-left: 4px solid #d99a18;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    article.module-card {
+      border: 1px solid #dce6f0;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 14px 0;
+    }
+    @media (max-width: 600px) {
+      main { padding: 12px; margin: 12px auto; }
+      section { padding: 16px; }
+    }
+
+
+    /* Contraste renforcé : texte foncé sur fond clair */
+    body, main, section, article, p, li, label, legend, span {
+      color: #222222;
+    }
+    section, article.module-card {
+      background-color: #ffffff;
+    }
+    section h2, section h3, article h3 {
+      color: #0756a5;
+    }
+    .visual-item, .tip, .practice {
+      color: #222222;
+    }
+    .visual-item span, .tip strong, .practice strong {
+      color: #222222;
+    }
+    header, header h1 {
+      color: #ffffff;
+    }
+    .btn, .btn:visited {
+      color: #ffffff;
+    }
+    #quiz-informatique fieldset,
+    #quiz-informatique legend,
+    #quiz-informatique label {
+      color: #222222;
+      background-color: #ffffff;
+    }
+.illustration-lecon {
+    width: 100%;
+    max-width: 600px;
+        margin: 24px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.illustration-lecon img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.illustration-lecon p {
+    font-size: 15px;
+    color: #555;
+    margin-top: 10px;
+    font-style: italic;
+}
+  
+.selecteur-modules{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.bouton-module{border:0;cursor:pointer;font:inherit}
+.bouton-module.actif{background:#063d78;outline:3px solid #c6def7}
+.panneau-module{margin-top:20px}
+.panneau-module[hidden]{display:none!important}
+.notice-securite{padding:12px 15px;background:#fff8e6;border-left:4px solid #d69e22;border-radius:6px}
+@media(max-width:600px){.selecteur-modules{display:grid}.bouton-module{width:100%;text-align:left}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script></head><body><header><h1>EDUCONNECT CI</h1><p>Apprendre, progresser et réussir.</p></header><main><section id="accueil-modules"><h2>Mes formations</h2><p>Choisis un module pour consulter ses leçons, réaliser les exercices et passer son quiz.</p><nav aria-label="Choix du module" class="selecteur-modules"><button aria-controls="panneau-module-1" class="btn bouton-module" data-module="module-1" type="button">Module 1 — Découverte de l’ordinateur</button><button aria-controls="panneau-module-2" class="btn bouton-module" data-module="module-2" type="button">Module 2 — Initiation à l’informatique</button><button aria-controls="panneau-module-3" class="btn bouton-module" data-module="module-3" type="button">Module 3 — Bureautique</button><button aria-controls="panneau-module-4" class="btn bouton-module" data-module="module-4" type="button">Module 4 — Internet et sécurité</button></nav></section><p class="notice-securite">Important : l’affichage par module organise la page. Avant la mise en production, l’accès aux leçons doit aussi être vérifié côté serveur selon les droits d’achat de chaque apprenant.</p><div class="panneau-module" data-panneau="module-1" id="panneau-module-1"><h2>Module 1 — Découverte de l’ordinateur</h2><section id="module-1-lecons">
+  <div id="cours-module-1" aria-live="polite">
+    Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 1.
+  </div>
+  </section><section id="quiz-module-1">
+<h2>Quiz final – Module 1 : Initiation à l'informatique</h2>
+<p>
+        Réponds aux 7 questions. Chaque bonne réponse vaut 1 point.
+        Il faut obtenir au moins 6/7 pour valider le module.
+    </p>
+<form id="quiz-module-1-form">
+<fieldset>
+<legend>1. Qu'est-ce qu'un ordinateur ?</legend>
+<label><input name="m1q1" type="radio" value="A"/> A. Une machine électronique qui traite des informations</label><br/>
+<label><input name="m1q1" type="radio" value="B"/> B. Un appareil uniquement destiné à jouer</label><br/>
+<label><input name="m1q1" type="radio" value="C"/> C. Un appareil qui fonctionne sans énergie</label><br/>
+<label><input name="m1q1" type="radio" value="D"/> D. Une machine qui sert uniquement à imprimer</label>
+</fieldset>
+<fieldset>
+<legend>2. Quels éléments constituent les principaux composants matériels d'un ordinateur ?</legend>
+<label><input name="m1q2" type="radio" value="A"/> A. Les logiciels et les applications</label><br/>
+<label><input name="m1q2" type="radio" value="B"/> B. Les fichiers et les dossiers</label><br/>
+<label><input name="m1q2" type="radio" value="C"/> C. L'unité centrale, l'écran, le clavier et la souris</label><br/>
+<label><input name="m1q2" type="radio" value="D"/> D. Internet et les réseaux sociaux</label>
+</fieldset>
+<fieldset>
+<legend>3. À quoi sert principalement le clavier ?</legend>
+<label><input name="m1q3" type="radio" value="A"/> A. À afficher les images</label><br/>
+<label><input name="m1q3" type="radio" value="B"/> B. À imprimer les documents</label><br/>
+<label><input name="m1q3" type="radio" value="C"/> C. À saisir du texte et des commandes</label><br/>
+<label><input name="m1q3" type="radio" value="D"/> D. À diffuser le son</label>
+</fieldset>
+<fieldset>
+<legend>4. Le microphone est un périphérique :</legend>
+<label><input name="m1q4" type="radio" value="A"/> A. D'entrée</label><br/>
+<label><input name="m1q4" type="radio" value="B"/> B. De sortie</label><br/>
+<label><input name="m1q4" type="radio" value="C"/> C. De stockage</label><br/>
+<label><input name="m1q4" type="radio" value="D"/> D. D'impression</label>
+</fieldset>
+<fieldset>
+<legend>5. Quel est le rôle principal du système d'exploitation ?</legend>
+<label><input name="m1q5" type="radio" value="A"/> A. Remplacer le clavier</label><br/>
+<label><input name="m1q5" type="radio" value="B"/> B. Fournir uniquement une connexion Internet</label><br/>
+<label><input name="m1q5" type="radio" value="C"/> C. Gérer les ressources de l'ordinateur et permettre l'exécution des programmes</label><br/>
+<label><input name="m1q5" type="radio" value="D"/> D. Augmenter automatiquement la mémoire</label>
+</fieldset>
+<fieldset>
+<legend>6. Pourquoi faut-il arrêter correctement son ordinateur ?</legend>
+<label><input name="m1q6" type="radio" value="A"/> A. Pour effacer tous les fichiers</label><br/>
+<label><input name="m1q6" type="radio" value="B"/> B. Pour supprimer le système d'exploitation</label><br/>
+<label><input name="m1q6" type="radio" value="C"/> C. Pour éviter les pertes de données et les problèmes du système</label><br/>
+<label><input name="m1q6" type="radio" value="D"/> D. Pour désinstaller les applications</label>
+</fieldset>
+<fieldset>
+<legend>7. Quelle est la bonne méthode pour éteindre un ordinateur ?</legend>
+<label><input name="m1q7" type="radio" value="A"/> A. Enregistrer son travail, fermer les applications puis choisir Arrêter</label><br/>
+<label><input name="m1q7" type="radio" value="B"/> B. Débrancher directement le câble électrique</label><br/>
+<label><input name="m1q7" type="radio" value="C"/> C. Retirer la batterie sans précaution</label><br/>
+<label><input name="m1q7" type="radio" value="D"/> D. Appuyer plusieurs fois sur le clavier</label>
+</fieldset>
+<button class="btn" type="submit">
+            Valider mes réponses
+        </button>
+</form>
+<div aria-live="polite" id="resultat-module-1" role="status"></div>
+</section></div><div class="panneau-module" data-panneau="module-2" id="panneau-module-2"><h2>Module 2 — Initiation à l’informatique</h2><section id="module-2-lecons">
+  <div id="cours-module-2" aria-live="polite">
+    Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 2.
+  </div>
+  </section><section id="quiz-module-2">
+<h2>Évaluation du module 2 — Windows</h2>
+<p>7 questions à choix multiples. Chaque bonne réponse vaut 1 point. Il faut obtenir au moins 6/7 pour valider le module.</p>
+<p class="tip"><strong>Évaluation :</strong> tes réponses sont transmises à Supabase pour une correction sécurisée. La validation officielle dépend du résultat enregistré par le serveur.</p>
+<form id="quiz-module-2-form">
+<fieldset><legend>1. Quel est le rôle principal d’un système d’exploitation comme Windows ?</legend>
+<label><input name="m2q1" type="radio" value="A"/> Gérer le fonctionnement de l’ordinateur et ses ressources</label><br/>
+<label><input name="m2q1" type="radio" value="B"/> Remplacer tous les logiciels installés</label><br/>
+<label><input name="m2q1" type="radio" value="C"/> Créer automatiquement tous les documents</label><br/>
+<label><input name="m2q1" type="radio" value="D"/> Augmenter physiquement la mémoire</label>
+</fieldset>
+<fieldset><legend>2. Quel raccourci ouvre directement les paramètres Windows ?</legend>
+<label><input name="m2q2" type="radio" value="A"/> Windows + E</label><br/>
+<label><input name="m2q2" type="radio" value="B"/> Windows + I</label><br/>
+<label><input name="m2q2" type="radio" value="C"/> Ctrl + C</label><br/>
+<label><input name="m2q2" type="radio" value="D"/> Alt + Tab</label>
+</fieldset>
+<fieldset><legend>3. À quoi sert principalement l’Explorateur de fichiers ?</legend>
+<label><input name="m2q3" type="radio" value="A"/> Protéger automatiquement le réseau Wi-Fi</label><br/>
+<label><input name="m2q3" type="radio" value="B"/> Créer des comptes utilisateurs en ligne</label><br/>
+<label><input name="m2q3" type="radio" value="C"/> Organiser et gérer les fichiers et les dossiers</label><br/>
+<label><input name="m2q3" type="radio" value="D"/> Installer obligatoirement tous les pilotes</label>
+</fieldset>
+<fieldset><legend>4. Quel raccourci permet de copier un fichier sélectionné ?</legend>
+<label><input name="m2q4" type="radio" value="A"/> Ctrl + X</label><br/>
+<label><input name="m2q4" type="radio" value="B"/> Ctrl + V</label><br/>
+<label><input name="m2q4" type="radio" value="C"/> Ctrl + A</label><br/>
+<label><input name="m2q4" type="radio" value="D"/> Ctrl + C</label>
+</fieldset>
+<fieldset><legend>5. Quel raccourci permet de passer d’une application ouverte à une autre ?</legend>
+<label><input name="m2q5" type="radio" value="A"/> Alt + Tab</label><br/>
+<label><input name="m2q5" type="radio" value="B"/> Windows + E</label><br/>
+<label><input name="m2q5" type="radio" value="C"/> Windows + I</label><br/>
+<label><input name="m2q5" type="radio" value="D"/> F2</label>
+</fieldset>
+<fieldset><legend>6. Quel est l’intérêt principal d’une sauvegarde de fichiers ?</legend>
+<label><input name="m2q6" type="radio" value="A"/> Augmenter la vitesse du processeur</label><br/>
+<label><input name="m2q6" type="radio" value="B"/> Conserver une copie pour récupérer ses données en cas de perte</label><br/>
+<label><input name="m2q6" type="radio" value="C"/> Supprimer automatiquement les virus</label><br/>
+<label><input name="m2q6" type="radio" value="D"/> Remplacer les mises à jour Windows</label>
+</fieldset>
+<fieldset><legend>7. Un courriel inattendu demande ton mot de passe via un lien. Quelle est la meilleure réaction ?</legend>
+<label><input name="m2q7" type="radio" value="A"/> Cliquer immédiatement</label><br/>
+<label><input name="m2q7" type="radio" value="B"/> Transmettre le mot de passe à l’expéditeur</label><br/>
+<label><input name="m2q7" type="radio" value="C"/> Ne pas cliquer et vérifier la demande par un canal officiel</label><br/>
+<label><input name="m2q7" type="radio" value="D"/> Télécharger toutes les pièces jointes</label>
+</fieldset>
+<button class="btn" type="submit">Valider mes réponses</button>
+</form>
+<div id="resultat-module-2" role="status"></div>
+</section></div><div class="panneau-module" data-panneau="module-3" id="panneau-module-3"><h2>Module 3 — Bureautique</h2><section id="module-3">
+<div id="cours-module-3" aria-live="polite">Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module-3.</div>
+<div class="quiz-final" id="quiz-module-3">
+<h2>Évaluation finale – Module 3 : Bureautique</h2>
+<p>
+        Réponds aux 7 questions suivantes pour valider tes connaissances.
+        Chaque bonne réponse vaut 1 point.
+        Il faut obtenir au moins 6/7 pour réussir.
+    </p>
+<form id="form-quiz-module-3">
+<div class="question-quiz">
+<h3>Question 1 : À quoi sert principalement Microsoft Word ?</h3>
+<label><input name="q1" type="radio" value="A"/> A. À créer des calculs</label>
+<label><input name="q1" type="radio" value="B"/> B. À créer des présentations</label>
+<label><input name="q1" type="radio" value="C"/> C. À rédiger et mettre en forme des documents</label>
+<label><input name="q1" type="radio" value="D"/> D. À naviguer sur Internet</label>
+</div>
+<div class="question-quiz">
+<h3>Question 2 : Quel raccourci permet d'enregistrer un document ?</h3>
+<label><input name="q2" type="radio" value="A"/> A. Ctrl + P</label>
+<label><input name="q2" type="radio" value="B"/> B. Ctrl + S</label>
+<label><input name="q2" type="radio" value="C"/> C. Ctrl + C</label>
+<label><input name="q2" type="radio" value="D"/> D. Ctrl + V</label>
+</div>
+<div class="question-quiz">
+<h3>Question 3 : À quoi servent les marges dans un document Word ?</h3>
+<label><input name="q3" type="radio" value="A"/> A. À changer la couleur du texte</label>
+<label><input name="q3" type="radio" value="B"/> B. À insérer une image</label>
+<label><input name="q3" type="radio" value="C"/> C. À définir les espaces autour du contenu de la page</label>
+<label><input name="q3" type="radio" value="D"/> D. À supprimer le document</label>
+</div>
+<div class="question-quiz">
+<h3>Question 4 : Dans Excel, comment appelle-t-on l'intersection d'une ligne et d'une colonne ?</h3>
+<label><input name="q4" type="radio" value="A"/> A. Une cellule</label>
+<label><input name="q4" type="radio" value="B"/> B. Une feuille</label>
+<label><input name="q4" type="radio" value="C"/> C. Un classeur</label>
+<label><input name="q4" type="radio" value="D"/> D. Un paragraphe</label>
+</div>
+<div class="question-quiz">
+<h3>Question 5 : Quelle formule permet d'additionner plusieurs cellules dans Excel ?</h3>
+<label><input name="q5" type="radio" value="A"/> A. =MOYENNE()</label>
+<label><input name="q5" type="radio" value="B"/> B. =MAX()</label>
+<label><input name="q5" type="radio" value="C"/> C. =SOMME()</label>
+<label><input name="q5" type="radio" value="D"/> D. =MIN()</label>
+</div>
+<div class="question-quiz">
+<h3>Question 6 : À quoi sert principalement Microsoft PowerPoint ?</h3>
+<label><input name="q6" type="radio" value="A"/> A. À gérer une base de données</label>
+<label><input name="q6" type="radio" value="B"/> B. À créer des présentations sous forme de diapositives</label>
+<label><input name="q6" type="radio" value="C"/> C. À rédiger des lettres uniquement</label>
+<label><input name="q6" type="radio" value="D"/> D. À effectuer des calculs</label>
+</div>
+<div class="question-quiz">
+<h3>Question 7 : Quelle touche permet de lancer un diaporama PowerPoint depuis le début ?</h3>
+<label><input name="q7" type="radio" value="A"/> A. F2</label>
+<label><input name="q7" type="radio" value="B"/> B. F5</label>
+<label><input name="q7" type="radio" value="C"/> C. F7</label>
+<label><input name="q7" type="radio" value="D"/> D. F12</label>
+</div>
+<button type="submit">Soumettre mes réponses</button>
+<p id="resultat-quiz-module-3"></p>
+</form>
+</div>
+</article>
+</div>
+</section></div><div class="panneau-module" data-panneau="module-4" id="panneau-module-4"><h2>Module 4 — Internet et sécurité</h2><section id="module-4">
+<div id="cours-module-4" aria-live="polite">Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module-4.</div>
+<div class="quiz-final" id="quiz-module-4">
+<h2>Évaluation finale – Module 4 : Internet et sécurité</h2>
+<p>
+    Réponds aux 7 questions suivantes pour valider tes connaissances.
+    Chaque bonne réponse vaut 1 point. Il faut obtenir au moins 6/7
+    pour réussir.
+  </p>
+<form id="form-quiz-module-4">
+<div class="question-quiz">
+<h3>Question 1 : Quelle est la différence entre Internet et le Web ?</h3>
+<label><input name="q1" type="radio" value="A"/> A. Internet et le Web sont exactement la même chose.</label>
+<label><input name="q1" type="radio" value="B"/> B. Le Web est un ordinateur connecté à Internet.</label>
+<label><input name="q1" type="radio" value="C"/> C. Internet est un réseau mondial et le Web est un service qui fonctionne grâce à lui.</label>
+<label><input name="q1" type="radio" value="D"/> D. Internet sert uniquement à envoyer des e-mails.</label>
+</div>
+<div class="question-quiz">
+<h3>Question 2 : Quel est le rôle principal d'un navigateur Internet ?</h3>
+<label><input name="q2" type="radio" value="A"/> A. Créer des mots de passe automatiquement.</label>
+<label><input name="q2" type="radio" value="B"/> B. Permettre de consulter des sites et des pages Web.</label>
+<label><input name="q2" type="radio" value="C"/> C. Réparer un ordinateur.</label>
+<label><input name="q2" type="radio" value="D"/> D. Remplacer une connexion Internet.</label>
+</div>
+<div class="question-quiz">
+<h3>Question 3 : Comment améliorer la qualité d'une recherche sur Internet ?</h3>
+<label><input name="q3" type="radio" value="A"/> A. Cliquer sur le premier résultat sans le vérifier.</label>
+<label><input name="q3" type="radio" value="B"/> B. Utiliser uniquement des mots très généraux.</label>
+<label><input name="q3" type="radio" value="C"/> C. Ouvrir tous les liens proposés.</label>
+<label><input name="q3" type="radio" value="D"/> D. Utiliser des mots-clés précis et vérifier les sources.</label>
+</div>
+<div class="question-quiz">
+<h3>Question 4 : Que représente le symbole @ dans une adresse e-mail ?</h3>
+<label><input name="q4" type="radio" value="A"/> A. Il sépare le nom d'utilisateur du nom de domaine.</label>
+<label><input name="q4" type="radio" value="B"/> B. Il indique le mot de passe.</label>
+<label><input name="q4" type="radio" value="C"/> C. Il remplace le nom de domaine.</label>
+<label><input name="q4" type="radio" value="D"/> D. Il indique la date de création du compte.</label>
+</div>
+<div class="question-quiz">
+<h3>Question 5 : Quelle est une bonne pratique sur les réseaux sociaux ?</h3>
+<label><input name="q5" type="radio" value="A"/> A. Publier toutes ses informations personnelles.</label>
+<label><input name="q5" type="radio" value="B"/> B. Accepter toutes les demandes de contact.</label>
+<label><input name="q5" type="radio" value="C"/> C. Vérifier les paramètres de confidentialité avant de partager des informations.</label>
+<label><input name="q5" type="radio" value="D"/> D. Partager toutes les informations reçues sans vérification.</label>
+</div>
+<div class="question-quiz">
+<h3>Question 6 : Quelle caractéristique correspond à un mot de passe solide ?</h3>
+<label><input name="q6" type="radio" value="A"/> A. Utiliser uniquement sa date de naissance.</label>
+<label><input name="q6" type="radio" value="B"/> B. Utiliser un mot de passe long, difficile à deviner et unique pour chaque compte.</label>
+<label><input name="q6" type="radio" value="C"/> C. Utiliser le mot « 123456 ».</label>
+<label><input name="q6" type="radio" value="D"/> D. Utiliser le même mot de passe partout.</label>
+</div>
+<div class="question-quiz">
+<h3>Question 7 : Que faut-il faire lorsqu'on reçoit un message suspect demandant son mot de passe ?</h3>
+<label><input name="q7" type="radio" value="A"/> A. Cliquer immédiatement sur le lien.</label>
+<label><input name="q7" type="radio" value="B"/> B. Envoyer son mot de passe à l'expéditeur.</label>
+<label><input name="q7" type="radio" value="C"/> C. Transférer le message à tous ses contacts.</label>
+<label><input name="q7" type="radio" value="D"/> D. Ne pas cliquer, ne rien communiquer et vérifier par un canal officiel.</label>
+</div>
+<button type="submit">Soumettre mes réponses</button>
+<p id="resultat-quiz-module-4"></p>
+</form>
+</div>
+</div>
+</article>
+</section></div></main><footer><p>© 2026 EDUCONNECT CI — Tous droits réservés.</p></footer><script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formulaireModule1 = document.getElementById("quiz-module-1-form");
+  const resultatModule1 = document.getElementById("resultat-module-1");
+  const supabaseModule1 = window.eduSupabase;
+
+  if (!formulaireModule1 || !resultatModule1 || !supabaseModule1) {
+    console.error("Quiz du module 1 ou connexion Supabase introuvable.");
+    return;
+  }
+
+  formulaireModule1.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    resultatModule1.textContent = "Vérification de tes réponses...";
+
+    try {
+      const reponsesModule1 = [];
+
+      for (let i = 1; i <= 7; i++) {
+        const choix = formulaireModule1.querySelector(
+          'input[name="m1q' + i + '"]:checked'
+        );
+
+        if (!choix) {
+          resultatModule1.textContent =
+            "Réponds aux 7 questions avant de valider.";
+          return;
+        }
+
+        reponsesModule1.push(choix.value);
+      }
+
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabaseModule1.auth.getUser();
+
+      if (erreurUtilisateur || !utilisateur.user) {
+        resultatModule1.textContent =
+          "Connecte-toi à ton compte avant de passer le questionnaire.";
+        return;
+      }
+
+      const { data: tentativeId, error: erreurDemarrage } =
+        await supabaseModule1.rpc("demarrer_quiz_module", {
+          p_module_id: "module-1"
+        });
+
+      if (erreurDemarrage || !tentativeId) {
+      console.error(
+  "DÉTAIL ERREUR QUIZ :",
+  JSON.stringify(erreurDemarrage, null, 2)
+);
+        resultatModule1.textContent =
+          "Impossible de démarrer le questionnaire. Vérifie que ton accès est autorisé.";
+        return;
+      }
+
+      const parametresModule1 = {
+        p_tentative_id: tentativeId
+      };
+
+      reponsesModule1.forEach((reponse, index) => {
+        parametresModule1["p_reponse_q" + (index + 1)] = reponse;
+      });
+
+      const { data, error } = await supabaseModule1.rpc(
+        "soumettre_quiz_module",
+        parametresModule1
+      );
+
+      if (error) {
+        console.error("Erreur de soumission :", error);
+        resultatModule1.textContent =
+          "Une erreur est survenue pendant la validation. Réessaie.";
+        return;
+      }
+
+      const resultatServeur = Array.isArray(data) ? data[0] : data;
+
+      if (!resultatServeur) {
+        resultatModule1.textContent =
+          "Aucun résultat n'a été retourné par le serveur.";
+        return;
+      }
+
+      resultatModule1.textContent =
+        "Résultat : " + resultatServeur.score + "/7. " +
+        resultatServeur.message;
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      resultatModule1.textContent =
+        "Une erreur inattendue est survenue. Réessaie.";
+    }
+
+  });
+
+});
+</script><script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formulaire = document.getElementById("quiz-module-2-form");
+  const resultat = document.getElementById("resultat-module-2");
+  const supabase = window.eduSupabase;
+
+  if (!formulaire || !resultat || !supabase) {
+    console.error("Formulaire ou connexion Supabase introuvable.");
+    return;
+  }
+
+  formulaire.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    resultat.textContent = "Vérification de tes réponses...";
+
+    try {
+
+      const reponses = [];
+
+      for (let i = 1; i <= 7; i++) {
+        const choix = formulaire.querySelector(
+          'input[name="m2q' + i + '"]:checked'
+        );
+
+        if (!choix) {
+          resultat.textContent =
+            "Réponds aux 7 questions avant de valider.";
+          return;
+        }
+
+        reponses.push(choix.value);
+      }
+
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabase.auth.getUser();
+
+      if (erreurUtilisateur || !utilisateur.user) {
+        resultat.textContent =
+          "Connecte-toi à ton compte avant de passer le questionnaire.";
+        return;
+      }
+
+      const { data: tentativeId, error: erreurDemarrage } =
+        await supabase.rpc("demarrer_quiz_module", {
+          p_module_id: "module-2"
+        });
+
+      if (erreurDemarrage || !tentativeId) {
+        console.error("DÉTAIL ERREUR QUIZ :", {
+  message: erreurDemarrage?.message,
+  code: erreurDemarrage?.code,
+  details: erreurDemarrage?.details,
+  hint: erreurDemarrage?.hint
+});
+        resultat.textContent =
+          "Impossible de démarrer le questionnaire. Vérifie que tu es connecté et que ton accès à ce module est autorisé.";
+        return;
+      }
+
+      const parametres = {
+        p_tentative_id: tentativeId
+      };
+
+      reponses.forEach((reponse, index) => {
+        parametres["p_reponse_q" + (index + 1)] = reponse;
+      });
+
+      const { data, error } = await supabase.rpc(
+        "soumettre_quiz_module",
+        parametres
+      );
+
+      if (error) {
+        console.error("Erreur de soumission :", error);
+        resultat.textContent =
+          "Une erreur est survenue pendant la validation. Réessaie.";
+        return;
+      }
+
+      const resultatServeur = Array.isArray(data) ? data[0] : data;
+
+      if (!resultatServeur) {
+        resultat.textContent =
+          "Aucun résultat n'a été retourné par le serveur.";
+        return;
+      }
+
+      resultat.textContent =
+        "Résultat : " + resultatServeur.score + "/7. " +
+        resultatServeur.message;
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      resultat.textContent =
+        "Une erreur inattendue est survenue. Réessaie.";
+    }
+
+  });
+
+});
+</script><script>
+document.addEventListener("DOMContentLoaded", function () {
+    const formulaire = document.getElementById("form-quiz-module-3");
+    const resultat = document.getElementById("resultat-quiz-module-3");
+
+    if (!formulaire || !resultat) {
+        console.error("Formulaire du quiz Module 3 introuvable.");
+        return;
+    }
+
+    formulaire.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const bouton = formulaire.querySelector('button[type="submit"]');
+
+        const reponses = {};
+
+        for (let i = 1; i <= 7; i++) {
+            const choix = formulaire.querySelector(
+                'input[name="q' + i + '"]:checked'
+            );
+
+            if (!choix) {
+                resultat.textContent =
+                    "Veuillez répondre aux 7 questions avant de soumettre.";
+                return;
+            }
+
+            reponses["p_reponse_q" + i] = choix.value;
+        }
+
+        bouton.disabled = true;
+        bouton.textContent = "Correction en cours...";
+        resultat.textContent = "Envoi sécurisé de vos réponses...";
+
+        try {
+            const { data: tentative, error: erreurDemarrage } =
+                await window.eduSupabase.rpc("demarrer_quiz_module", {
+                    p_module_id: "module-3"
+                });
+
+            if (erreurDemarrage) {
+                throw erreurDemarrage;
+            }
+
+            const tentativeId =
+                typeof tentative === "string"
+                    ? tentative
+                    : tentative?.data || tentative?.tentative_id || tentative?.id;
+
+            if (!tentativeId) {
+                throw new Error("Identifiant de tentative introuvable.");
+            }
+
+            const { data, error } = await window.eduSupabase.rpc(
+                "soumettre_quiz_module",
+                {
+                    p_tentative_id: tentativeId,
+                    ...reponses
+                }
+            );
+
+            if (error) {
+                throw error;
+            }
+
+            const resultatQuiz =
+                data?.data && typeof data.data === "object"
+                    ? data.data
+                    : data;
+
+            if (resultatQuiz?.success === false) {
+                throw new Error(
+                    resultatQuiz.message || "La correction a échoué."
+                );
+            }
+
+            resultat.textContent =
+                resultatQuiz?.message ||
+                "Vos réponses ont été transmises et corrigées par EDUCONNECT CI. Résultat : " +
+                JSON.stringify(resultatQuiz);
+
+            resultat.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        } catch (erreur) {
+            console.error("Erreur du quiz Module 3 :", erreur);
+
+            resultat.textContent =
+                "Une erreur est survenue : " +
+                (erreur.message || "Veuillez réessayer.");
+
+            bouton.disabled = false;
+            bouton.textContent = "Soumettre mes réponses";
+        }
+    });
+});
+</script><script>
+document.addEventListener("DOMContentLoaded", () => {
+    const formulaire = document.getElementById("form-quiz-module-4");
+    const resultat = document.getElementById("resultat-quiz-module-4");
+
+    if (!formulaire || !resultat) {
+        console.error("Formulaire ou zone de résultat du module 4 introuvable.");
+        return;
+    }
+
+    formulaire.addEventListener("submit", async (evenement) => {
+        evenement.preventDefault();
+
+        const bouton = formulaire.querySelector('button[type="submit"]');
+        const reponses = {};
+
+        for (let i = 1; i <= 7; i++) {
+            const choix = formulaire.querySelector(`input[name="q${i}"]:checked`);
+
+            if (!choix) {
+                resultat.textContent = "Veuillez répondre aux 7 questions avant de valider.";
+                return;
+            }
+
+            reponses[`p_reponse_q${i}`] = choix.value;
+        }
+
+        if (bouton) {
+            bouton.disabled = true;
+            bouton.textContent = "Correction en cours...";
+        }
+
+        resultat.textContent = "Enregistrement de vos réponses...";
+
+        try {
+            const supabase = window.eduSupabase;
+
+            if (!supabase) {
+                throw new Error("La connexion à Supabase est indisponible.");
+            }
+
+            const { data: tentative, error: erreurDemarrage } =
+                await supabase.rpc("demarrer_quiz_module", {
+                    p_module_id: "module-4"
+                });
+
+            if (erreurDemarrage) throw erreurDemarrage;
+
+            const tentativeId =
+                typeof tentative === "string"
+                    ? tentative
+                    : tentative?.id || tentative?.tentative_id;
+
+            if (!tentativeId) {
+                throw new Error("Impossible de récupérer l'identifiant de la tentative.");
+            }
+
+            const { data, error } = await supabase.rpc("soumettre_quiz_module", {
+                p_tentative_id: tentativeId,
+                ...reponses
+            });
+
+            if (error) throw error;
+
+            const correction = Array.isArray(data) ? data[0] : data;
+
+            if (!correction) {
+                throw new Error("Aucun résultat de correction reçu.");
+            }
+
+            resultat.textContent =
+                `${correction.message || "Correction terminée."} ` +
+                `Score : ${correction.score}/7.`;
+
+            if (correction.completed) {
+                resultat.textContent += " Module 4 validé !";
+            }
+
+        } catch (erreur) {
+            console.error("Erreur quiz module 4 :", erreur);
+            resultat.textContent =
+                "Une erreur est survenue : " + erreur.message;
+        } finally {
+            if (bouton) {
+                bouton.disabled = false;
+                bouton.textContent = "Valider mes réponses";
+            }
+        }
+    });
+});
+</script><script>
+// Chargement sécurisé des cours depuis le bucket privé Supabase.
+(function () {
+  const modulesCharges = new Set();
+  const modulesEnCours = new Set();
+
+  async function chargerCoursPrive(moduleId) {
+    const zone = document.getElementById("cours-" + moduleId);
+    const supabase = window.eduSupabase;
+    if (!zone || modulesCharges.has(moduleId) || modulesEnCours.has(moduleId)) return;
+    if (!supabase) {
+      zone.textContent = "La connexion à Supabase est indisponible. Réessaie plus tard.";
+      return;
+    }
+
+    modulesEnCours.add(moduleId);
+    zone.textContent = "Vérification de ton accès au cours...";
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !sessionData?.user) {
+        zone.textContent = "Connecte-toi à ton compte pour consulter ce cours.";
+        return;
+      }
+
+      const stockage = supabase.storage.from("cours-prives");
+      const cheminCours = moduleId + "/" + moduleId + ".html";
+      const { data: fichier, error: fichierError } = await stockage.download(cheminCours);
+      if (fichierError || !fichier) {
+        console.error("Chargement refusé ou impossible pour " + moduleId + " :", fichierError);
+        zone.textContent = "Ton accès à ce module n'est pas autorisé ou le cours est momentanément indisponible.";
+        return;
+      }
+
+      const html = await fichier.text();
+      const documentCours = new DOMParser().parseFromString(html, "text/html");
+      const contenu = documentCours.body;
+      if (!contenu) throw new Error("Le fichier du cours ne contient pas de corps HTML.");
+
+      // Ne pas exécuter de scripts fournis dans le fichier du cours.
+      contenu.querySelectorAll("script").forEach((script) => script.remove());
+
+      documentCours.querySelectorAll("style").forEach((styleSource) => {
+        const style = document.createElement("style");
+        style.textContent = styleSource.textContent;
+        style.dataset.modulePrive = moduleId;
+        document.head.appendChild(style);
+      });
+
+      // Les illustrations du bucket privé sont servies par URL signée temporaire.
+      const images = Array.from(contenu.querySelectorAll("img[src]"));
+      for (const image of images) {
+        const cheminImage = image.getAttribute("src");
+        if (!cheminImage || /^(https?:|data:|blob:)/i.test(cheminImage)) continue;
+        const cheminNettoye = cheminImage.replace(/^\.\//, "").replace(/^\/+/, "");
+        const cheminStockage = moduleId + "/" + cheminNettoye;
+        const { data: urlSignee, error: imageError } = await stockage.createSignedUrl(cheminStockage, 3600);
+        if (imageError || !urlSignee?.signedUrl) {
+          throw new Error("Impossible de charger une illustration : " + cheminNettoye);
+        }
+        image.src = urlSignee.signedUrl;
+      }
+
+      zone.replaceChildren(...Array.from(contenu.childNodes));
+      modulesCharges.add(moduleId);
+    } catch (erreur) {
+      console.error("Erreur de chargement de " + moduleId + " :", erreur);
+      zone.textContent = "Le cours n'a pas pu être chargé. Vérifie ta connexion puis réessaie.";
+    } finally {
+      modulesEnCours.delete(moduleId);
+    }
+  }
+
+  ["module-1", "module-2", "module-3", "module-4"].forEach((moduleId) => {
+    window["chargerCours" + moduleId.replace("-", "").replace(/^module/, "Module")] = () => chargerCoursPrive(moduleId);
+  });
+  window.chargerCoursModule1 = () => chargerCoursPrive("module-1");
+  window.chargerCoursModule2 = () => chargerCoursPrive("module-2");
+  window.chargerCoursModule3 = () => chargerCoursPrive("module-3");
+  window.chargerCoursModule4 = () => chargerCoursPrive("module-4");
+})();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+  const boutons = document.querySelectorAll(".bouton-module");
+  const panneaux = document.querySelectorAll(".panneau-module");
+
+  // Masquer les contenus immédiatement : aucun cours ne doit apparaître
+  // avant la vérification de la session Supabase.
+  panneaux.forEach(function (panneau) {
+    panneau.hidden = true;
+  });
+
+  const supabase = window.eduSupabase;
+  if (!supabase) {
+    console.error("Supabase n'est pas initialisé.");
+    window.location.replace("connexion.html");
+    return;
+  }
+
+  try {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+    if (sessionError || !sessionData?.user) {
+      const retour = window.location.pathname + window.location.search;
+      window.location.replace("connexion.html?redirect=" + encodeURIComponent(retour));
+      return;
+    }
+  } catch (erreur) {
+    console.error("Vérification de la session impossible :", erreur);
+    window.location.replace("connexion.html");
+    return;
+  }
+
+  function afficherModule(id) {
+    panneaux.forEach(function (panneau) {
+      panneau.hidden = panneau.dataset.panneau !== id;
+    });
+
+    boutons.forEach(function (bouton) {
+      const actif = bouton.dataset.module === id;
+      bouton.classList.toggle("actif", actif);
+      bouton.setAttribute("aria-pressed", actif ? "true" : "false");
+    });
+
+    const cible = document.getElementById("panneau-" + id);
+    if (id === "module-1" && typeof window.chargerCoursModule1 === "function") {
+      window.chargerCoursModule1();
+    }
+    const chargeur = window["chargerCours" + id.replace("-", "").replace(/^module/, "Module")];
+    if (typeof chargeur === "function") chargeur();
+    if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  boutons.forEach(function (bouton) {
+    bouton.addEventListener("click", function () {
+      afficherModule(bouton.dataset.module);
+    });
+  });
+
+  const parametres = new URLSearchParams(window.location.search);
+  const moduleDemande = parametres.get("module");
+  const modulesConnus = ["module-1", "module-2", "module-3", "module-4"];
+
+  afficherModule(modulesConnus.includes(moduleDemande) ? moduleDemande : "module-1");
+});
+</script>
+</body>
+</html>

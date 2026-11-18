@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+
+<html class="auth-verification" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Formations — Les quatre modules | EDUCONNECT CI</title>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f4f7fb;
+  color: #222;
+  line-height: 1.8;
+  font-size: 17px;
+}
+header {
+      background: #0756a5;
+      color: white;
+      text-align: center;
+      padding: 25px 15px;
+    }
+    main {
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+  margin: 25px auto;
+  padding: 20px;
+}
+    section {
+      background: white;
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px #00000010;
+    }
+    h2 { color: #0756a5; }
+    .btn {
+      display: inline-block;
+      background: #0756a5;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 6px;
+      text-decoration: none;
+      margin: 8px 5px 8px 0;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #e4ebf3;
+    }
+    
+#quiz-informatique fieldset {
+  color: #222;
+  background-color: #fff;
+}
+
+#quiz-informatique legend,
+#quiz-informatique label {
+  color: #222;
+}
+
+
+    .lesson-visual {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .visual-item {
+      background: #eef5fc;
+      border: 1px solid #d5e5f5;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .visual-icon { display: block; font-size: 2.2rem; margin-bottom: 6px; }
+    .visual-item strong { display: block; color: #0756a5; }
+    .tip {
+      background: #eef8f1;
+      border-left: 4px solid #27864b;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    .practice {
+      background: #fff8e8;
+      border-left: 4px solid #d99a18;
+      padding: 12px 15px;
+      border-radius: 6px;
+      margin: 15px 0;
+    }
+    article.module-card {
+      border: 1px solid #dce6f0;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 14px 0;
+    }
+    @media (max-width: 600px) {
+      main { padding: 12px; margin: 12px auto; }
+      section { padding: 16px; }
+    }
+
+
+    /* Contraste renforcé : texte foncé sur fond clair */
+    body, main, section, article, p, li, label, legend, span {
+      color: #222222;
+    }
+    section, article.module-card {
+      background-color: #ffffff;
+    }
+    section h2, section h3, article h3 {
+      color: #0756a5;
+    }
+    .visual-item, .tip, .practice {
+      color: #222222;
+    }
+    .visual-item span, .tip strong, .practice strong {
+      color: #222222;
+    }
+    header, header h1 {
+      color: #ffffff;
+    }
+    .btn, .btn:visited {
+      color: #ffffff;
+    }
+    #quiz-informatique fieldset,
+    #quiz-informatique legend,
+    #quiz-informatique label {
+      color: #222222;
+      background-color: #ffffff;
+    }
+.illustration-lecon {
+    width: 100%;
+    max-width: 600px;
+        margin: 24px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.illustration-lecon img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+.illustration-lecon p {
+    font-size: 15px;
+    color: #555;
+    margin-top: 10px;
+    font-style: italic;
+}
+  
+.selecteur-modules{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.bouton-module{border:0;cursor:pointer;font:inherit}
+.bouton-module.actif{background:#063d78;outline:3px solid #c6def7}
+.panneau-module{margin-top:20px}
+.panneau-module[hidden]{display:none!important}
+.notice-securite{padding:12px 15px;background:#fff8e6;border-left:4px solid #d69e22;border-radius:6px}
+@media(max-width:600px){.selecteur-modules{display:grid}.bouton-module{width:100%;text-align:left}}
+
+/* Formulaire de remise des travaux pratiques */
+.formulaire-depot-lecon {
+  margin: 18px 0 24px;
+  padding: 16px;
+  background: #f0f6ff;
+  border: 1px solid #b8d2ef;
+  border-left: 4px solid #0756a5;
+  border-radius: 8px;
+}
+.formulaire-depot-lecon h4 { color: #0756a5; margin-top: 0; }
+.formulaire-depot-lecon input[type="file"] { display: block; max-width: 100%; margin: 10px 0; }
+.formulaire-depot-lecon .statut-depot-lecon { font-weight: 600; }
+.retour-correction-lecon {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #d5e1ee;
+}
+.retour-correction-lecon[data-etat="approved"] { border-left: 4px solid #27864b; }
+.retour-correction-lecon[data-etat="rejected"] { border-left: 4px solid #c0392b; }
+.retour-correction-lecon[data-etat="pending"] { border-left: 4px solid #d99a18; }
+
+
+/* Masquer les cours tant que la session apprenant n'est pas vérifiée */
+html.auth-verification body { visibility: hidden; }
+
+/* Évaluations individuelles des leçons des modules 1 et 2 */
+.evaluation-lecon {
+  margin: 18px 0 24px;
+  padding: 16px;
+  background: #f7faff;
+  border: 1px solid #c8d9ed;
+  border-left: 4px solid #27864b;
+  border-radius: 8px;
+}
+.evaluation-lecon h4 { color: #0756a5; margin-top: 0; }
+.evaluation-lecon fieldset {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #d5e1ee;
+  border-radius: 6px;
+  background: #fff;
+}
+.evaluation-lecon label { display: block; margin: 7px 0; }
+.evaluation-lecon .statut-evaluation { font-weight: 600; }
+.evaluation-lecon button:disabled { opacity: .65; cursor: wait; }
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script>
+<script>
+/* Protection globale : aucun contenu de cours n'est affiché sans session apprenant. */
+(async function verifierConnexionApprenant() {
+  const pageConnexion = new URL("connexion.html", window.location.href).href;
+  try {
+    const client = window.eduSupabase;
+    if (!client || !client.auth) {
+      window.location.replace(pageConnexion);
+      return;
+    }
+    const { data, error } = await client.auth.getUser();
+    if (error || !data || !data.user) {
+      window.location.replace(pageConnexion);
+      return;
+    }
+    document.documentElement.classList.remove("auth-verification");
+  } catch (erreur) {
+    console.error("Vérification de la session apprenant impossible :", erreur);
+    window.location.replace(pageConnexion);
+  }
+})();
+</script></head><body><header><h1>EDUCONNECT CI</h1><p>Apprendre, progresser et réussir.</p></header><main><section id="accueil-modules"><h2>Mes formations</h2><p>Choisis un module pour consulter ses leçons, réaliser les exercices et passer son quiz.</p><nav aria-label="Choix du module" class="selecteur-modules"><button aria-controls="panneau-module-1" class="btn bouton-module" data-module="module-1" type="button">Module 1 — Découverte de l’ordinateur</button><button aria-controls="panneau-module-2" class="btn bouton-module" data-module="module-2" type="button">Module 2 — Initiation à l’informatique</button><button aria-controls="panneau-module-3" class="btn bouton-module" data-module="module-3" type="button">Module 3 — Bureautique</button><button aria-controls="panneau-module-4" class="btn bouton-module" data-module="module-4" type="button">Module 4 — Internet et sécurité</button></nav></section><p class="notice-securite">Important : l’affichage par module organise la page. Avant la mise en production, l’accès aux leçons doit aussi être vérifié côté serveur selon les droits d’achat de chaque apprenant.</p><div class="panneau-module" data-panneau="module-1" id="panneau-module-1"><h2>Module 1 — Découverte de l’ordinateur</h2><section id="module-1-lecons">
+<div aria-live="polite" id="cours-module-1">
+    Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 1.
+  </div>
+</section><section id="quiz-module-1">
+<h2>Quiz final – Module 1 : Initiation à l'informatique</h2>
+<p>
+        Réponds aux 7 questions. Chaque bonne réponse vaut 1 point.
+        Il faut obtenir au moins 6/7 pour valider le module.
+    </p>
+<form id="quiz-module-1-form">
+<fieldset>
+<legend>1. Qu'est-ce qu'un ordinateur ?</legend>
+<label><input name="m1q1" type="radio" value="A"/> A. Une machine électronique qui traite des informations</label><br/>
+<label><input name="m1q1" type="radio" value="B"/> B. Un appareil uniquement destiné à jouer</label><br/>
+<label><input name="m1q1" type="radio" value="C"/> C. Un appareil qui fonctionne sans énergie</label><br/>
+<label><input name="m1q1" type="radio" value="D"/> D. Une machine qui sert uniquement à imprimer</label>
+</fieldset>
+<fieldset>
+<legend>2. Quels éléments constituent les principaux composants matériels d'un ordinateur ?</legend>
+<label><input name="m1q2" type="radio" value="A"/> A. Les logiciels et les applications</label><br/>
+<label><input name="m1q2" type="radio" value="B"/> B. Les fichiers et les dossiers</label><br/>
+<label><input name="m1q2" type="radio" value="C"/> C. L'unité centrale, l'écran, le clavier et la souris</label><br/>
+<label><input name="m1q2" type="radio" value="D"/> D. Internet et les réseaux sociaux</label>
+</fieldset>
+<fieldset>
+<legend>3. À quoi sert principalement le clavier ?</legend>
+<label><input name="m1q3" type="radio" value="A"/> A. À afficher les images</label><br/>
+<label><input name="m1q3" type="radio" value="B"/> B. À imprimer les documents</label><br/>
+<label><input name="m1q3" type="radio" value="C"/> C. À saisir du texte et des commandes</label><br/>
+<label><input name="m1q3" type="radio" value="D"/> D. À diffuser le son</label>
+</fieldset>
+<fieldset>
+<legend>4. Le microphone est un périphérique :</legend>
+<label><input name="m1q4" type="radio" value="A"/> A. D'entrée</label><br/>
+<label><input name="m1q4" type="radio" value="B"/> B. De sortie</label><br/>
+<label><input name="m1q4" type="radio" value="C"/> C. De stockage</label><br/>
+<label><input name="m1q4" type="radio" value="D"/> D. D'impression</label>
+</fieldset>
+<fieldset>
+<legend>5. Quel est le rôle principal du système d'exploitation ?</legend>
+<label><input name="m1q5" type="radio" value="A"/> A. Remplacer le clavier</label><br/>
+<label><input name="m1q5" type="radio" value="B"/> B. Fournir uniquement une connexion Internet</label><br/>
+<label><input name="m1q5" type="radio" value="C"/> C. Gérer les ressources de l'ordinateur et permettre l'exécution des programmes</label><br/>
+<label><input name="m1q5" type="radio" value="D"/> D. Augmenter automatiquement la mémoire</label>
+</fieldset>
+<fieldset>
+<legend>6. Pourquoi faut-il arrêter correctement son ordinateur ?</legend>
+<label><input name="m1q6" type="radio" value="A"/> A. Pour effacer tous les fichiers</label><br/>
+<label><input name="m1q6" type="radio" value="B"/> B. Pour supprimer le système d'exploitation</label><br/>
+<label><input name="m1q6" type="radio" value="C"/> C. Pour éviter les pertes de données et les problèmes du système</label><br/>
+<label><input name="m1q6" type="radio" value="D"/> D. Pour désinstaller les applications</label>
+</fieldset>
+<fieldset>
+<legend>7. Quelle est la bonne méthode pour éteindre un ordinateur ?</legend>
+<label><input name="m1q7" type="radio" value="A"/> A. Enregistrer son travail, fermer les applications puis choisir Arrêter</label><br/>
+<label><input name="m1q7" type="radio" value="B"/> B. Débrancher directement le câble électrique</label><br/>
+<label><input name="m1q7" type="radio" value="C"/> C. Retirer la batterie sans précaution</label><br/>
+<label><input name="m1q7" type="radio" value="D"/> D. Appuyer plusieurs fois sur le clavier</label>
+</fieldset>
+<button class="btn" type="submit">
+            Valider mes réponses
+        </button>
+</form>
+<div aria-live="polite" id="resultat-module-1" role="status"></div>
+</section></div><div class="panneau-module" data-panneau="module-2" id="panneau-module-2"><h2>Module 2 — Initiation à l’informatique</h2><section id="module-2-lecons">
+<div aria-live="polite" id="cours-module-2">
+    Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 2.
+  </div>
+</section><section id="quiz-module-2">
+<h2>Évaluation du module 2 — Windows</h2>
+<p>7 questions à choix multiples. Chaque bonne réponse vaut 1 point. Il faut obtenir au moins 6/7 pour valider le module.</p>
+<p class="tip"><strong>Évaluation :</strong> tes réponses sont transmises à Supabase pour une correction sécurisée. La validation officielle dépend du résultat enregistré par le serveur.</p>
+<form id="quiz-module-2-form">
+<fieldset><legend>1. Quel est le rôle principal d’un système d’exploitation comme Windows ?</legend>
+<label><input name="m2q1" type="radio" value="A"/> Gérer le fonctionnement de l’ordinateur et ses ressources</label><br/>
+<label><input name="m2q1" type="radio" value="B"/> Remplacer tous les logiciels installés</label><br/>
+<label><input name="m2q1" type="radio" value="C"/> Créer automatiquement tous les documents</label><br/>
+<label><input name="m2q1" type="radio" value="D"/> Augmenter physiquement la mémoire</label>
+</fieldset>
+<fieldset><legend>2. Quel raccourci ouvre directement les paramètres Windows ?</legend>
+<label><input name="m2q2" type="radio" value="A"/> Windows + E</label><br/>
+<label><input name="m2q2" type="radio" value="B"/> Windows + I</label><br/>
+<label><input name="m2q2" type="radio" value="C"/> Ctrl + C</label><br/>
+<label><input name="m2q2" type="radio" value="D"/> Alt + Tab</label>
+</fieldset>
+<fieldset><legend>3. À quoi sert principalement l’Explorateur de fichiers ?</legend>
+<label><input name="m2q3" type="radio" value="A"/> Protéger automatiquement le réseau Wi-Fi</label><br/>
+<label><input name="m2q3" type="radio" value="B"/> Créer des comptes utilisateurs en ligne</label><br/>
+<label><input name="m2q3" type="radio" value="C"/> Organiser et gérer les fichiers et les dossiers</label><br/>
+<label><input name="m2q3" type="radio" value="D"/> Installer obligatoirement tous les pilotes</label>
+</fieldset>
+<fieldset><legend>4. Quel raccourci permet de copier un fichier sélectionné ?</legend>
+<label><input name="m2q4" type="radio" value="A"/> Ctrl + X</label><br/>
+<label><input name="m2q4" type="radio" value="B"/> Ctrl + V</label><br/>
+<label><input name="m2q4" type="radio" value="C"/> Ctrl + A</label><br/>
+<label><input name="m2q4" type="radio" value="D"/> Ctrl + C</label>
+</fieldset>
+<fieldset><legend>5. Quel raccourci permet de passer d’une application ouverte à une autre ?</legend>
+<label><input name="m2q5" type="radio" value="A"/> Alt + Tab</label><br/>
+<label><input name="m2q5" type="radio" value="B"/> Windows + E</label><br/>
+<label><input name="m2q5" type="radio" value="C"/> Windows + I</label><br/>
+<label><input name="m2q5" type="radio" value="D"/> F2</label>
+</fieldset>
+<fieldset><legend>6. Quel est l’intérêt principal d’une sauvegarde de fichiers ?</legend>
+<label><input name="m2q6" type="radio" value="A"/> Augmenter la vitesse du processeur</label><br/>
+<label><input name="m2q6" type="radio" value="B"/> Conserver une copie pour récupérer ses données en cas de perte</label><br/>
+<label><input name="m2q6" type="radio" value="C"/> Supprimer automatiquement les virus</label><br/>
+<label><input name="m2q6" type="radio" value="D"/> Remplacer les mises à jour Windows</label>
+</fieldset>
+<fieldset><legend>7. Un courriel inattendu demande ton mot de passe via un lien. Quelle est la meilleure réaction ?</legend>
+<label><input name="m2q7" type="radio" value="A"/> Cliquer immédiatement</label><br/>
+<label><input name="m2q7" type="radio" value="B"/> Transmettre le mot de passe à l’expéditeur</label><br/>
+<label><input name="m2q7" type="radio" value="C"/> Ne pas cliquer et vérifier la demande par un canal officiel</label><br/>
+<label><input name="m2q7" type="radio" value="D"/> Télécharger toutes les pièces jointes</label>
+</fieldset>
+<button class="btn" type="submit">Valider mes réponses</button>
+</form>
+<div id="resultat-module-2" role="status"></div>
+</section></div><div class="panneau-module" data-panneau="module-3" id="panneau-module-3"><h2>Module 3 — Bureautique</h2><section id="module-3">
+<h2>Module 3 — Bureautique</h2>
+<p>
+    Bienvenue dans le module Bureautique de EDUCONNECT CI.
+    Tu vas apprendre à utiliser les principaux logiciels
+    de bureautique pour créer des documents, effectuer
+    des calculs et réaliser des présentations.
+  </p>
+<h3>Objectifs pédagogiques</h3>
+<ul>
+<li>Créer et mettre en forme des documents avec Microsoft Word.</li>
+<li>Réaliser des tableaux et des calculs simples avec Microsoft Excel.</li>
+<li>Créer des présentations avec Microsoft PowerPoint.</li>
+</ul>
+<h3>Les cinq leçons</h3>
+<ol>
+<li>Découverte de Microsoft Word.</li>
+<li>Création et mise en forme de documents.</li>
+<li>Découverte de Microsoft Excel.</li>
+<li>Tableaux, formules et calculs simples.</li>
+<li>Découverte de Microsoft PowerPoint.</li>
+</ol>
+<p>
+    Chaque leçon comportera un cours détaillé,
+    des exemples et un exercice pratique.
+  </p>
+
+<div aria-live="polite" id="cours-module-3">Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 3.</div></section></div><div class="panneau-module" data-panneau="module-4" id="panneau-module-4"><h2>Module 4 — Internet et sécurité</h2><section id="module-4">
+<h2>Module 4 — Internet et sécurité</h2>
+<p>
+    Bienvenue dans le module Internet et sécurité d'EDUCONNECT CI.
+    Dans ce module, tu vas apprendre à découvrir Internet, naviguer sur
+    le Web, effectuer des recherches efficaces, utiliser une adresse
+    e-mail et adopter les bonnes pratiques pour protéger tes données
+    personnelles et tes appareils.
+</p>
+<p>
+    Ce module comprend cinq leçons pratiques accompagnées d'exercices
+    d'application et d'une évaluation finale.
+</p>
+
+<!-- LEÇON 2 -->
+
+<div aria-live="polite" id="cours-module-4">Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 4.</div></section></div></main><footer><p>© 2026 EDUCONNECT CI — Tous droits réservés.</p></footer><script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formulaireModule1 = document.getElementById("quiz-module-1-form");
+  const resultatModule1 = document.getElementById("resultat-module-1");
+  const supabaseModule1 = window.eduSupabase;
+
+  if (!formulaireModule1 || !resultatModule1 || !supabaseModule1) {
+    console.error("Quiz du module 1 ou connexion Supabase introuvable.");
+    return;
+  }
+
+  // Affiche la transition à partir d'un résultat confirmé par Supabase.
+  // Cette fonction peut être appelée après le quiz ou au rechargement de la page.
+  function afficherTransitionModule2(score, messageServeur) {
+    resultatModule1.replaceChildren();
+
+    const resume = document.createElement("p");
+    resume.textContent =
+      "Résultat enregistré : " + score + "/7. " +
+      (messageServeur || "Félicitations ! Module 1 validé.");
+    resultatModule1.appendChild(resume);
+
+    const transitionModule2 = document.createElement("div");
+    transitionModule2.className = "notice-reussite-module";
+    transitionModule2.setAttribute("role", "status");
+    transitionModule2.setAttribute("aria-live", "polite");
+    transitionModule2.style.cssText =
+      "margin-top:16px;padding:16px;border-left:4px solid #16a34a;" +
+      "background:#f0fdf4;border-radius:8px;line-height:1.6;color:#14532d;";
+
+    const titreTransition = document.createElement("strong");
+    titreTransition.textContent = "🎉 Félicitations ! Vous avez validé le Module 1 d'EDUCONNECT CI !";
+
+    const paragrapheReussite = document.createElement("p");
+    paragrapheReussite.textContent =
+      "Votre réussite vous permet de passer à l'étape suivante de votre parcours : le Module 2 — Initiation à l'informatique.";
+
+    const paragraphePaiement = document.createElement("p");
+    paragraphePaiement.textContent =
+      "Pour accéder au contenu pédagogique du Module 2, veuillez vous acquitter des frais de formation correspondants depuis votre espace apprenant, rubrique Paiements.";
+
+    const paragrapheActivation = document.createElement("p");
+    paragrapheActivation.textContent =
+      "Votre accès au Module 2 sera activé après confirmation du paiement par PayDunya. Le dépôt d'un justificatif reste disponible à titre complémentaire.";
+
+    const signatureTransition = document.createElement("strong");
+    signatureTransition.textContent = "EDUCONNECT CI — Apprendre, progresser et réussir.";
+
+    transitionModule2.append(
+      titreTransition,
+      paragrapheReussite,
+      paragraphePaiement,
+      paragrapheActivation,
+      signatureTransition
+    );
+    resultatModule1.appendChild(transitionModule2);
+  }
+
+  // Relit le résultat durable enregistré côté serveur pour le réafficher
+  // après reconnexion, actualisation ou retour ultérieur sur cette page.
+  async function restaurerTransitionModule2() {
+    try {
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabaseModule1.auth.getUser();
+      if (erreurUtilisateur || !utilisateur || !utilisateur.user) return;
+
+      const { data: progression, error: erreurProgression } =
+        await supabaseModule1.rpc("consulter_ma_progression");
+
+      if (erreurProgression) throw erreurProgression;
+
+      const module1 = (Array.isArray(progression) ? progression : []).find(
+        ligne => ligne.course_id === "informatique" && ligne.module_id === "module-1"
+      );
+
+      if (module1 && module1.completed === true && Number(module1.score) >= 6) {
+        afficherTransitionModule2(
+          Number(module1.score),
+          "Félicitations ! Votre Module 1 est déjà validé."
+        );
+      }
+    } catch (erreur) {
+      // Une indisponibilité temporaire ne bloque ni le cours ni les autres fonctions.
+      console.warn("Impossible de restaurer le résultat du Module 1 :", erreur);
+    }
+  }
+
+  restaurerTransitionModule2();
+
+  formulaireModule1.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    resultatModule1.textContent = "Vérification de tes réponses...";
+
+    try {
+      const reponsesModule1 = [];
+
+      for (let i = 1; i <= 7; i++) {
+        const choix = formulaireModule1.querySelector(
+          'input[name="m1q' + i + '"]:checked'
+        );
+
+        if (!choix) {
+          resultatModule1.textContent =
+            "Réponds aux 7 questions avant de valider.";
+          return;
+        }
+
+        reponsesModule1.push(choix.value);
+      }
+
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabaseModule1.auth.getUser();
+
+      if (erreurUtilisateur || !utilisateur.user) {
+        resultatModule1.textContent =
+          "Connecte-toi à ton compte avant de passer le questionnaire.";
+        return;
+      }
+
+      const { data: tentativeId, error: erreurDemarrage } =
+        await supabaseModule1.rpc("demarrer_quiz_module", {
+          p_module_id: "module-1"
+        });
+
+      if (erreurDemarrage || !tentativeId) {
+      console.error(
+  "DÉTAIL ERREUR QUIZ :",
+  JSON.stringify(erreurDemarrage, null, 2)
+);
+        resultatModule1.textContent =
+          "Impossible de démarrer le questionnaire. Vérifie que ton accès est autorisé.";
+        return;
+      }
+
+      const parametresModule1 = {
+        p_tentative_id: tentativeId
+      };
+
+      reponsesModule1.forEach((reponse, index) => {
+        parametresModule1["p_reponse_q" + (index + 1)] = reponse;
+      });
+
+      const { data, error } = await supabaseModule1.rpc(
+        "soumettre_quiz_module",
+        parametresModule1
+      );
+
+      if (error) {
+        console.error("Erreur de soumission :", error);
+        resultatModule1.textContent =
+          "Une erreur est survenue pendant la validation. Réessaie.";
+        return;
+      }
+
+      const resultatServeur = Array.isArray(data) ? data[0] : data;
+
+      if (!resultatServeur) {
+        resultatModule1.textContent =
+          "Aucun résultat n'a été retourné par le serveur.";
+        return;
+      }
+
+      // Le résultat vient du serveur : on affiche la transition puis elle
+      // pourra être restaurée lors des prochaines visites via consulter_ma_progression.
+      const scoreModule1 = Number(resultatServeur.score);
+      if (Number.isFinite(scoreModule1) && scoreModule1 >= 6 && resultatServeur.completed === true) {
+        afficherTransitionModule2(scoreModule1, resultatServeur.message);
+      } else {
+        resultatModule1.textContent =
+          "Résultat : " + resultatServeur.score + "/7. " + resultatServeur.message;
+      }
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      resultatModule1.textContent =
+        "Une erreur inattendue est survenue. Réessaie.";
+    }
+
+  });
+
+});
+</script><script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const formulaire = document.getElementById("quiz-module-2-form");
+  const resultat = document.getElementById("resultat-module-2");
+  const supabase = window.eduSupabase;
+
+  if (!formulaire || !resultat || !supabase) {
+    console.error("Formulaire ou connexion Supabase introuvable.");
+    return;
+  }
+
+  formulaire.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    resultat.textContent = "Vérification de tes réponses...";
+
+    try {
+
+      const reponses = [];
+
+      for (let i = 1; i <= 7; i++) {
+        const choix = formulaire.querySelector(
+          'input[name="m2q' + i + '"]:checked'
+        );
+
+        if (!choix) {
+          resultat.textContent =
+            "Réponds aux 7 questions avant de valider.";
+          return;
+        }
+
+        reponses.push(choix.value);
+      }
+
+      const { data: utilisateur, error: erreurUtilisateur } =
+        await supabase.auth.getUser();
+
+      if (erreurUtilisateur || !utilisateur.user) {
+        resultat.textContent =
+          "Connecte-toi à ton compte avant de passer le questionnaire.";
+        return;
+      }
+
+      const { data: tentativeId, error: erreurDemarrage } =
+        await supabase.rpc("demarrer_quiz_module", {
+          p_module_id: "module-2"
+        });
+
+      if (erreurDemarrage || !tentativeId) {
+        console.error("DÉTAIL ERREUR QUIZ :", {
+  message: erreurDemarrage?.message,
+  code: erreurDemarrage?.code,
+  details: erreurDemarrage?.details,
+  hint: erreurDemarrage?.hint
+});
+        resultat.textContent =
+          "Impossible de démarrer le questionnaire. Vérifie que tu es connecté et que ton accès à ce module est autorisé.";
+        return;
+      }
+
+      const parametres = {
+        p_tentative_id: tentativeId
+      };
+
+      reponses.forEach((reponse, index) => {
+        parametres["p_reponse_q" + (index + 1)] = reponse;
+      });
+
+      const { data, error } = await supabase.rpc(
+        "soumettre_quiz_module",
+        parametres
+      );
+
+      if (error) {
+        console.error("Erreur de soumission :", error);
+        resultat.textContent =
+          "Une erreur est survenue pendant la validation. Réessaie.";
+        return;
+      }
+
+      const resultatServeur = Array.isArray(data) ? data[0] : data;
+
+      if (!resultatServeur) {
+        resultat.textContent =
+          "Aucun résultat n'a été retourné par le serveur.";
+        return;
+      }
+
+      resultat.textContent =
+        "Résultat : " + resultatServeur.score + "/7. " +
+        resultatServeur.message;
+
+    } catch (erreur) {
+      console.error("Erreur inattendue :", erreur);
+      resultat.textContent =
+        "Une erreur inattendue est survenue. Réessaie.";
+    }
+
+  });
+
+});
+</script><script>
+window.initialiserQuizModule3 = function () {
+    const formulaire = document.getElementById("form-quiz-module-3");
+    const resultat = document.getElementById("resultat-quiz-module-3");
+
+    if (!formulaire || !resultat) {
+        console.error("Formulaire du quiz Module 3 introuvable.");
+        return;
+    }
+
+    formulaire.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const bouton = formulaire.querySelector('button[type="submit"]');
+
+        const reponses = {};
+
+        for (let i = 1; i <= 7; i++) {
+            const choix = formulaire.querySelector(
+                'input[name="q' + i + '"]:checked'
+            );
+
+            if (!choix) {
+                resultat.textContent =
+                    "Veuillez répondre aux 7 questions avant de soumettre.";
+                return;
+            }
+
+            reponses["p_reponse_q" + i] = choix.value;
+        }
+
+        bouton.disabled = true;
+        bouton.textContent = "Correction en cours...";
+        resultat.textContent = "Envoi sécurisé de vos réponses...";
+
+        try {
+            const { data: tentative, error: erreurDemarrage } =
+                await window.eduSupabase.rpc("demarrer_quiz_module", {
+                    p_module_id: "module-3"
+                });
+
+            if (erreurDemarrage) {
+                throw erreurDemarrage;
+            }
+
+            const tentativeId =
+                typeof tentative === "string"
+                    ? tentative
+                    : tentative?.data || tentative?.tentative_id || tentative?.id;
+
+            if (!tentativeId) {
+                throw new Error("Identifiant de tentative introuvable.");
+            }
+
+            const { data, error } = await window.eduSupabase.rpc(
+                "soumettre_quiz_module",
+                {
+                    p_tentative_id: tentativeId,
+                    ...reponses
+                }
+            );
+
+            if (error) {
+                throw error;
+            }
+
+            const resultatQuiz =
+                data?.data && typeof data.data === "object"
+                    ? data.data
+                    : data;
+
+            if (resultatQuiz?.success === false) {
+                throw new Error(
+                    resultatQuiz.message || "La correction a échoué."
+                );
+            }
+
+            resultat.textContent =
+                resultatQuiz?.message ||
+                "Vos réponses ont été transmises et corrigées par EDUCONNECT CI. Résultat : " +
+                JSON.stringify(resultatQuiz);
+
+            resultat.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        } catch (erreur) {
+            console.error("Erreur du quiz Module 3 :", erreur);
+
+            resultat.textContent =
+                "Une erreur est survenue : " +
+                (erreur.message || "Veuillez réessayer.");
+
+            bouton.disabled = false;
+            bouton.textContent = "Soumettre mes réponses";
+        }
+    });
+};
+</script><script>
+window.initialiserQuizModule4 = function () {
+    const formulaire = document.getElementById("form-quiz-module-4");
+    const resultat = document.getElementById("resultat-quiz-module-4");
+
+    if (!formulaire || !resultat) {
+        console.error("Formulaire ou zone de résultat du module 4 introuvable.");
+        return;
+    }
+
+    formulaire.addEventListener("submit", async (evenement) => {
+        evenement.preventDefault();
+
+        const bouton = formulaire.querySelector('button[type="submit"]');
+        const reponses = {};
+
+        for (let i = 1; i <= 7; i++) {
+            const choix = formulaire.querySelector(`input[name="q${i}"]:checked`);
+
+            if (!choix) {
+                resultat.textContent = "Veuillez répondre aux 7 questions avant de valider.";
+                return;
+            }
+
+            reponses[`p_reponse_q${i}`] = choix.value;
+        }
+
+        if (bouton) {
+            bouton.disabled = true;
+            bouton.textContent = "Correction en cours...";
+        }
+
+        resultat.textContent = "Enregistrement de vos réponses...";
+
+        try {
+            const supabase = window.eduSupabase;
+
+            if (!supabase) {
+                throw new Error("La connexion à Supabase est indisponible.");
+            }
+
+            const { data: tentative, error: erreurDemarrage } =
+                await supabase.rpc("demarrer_quiz_module", {
+                    p_module_id: "module-4"
+                });
+
+            if (erreurDemarrage) throw erreurDemarrage;
+
+            const tentativeId =
+                typeof tentative === "string"
+                    ? tentative
+                    : tentative?.id || tentative?.tentative_id;
+
+            if (!tentativeId) {
+                throw new Error("Impossible de récupérer l'identifiant de la tentative.");
+            }
+
+            const { data, error } = await supabase.rpc("soumettre_quiz_module", {
+                p_tentative_id: tentativeId,
+                ...reponses
+            });
+
+            if (error) throw error;
+
+            const correction = Array.isArray(data) ? data[0] : data;
+
+            if (!correction) {
+                throw new Error("Aucun résultat de correction reçu.");
+            }
+
+            resultat.textContent =
+                `${correction.message || "Correction terminée."} ` +
+                `Score : ${correction.score}/7.`;
+
+            if (correction.completed) {
+                resultat.textContent += " Module 4 validé !";
+            }
+
+        } catch (erreur) {
+            console.error("Erreur quiz module 4 :", erreur);
+            resultat.textContent =
+                "Une erreur est survenue : " + erreur.message;
+        } finally {
+            if (bouton) {
+                bouton.disabled = false;
+                bouton.textContent = "Valider mes réponses";
+            }
+        }
+    });
+};
+</script><script>
+/* Dépôt des exercices pratiques des modules privés 1 et 2. */
+(function () {
+  const TYPES_AUTORISES = {
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    pdf: 'application/pdf',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png'
+  };
+  const EXTENSIONS = Object.keys(TYPES_AUTORISES);
+  const LIMITE_OCTETS = 20 * 1024 * 1024;
+
+  function installerDepotsPratiques(contenu, moduleId) {
+    const prefixe = moduleId === 'module-1' ? 'm1' : 'm2';
+    const lecons = Array.from(contenu.querySelectorAll('h3'))
+      .filter(titre => /^Leçon\s+[1-5]\s*[:—-]/i.test(titre.textContent.trim()));
+
+    if (lecons.length !== 5) {
+      console.warn(`Le module ${moduleId} doit contenir 5 titres de leçon ; ${lecons.length} détecté(s).`);
+    }
+    if (!lecons.length) {
+      console.error('Aucun titre de leçon reconnu pour installer les formulaires :', moduleId);
+      return;
+    }
+
+    lecons.forEach((titre, index) => {
+      const lessonId = `${prefixe}-l${index + 1}`;
+      const suivant = lecons[index + 1] || null;
+
+      // Repérer l'exercice pratique situé après ce titre et avant le titre suivant.
+      const pratiques = Array.from(contenu.querySelectorAll('.practice')).filter(pratique => {
+        const apresTitre = Boolean(titre.compareDocumentPosition(pratique) & Node.DOCUMENT_POSITION_FOLLOWING);
+        const avantSuivant = !suivant ||
+          Boolean(suivant.compareDocumentPosition(pratique) & Node.DOCUMENT_POSITION_PRECEDING);
+        return apresTitre && avantSuivant;
+      });
+      const cible = pratiques.length ? pratiques[pratiques.length - 1] : titre;
+
+      if (cible.parentNode.querySelector(`:scope > .formulaire-depot-lecon[data-lesson-id="${lessonId}"]`)) return;
+
+      const bloc = document.createElement('section');
+      bloc.className = 'formulaire-depot-lecon';
+      bloc.dataset.lessonId = lessonId;
+      bloc.innerHTML = `
+        <h4>Remise de l’exercice pratique — ${index + 1}/5</h4>
+        <p>Après avoir réalisé l’exercice de cette leçon, sélectionne ton fichier et transmets-le pour correction.</p>
+        <p><small>Formats acceptés : PDF, Word, Excel, PowerPoint, JPG et PNG. Taille maximale : 20 Mo.</small></p>
+        <form enctype="multipart/form-data">
+          <label>Fichier à remettre
+            <input type="file" name="fichier" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png" required>
+          </label>
+          <button class="btn" type="submit">Envoyer mon travail</button>
+          <p class="statut-depot-lecon" role="status" aria-live="polite"></p>
+        </form>
+        <div class="retour-correction-lecon" data-etat="loading" role="status" aria-live="polite">
+          Chargement du résultat de la correction…
+        </div>`;
+
+      cible.parentNode.insertBefore(bloc, cible.nextSibling);
+
+      const form = bloc.querySelector('form');
+      const input = bloc.querySelector('input[type="file"]');
+      const bouton = bloc.querySelector('button');
+      const statut = bloc.querySelector('.statut-depot-lecon');
+      const retourCorrection = bloc.querySelector('.retour-correction-lecon');
+
+      // Lire uniquement le résultat déjà enregistré par examiner_depot_lecon.
+      // Aucun changement n'est effectué dans les tables ni dans les règles RLS.
+      async function actualiserRetourCorrection() {
+        const supabase = window.eduSupabase;
+        if (!supabase) {
+          retourCorrection.textContent = 'La connexion à Supabase est indisponible.';
+          return;
+        }
+        try {
+          const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+          if (sessionError) throw sessionError;
+          const utilisateur = sessionData && sessionData.user;
+          if (!utilisateur) throw new Error('Session apprenant introuvable.');
+
+          const { data, error } = await supabase
+            .from('lesson_progress')
+            .select('practical_review_status,practical_validated,practical_reviewed_at,practical_feedback')
+            .eq('user_id', utilisateur.id)
+            .eq('course_id', 'informatique')
+            .eq('module_id', moduleId)
+            .eq('lesson_id', lessonId)
+            .maybeSingle();
+
+          if (error) throw error;
+
+          const decision = data?.practical_review_status || null;
+          retourCorrection.dataset.etat = decision || 'none';
+
+          // Après approbation, empêcher une nouvelle remise pour cette leçon.
+          // Le bloc de résultat reste visible afin que l'apprenant conserve sa correction.
+          const travailApprouve = decision === 'approved' && data?.practical_validated === true;
+          form.hidden = travailApprouve;
+
+          if (!decision) {
+            retourCorrection.textContent = 'Aucun résultat de correction enregistré pour le moment.';
+            return;
+          }
+
+          const libelles = {
+            approved: 'Travail pratique validé',
+            rejected: 'Travail pratique rejeté',
+            pending: 'Travail pratique en attente de correction'
+          };
+          const titreRetour = document.createElement('strong');
+          titreRetour.textContent = libelles[decision] || 'État de correction : ' + decision;
+          retourCorrection.replaceChildren(titreRetour);
+
+          if (data.practical_reviewed_at) {
+            const date = document.createElement('p');
+            date.textContent = 'Date de correction : ' +
+              new Date(data.practical_reviewed_at).toLocaleString('fr-FR');
+            retourCorrection.appendChild(date);
+          }
+
+          if (data.practical_feedback) {
+            const commentaire = document.createElement('p');
+            commentaire.textContent = 'Commentaire de l’administrateur : ' + data.practical_feedback;
+            retourCorrection.appendChild(commentaire);
+          } else if (decision === 'rejected') {
+            const info = document.createElement('p');
+            info.textContent = 'Aucun commentaire complémentaire n’a été fourni.';
+            retourCorrection.appendChild(info);
+          }
+
+          if (decision === 'approved' && data.practical_validated) {
+            const confirmation = document.createElement('p');
+            confirmation.textContent = 'Ton travail pratique est approuvé. Aucun nouvel envoi n’est nécessaire pour cette leçon.';
+            retourCorrection.appendChild(confirmation);
+          }
+        } catch (erreur) {
+          console.error(`Lecture du résultat ${moduleId}/${lessonId} :`, erreur);
+          retourCorrection.dataset.etat = 'error';
+          retourCorrection.textContent =
+            'Impossible de récupérer le résultat de la correction. Réessaie en actualisant la page.';
+        }
+      }
+
+      actualiserRetourCorrection();
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const fichier = input.files && input.files[0];
+        if (!fichier) {
+          statut.textContent = 'Choisis un fichier avant de continuer.';
+          return;
+        }
+        if (fichier.size < 1 || fichier.size > LIMITE_OCTETS) {
+          statut.textContent = 'Le fichier doit peser entre 1 octet et 20 Mo.';
+          return;
+        }
+
+        const extension = (fichier.name.split('.').pop() || '').toLowerCase();
+        if (!EXTENSIONS.includes(extension)) {
+          statut.textContent = 'Ce format de fichier n’est pas accepté.';
+          return;
+        }
+        const mimeType = TYPES_AUTORISES[extension];
+        if (fichier.type && fichier.type !== mimeType) {
+          statut.textContent = 'Le type réel du fichier ne correspond pas à son extension.';
+          return;
+        }
+
+        const supabase = window.eduSupabase;
+        if (!supabase) {
+          statut.textContent = 'La connexion à Supabase est indisponible. Réessaie plus tard.';
+          return;
+        }
+
+        bouton.disabled = true;
+        statut.textContent = 'Vérification de ta session et démarrage de la leçon…';
+        let cheminObjet = null;
+        let televersementEffectue = false;
+        try {
+          const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+          if (sessionError) throw sessionError;
+          const utilisateur = sessionData && sessionData.user;
+          if (!utilisateur) throw new Error('Connecte-toi à ton compte avant de remettre ton travail.');
+
+          const { error: progressionError } = await supabase.rpc('demarrer_lecon', {
+            p_module_id: moduleId,
+            p_lesson_id: lessonId
+          });
+          if (progressionError) throw progressionError;
+
+          const nomNettoye = fichier.name.normalize('NFKD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-zA-Z0-9._-]/g, '_')
+            .slice(-150);
+          cheminObjet = `${utilisateur.id}/${moduleId}/${lessonId}/${Date.now()}-${nomNettoye || 'travail.' + extension}`;
+
+          statut.textContent = 'Téléversement du fichier en cours…';
+          const { error: uploadError } = await supabase.storage
+            .from('travaux-pratiques')
+            .upload(cheminObjet, fichier, { upsert: false, contentType: mimeType });
+          if (uploadError) throw uploadError;
+          televersementEffectue = true;
+
+          statut.textContent = 'Enregistrement du dépôt…';
+          const { data: depot, error: depotError } = await supabase.rpc('enregistrer_depot_lecon', {
+            p_module_id: moduleId,
+            p_lesson_id: lessonId,
+            p_object_path: cheminObjet
+          });
+          if (depotError) throw depotError;
+
+          const resultat = Array.isArray(depot) ? depot[0] : depot;
+          if (!resultat || !resultat.submission_id) {
+            throw new Error('Le serveur n’a pas confirmé l’enregistrement du dépôt.');
+          }
+          statut.textContent = `Travail envoyé avec succès. Dépôt n° ${resultat.submission_number} — en attente de correction.`;
+          retourCorrection.dataset.etat = 'pending';
+          retourCorrection.textContent = 'Travail pratique en attente de correction.';
+          form.reset();
+          await actualiserRetourCorrection();
+        } catch (erreur) {
+          console.error(`Erreur de dépôt ${moduleId}/${lessonId} :`, erreur);
+          if (televersementEffectue && cheminObjet) {
+            const { error: nettoyageErreur } = await supabase.storage.from('travaux-pratiques').remove([cheminObjet]);
+            if (nettoyageErreur) console.warn('Le fichier téléversé n’a pas pu être nettoyé :', nettoyageErreur);
+          }
+          statut.textContent = 'Échec du dépôt : ' + (erreur.message || 'une erreur est survenue.');
+        } finally {
+          bouton.disabled = false;
+        }
+      });
+    });
+  }
+
+  window.installerDepotsPratiques = installerDepotsPratiques;
+})();
+</script>
+
+<script>
+/*
+ * Évaluations individuelles des leçons — Modules 1 et 2.
+ * Les questions et la correction proviennent exclusivement de Supabase.
+ */
+(function () {
+  const OPTIONS = ["A", "B", "C", "D"];
+
+  function installerEvaluationsLecons(contenu, moduleId) {
+    const prefixe = moduleId === "module-1" ? "m1" : "m2";
+    const supabase = window.eduSupabase;
+    if (!supabase) {
+      console.error("Supabase indisponible : évaluations non installées pour", moduleId);
+      return;
+    }
+
+    const lecons = Array.from(contenu.querySelectorAll("h3"))
+      .filter(titre => /^Leçon\s+[1-5]\s*[:—-]/i.test(titre.textContent.trim()));
+
+    if (lecons.length !== 5) {
+      console.warn(`Le module ${moduleId} doit contenir 5 leçons ; ${lecons.length} détectée(s).`);
+    }
+
+    lecons.forEach((titre, index) => {
+      const lessonId = `${prefixe}-l${index + 1}`;
+      if (contenu.querySelector(`.evaluation-lecon[data-lesson-id="${lessonId}"]`)) return;
+
+      const suivant = lecons[index + 1] || null;
+      const pratiques = Array.from(contenu.querySelectorAll(".practice")).filter(pratique => {
+        const apresTitre = Boolean(titre.compareDocumentPosition(pratique) & Node.DOCUMENT_POSITION_FOLLOWING);
+        const avantSuivant = !suivant ||
+          Boolean(suivant.compareDocumentPosition(pratique) & Node.DOCUMENT_POSITION_PRECEDING);
+        return apresTitre && avantSuivant;
+      });
+      const cible = pratiques.length ? pratiques[pratiques.length - 1] : titre;
+
+      const bloc = document.createElement("section");
+      bloc.className = "evaluation-lecon";
+      bloc.dataset.lessonId = lessonId;
+      bloc.innerHTML = `
+        <h4>Évaluation de la leçon ${index + 1}</h4>
+        <p>Réponds aux cinq questions. Une note d'au moins 80 % est nécessaire pour réussir cette évaluation.</p>
+        <div class="questions-evaluation" aria-live="polite">Préparation de ton évaluation…</div>
+        <form class="form-evaluation-lecon" hidden>
+          <button class="btn" type="submit">Valider mon évaluation</button>
+        </form>
+        <p class="statut-evaluation" role="status" aria-live="polite"></p>
+      `;
+
+      // Le formulaire d'évaluation est placé après le formulaire de dépôt pratique.
+      const depot = cible.parentNode.querySelector(
+        `:scope > .formulaire-depot-lecon[data-lesson-id="${lessonId}"]`
+      );
+      const pointInsertion = depot || cible;
+      pointInsertion.parentNode.insertBefore(bloc, pointInsertion.nextSibling);
+
+      const zoneQuestions = bloc.querySelector(".questions-evaluation");
+      const formulaire = bloc.querySelector(".form-evaluation-lecon");
+      const statut = bloc.querySelector(".statut-evaluation");
+      const bouton = formulaire.querySelector('button[type="submit"]');
+
+      async function chargerQuestions() {
+        try {
+          const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+          if (sessionError) throw sessionError;
+          if (!sessionData?.user) throw new Error("Connecte-toi pour accéder à cette évaluation.");
+
+          // Vérifier d'abord la progression de CET apprenant.
+          // Une leçon déjà terminée ne doit pas déclencher un nouvel appel à obtenir_questions_lecon.
+          const { data: progression, error: progressionError } = await supabase
+            .from("lesson_progress")
+            .select("status,best_score,attempts,practical_validated,practical_review_status,completed_at")
+            .eq("user_id", sessionData.user.id)
+            .eq("course_id", "informatique")
+            .eq("module_id", moduleId)
+            .eq("lesson_id", lessonId)
+            .maybeSingle();
+
+          if (progressionError) throw progressionError;
+
+          if (progression?.status === "completed") {
+            formulaire.hidden = true;
+            zoneQuestions.textContent =
+              "Cette leçon est déjà validée. Note enregistrée : " +
+              (Number.isFinite(Number(progression.best_score))
+                ? Number(progression.best_score) + " %."
+                : "indisponible.") +
+              (progression.practical_validated
+                ? " Travail pratique approuvé."
+                : " Validation du travail pratique à vérifier.") +
+              (progression.completed_at
+                ? " Date de validation : " +
+                  new Date(progression.completed_at).toLocaleString("fr-FR") + "."
+                : "");
+            statut.textContent = "Aucune nouvelle tentative n'est nécessaire pour cette leçon.";
+            return;
+          }
+
+          // Crée la ligne de progression si l'apprenant n'a pas encore commencé la leçon.
+          const { error: demarrageError } = await supabase.rpc("demarrer_lecon", {
+            p_module_id: moduleId,
+            p_lesson_id: lessonId
+          });
+          if (demarrageError) throw demarrageError;
+
+          const { data, error } = await supabase.rpc("obtenir_questions_lecon", {
+            p_module_id: moduleId,
+            p_lesson_id: lessonId
+          });
+          if (error) throw error;
+
+          const questions = Array.isArray(data) ? data : (data ? [data] : []);
+          if (questions.length !== 5) {
+            throw new Error("Les cinq questions de cette leçon ne sont pas encore disponibles. Contacte l'administrateur.");
+          }
+
+          zoneQuestions.replaceChildren();
+          questions.forEach((question, questionIndex) => {
+            if (!question.question_id || !question.question_text) {
+              throw new Error("Une question est incomplète dans la base de données.");
+            }
+            const fieldset = document.createElement("fieldset");
+            const legend = document.createElement("legend");
+            legend.textContent = `${questionIndex + 1}. ${question.question_text}`;
+            fieldset.appendChild(legend);
+
+            OPTIONS.forEach(option => {
+              const texteOption = question[`option_${option.toLowerCase()}`];
+              if (texteOption === null || texteOption === undefined || texteOption === "") return;
+              const label = document.createElement("label");
+              const radio = document.createElement("input");
+              radio.type = "radio";
+              radio.name = `reponse-${lessonId}-${question.question_id}`;
+              radio.value = option;
+              radio.required = true;
+              radio.dataset.questionId = question.question_id;
+              label.append(radio, document.createTextNode(` ${option}. ${texteOption}`));
+              fieldset.appendChild(label);
+            });
+            formulaire.insertBefore(fieldset, bouton);
+          });
+
+          formulaire.hidden = false;
+          zoneQuestions.textContent = "";
+        } catch (erreur) {
+          console.error(`Chargement évaluation ${moduleId}/${lessonId} :`, erreur);
+          zoneQuestions.textContent = "Impossible de charger cette évaluation : " + (erreur.message || "erreur inconnue");
+        }
+      }
+
+      formulaire.addEventListener("submit", async event => {
+        event.preventDefault();
+        const radios = Array.from(formulaire.querySelectorAll('input[type="radio"]:checked'));
+        const fieldsets = formulaire.querySelectorAll("fieldset");
+        if (radios.length !== 5 || fieldsets.length !== 5) {
+          statut.textContent = "Réponds aux cinq questions avant de valider.";
+          return;
+        }
+
+        const p_answers = radios.map(radio => ({
+          question_id: radio.dataset.questionId,
+          answer: radio.value
+        }));
+
+        bouton.disabled = true;
+        bouton.textContent = "Correction en cours…";
+        statut.textContent = "Transmission sécurisée de tes réponses…";
+
+        try {
+          const { data, error } = await supabase.rpc("soumettre_evaluation_lecon", {
+            p_module_id: moduleId,
+            p_lesson_id: lessonId,
+            p_answers
+          });
+          if (error) throw error;
+
+          const resultat = Array.isArray(data) ? data[0] : data;
+          if (!resultat) throw new Error("Aucun résultat de correction n'a été retourné.");
+
+          const score = Number(resultat.score);
+          const bonnesReponses = Number(resultat.correct_answers);
+          statut.textContent =
+            `Évaluation enregistrée : ${Number.isFinite(score) ? score + " %" : "score indisponible"} ` +
+            `(${Number.isFinite(bonnesReponses) ? bonnesReponses + "/5 bonnes réponses" : "détail indisponible"}). ` +
+            (resultat.message || "");
+
+          if (resultat.lesson_completed) {
+            statut.textContent += " Leçon validée : l'évaluation et le travail pratique sont approuvés.";
+          } else if (resultat.passed && !resultat.practical_validated) {
+            statut.textContent += " Évaluation réussie. La validation finale attend encore l'approbation du travail pratique.";
+          } else if (!resultat.passed) {
+            statut.textContent += " Il faut obtenir au moins 80 % pour réussir cette évaluation.";
+          }
+
+          if (typeof window.actualiserVerrouQuiz === "function") {
+            window.actualiserVerrouQuiz(moduleId);
+          }
+        } catch (erreur) {
+          console.error(`Soumission évaluation ${moduleId}/${lessonId} :`, erreur);
+          statut.textContent = "L'enregistrement a échoué : " + (erreur.message || "erreur inconnue") + ". Tu peux réessayer.";
+        } finally {
+          bouton.disabled = false;
+          bouton.textContent = "Valider mon évaluation";
+        }
+      });
+
+      chargerQuestions();
+    });
+  }
+
+  window.installerEvaluationsLecons = installerEvaluationsLecons;
+})();
+</script>
+
+<script>
+// Chargement du cours 1 depuis le bucket privé Supabase.
+(function () {
+  let module1Charge = false;
+  let module1EnCours = false;
+  const urlsImagesModule1 = [];
+
+  async function chargerCoursModule1() {
+    const zone = document.getElementById("cours-module-1");
+    const supabase = window.eduSupabase;
+    if (!zone || module1Charge || module1EnCours) return;
+    if (!supabase) {
+      zone.textContent = "La connexion à Supabase est indisponible. Réessaie plus tard.";
+      return;
+    }
+
+    module1EnCours = true;
+    zone.textContent = "Vérification de ton accès au module 1...";
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !sessionData?.user) {
+        zone.textContent = "Connecte-toi à ton compte pour consulter ce cours.";
+        return;
+      }
+
+      const stockage = supabase.storage.from("cours-prives");
+      const { data: fichier, error: fichierError } = await stockage.download("module-1/module-1.html");
+      if (fichierError || !fichier) {
+        console.error("Chargement du module 1 refusé ou impossible :", fichierError);
+        zone.textContent = "Ton accès au module 1 n'est pas autorisé ou le cours est momentanément indisponible.";
+        return;
+      }
+
+      const html = await fichier.text();
+      const documentCours = new DOMParser().parseFromString(html, "text/html");
+      const contenu = documentCours.body;
+      if (!contenu) throw new Error("Le fichier du cours ne contient pas de corps HTML.");
+
+      // Reprendre les styles du fichier du cours sans charger un second document HTML.
+      documentCours.querySelectorAll("style").forEach((styleSource) => {
+        const style = document.createElement("style");
+        style.textContent = styleSource.textContent;
+        style.dataset.modulePrive = "module-1";
+        document.head.appendChild(style);
+      });
+
+      // Les images restent privées : créer une URL signée pour chacune.
+      const images = Array.from(contenu.querySelectorAll("img[src]"));
+      for (const image of images) {
+        const cheminImage = image.getAttribute("src");
+        if (!cheminImage || /^(https?:|data:|blob:)/i.test(cheminImage)) continue;
+        const cheminNettoye = cheminImage.replace(/^\.\//, "").replace(/^\/+/, "");
+        const cheminStockage = "module-1/" + cheminNettoye;
+        const { data: urlSignee, error: imageError } = await stockage.createSignedUrl(cheminStockage, 3600);
+        if (imageError || !urlSignee?.signedUrl) {
+          throw new Error("Impossible de charger une illustration du module 1 : " + cheminNettoye);
+        }
+        image.src = urlSignee.signedUrl;
+        urlsImagesModule1.push(urlSignee.signedUrl);
+      }
+
+      window.installerDepotsPratiques(contenu, 'module-1');
+      window.installerEvaluationsLecons(contenu, 'module-1');
+      zone.replaceChildren(...Array.from(contenu.childNodes));
+      module1Charge = true;
+    } catch (erreur) {
+      console.error("Erreur de chargement du module 1 :", erreur);
+      zone.textContent = "Le cours n'a pas pu être chargé. Vérifie ta connexion puis réessaie.";
+    } finally {
+      module1EnCours = false;
+    }
+  }
+
+  window.chargerCoursModule1 = chargerCoursModule1;
+})();
+</script>
+<script>
+// Chargement du cours 2 depuis le bucket privé Supabase.
+(function () {
+  let module2Charge = false;
+  let module2EnCours = false;
+
+  async function chargerCoursModule2() {
+    const zone = document.getElementById("cours-module-2");
+    const supabase = window.eduSupabase;
+    if (!zone || module2Charge || module2EnCours) return;
+    if (!supabase) {
+      zone.textContent = "La connexion à Supabase est indisponible. Réessaie plus tard.";
+      return;
+    }
+
+    module2EnCours = true;
+    zone.textContent = "Vérification de ton accès au module 2...";
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !sessionData?.user) {
+        zone.textContent = "Connecte-toi à ton compte pour consulter ce cours.";
+        return;
+      }
+
+      const stockage = supabase.storage.from("cours-prives");
+      const { data: fichier, error: fichierError } = await stockage.download("module-2/module-2.html");
+      if (fichierError || !fichier) {
+        console.error("Chargement du module 2 refusé ou impossible :", fichierError);
+        zone.textContent = "Ton accès au module 2 n'est pas autorisé ou le cours est momentanément indisponible.";
+        return;
+      }
+
+      const html = await fichier.text();
+      const documentCours = new DOMParser().parseFromString(html, "text/html");
+      const contenu = documentCours.body;
+      if (!contenu) throw new Error("Le fichier du cours ne contient pas de corps HTML.");
+
+      documentCours.querySelectorAll("style").forEach((styleSource) => {
+        const style = document.createElement("style");
+        style.textContent = styleSource.textContent;
+        style.dataset.modulePrive = "module-2";
+        document.head.appendChild(style);
+      });
+
+      const images = Array.from(contenu.querySelectorAll("img[src]"));
+      for (const image of images) {
+        const cheminImage = image.getAttribute("src");
+        if (!cheminImage || /^(https?:|data:|blob:)/i.test(cheminImage)) continue;
+        const cheminNettoye = cheminImage.replace(/^\.\//, "").replace(/^\/+/, "");
+        const cheminStockage = "module-2/" + cheminNettoye;
+        const { data: urlSignee, error: imageError } = await stockage.createSignedUrl(cheminStockage, 3600);
+        if (imageError || !urlSignee?.signedUrl) {
+          throw new Error("Impossible de charger une illustration du module 2 : " + cheminNettoye);
+        }
+        image.src = urlSignee.signedUrl;
+      }
+
+      window.installerDepotsPratiques(contenu, 'module-2');
+      window.installerEvaluationsLecons(contenu, 'module-2');
+      zone.replaceChildren(...Array.from(contenu.childNodes));
+      module2Charge = true;
+    } catch (erreur) {
+      console.error("Erreur de chargement du module 2 :", erreur);
+      zone.textContent = "Le cours n'a pas pu être chargé. Vérifie ta connexion puis réessaie.";
+    } finally {
+      module2EnCours = false;
+    }
+  }
+
+  window.chargerCoursModule2 = chargerCoursModule2;
+})();
+</script>
+<script>
+// Chargement des modules 3 et 4 depuis le bucket privé Supabase.
+(function () {
+  const etats = {"module-3": {charge:false,enCours:false}, "module-4": {charge:false,enCours:false}};
+  async function chargerModulePrive(moduleId) {
+    const etat=etats[moduleId], numero=moduleId==="module-3"?"3":"4";
+    const zone=document.getElementById("cours-"+moduleId), supabase=window.eduSupabase;
+    if(!zone||!etat||etat.charge||etat.enCours)return;
+    if(!supabase){zone.textContent="La connexion à Supabase est indisponible. Réessaie plus tard.";return;}
+    etat.enCours=true; zone.textContent="Vérification de ton accès au module "+numero+"...";
+    try {
+      const {data:sessionData,error:sessionError}=await supabase.auth.getUser();
+      if(sessionError||!sessionData?.user){zone.textContent="Connecte-toi à ton compte pour consulter ce cours.";return;}
+      const stockage=supabase.storage.from("cours-prives");
+      const {data:fichier,error:fichierError}=await stockage.download(moduleId+"/"+moduleId+".html");
+      if(fichierError||!fichier){console.error("Chargement du "+moduleId+" refusé ou impossible :",fichierError);zone.textContent="Ton accès au module "+numero+" n'est pas autorisé ou le cours est momentanément indisponible.";return;}
+      const documentCours=new DOMParser().parseFromString(await fichier.text(),"text/html"), contenu=documentCours.body;
+      if(!contenu)throw new Error("Le fichier du cours ne contient pas de corps HTML.");
+      const images=Array.from(contenu.querySelectorAll("img[src]"));
+      for(const image of images){
+        const chemin=image.getAttribute("src");
+        if(!chemin||/^(https?:|data:|blob:)/i.test(chemin))continue;
+        const propre=chemin.replace(/^\.\//,"").replace(/^\/+/,"");
+        const {data:urlSignee,error:imageError}=await stockage.createSignedUrl(moduleId+"/"+propre,3600);
+        if(imageError||!urlSignee?.signedUrl){console.warn("Illustration indisponible :",propre,imageError);image.removeAttribute("src");continue;}
+        image.src=urlSignee.signedUrl;
+      }
+      zone.replaceChildren(...Array.from(contenu.childNodes));
+      if(moduleId==="module-3"&&typeof window.initialiserQuizModule3==="function")window.initialiserQuizModule3();
+      if(moduleId==="module-4"&&typeof window.initialiserQuizModule4==="function")window.initialiserQuizModule4();
+      etat.charge=true;
+      if (typeof window.actualiserVerrouQuiz === "function") {
+        window.actualiserVerrouQuiz(moduleId);
+      }
+    } catch(erreur){console.error("Erreur de chargement du "+moduleId+" :",erreur);zone.textContent="Le cours n'a pas pu être chargé. Vérifie ta connexion puis réessaie.";}
+    finally{etat.enCours=false;}
+  }
+  window.chargerCoursModule3=()=>chargerModulePrive("module-3");
+  window.chargerCoursModule4=()=>chargerModulePrive("module-4");
+})();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const boutons = document.querySelectorAll(".bouton-module");
+  const panneaux = document.querySelectorAll(".panneau-module");
+  function afficherModule(id) {
+    panneaux.forEach(function (panneau) {
+      panneau.hidden = panneau.dataset.panneau !== id;
+    });
+    boutons.forEach(function (bouton) {
+      const actif = bouton.dataset.module === id;
+      bouton.classList.toggle("actif", actif);
+      bouton.setAttribute("aria-pressed", actif ? "true" : "false");
+    });
+    const cible = document.getElementById("panneau-" + id);
+    if (id === "module-1" && typeof window.chargerCoursModule1 === "function") {
+      window.chargerCoursModule1();
+    }
+    if (id === "module-2" && typeof window.chargerCoursModule2 === "function") {
+      window.chargerCoursModule2();
+    }
+    if (id === "module-3" && typeof window.chargerCoursModule3 === "function") window.chargerCoursModule3();
+    if (id === "module-4" && typeof window.chargerCoursModule4 === "function") window.chargerCoursModule4();
+    if (typeof window.actualiserVerrouQuiz === "function") {
+      window.actualiserVerrouQuiz(id);
+    }
+    if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  boutons.forEach(function (bouton) {
+    bouton.addEventListener("click", function () { afficherModule(bouton.dataset.module); });
+  });
+  
+const parametres = new URLSearchParams(window.location.search);
+const moduleDemande = parametres.get("module");
+
+const modulesAutorises = [
+  "module-1",
+  "module-2",
+  "module-3",
+  "module-4"
+];
+
+afficherModule(
+  modulesAutorises.includes(moduleDemande)
+    ? moduleDemande
+    : "module-1"
+);
+
+});
+</script>
+
+<script>
+/*
+ * Verrouillage visuel des quiz finaux.
+ * La sécurité réelle reste assurée par demarrer_quiz_module côté Supabase.
+ */
+(function () {
+  const LECONS = {
+    "module-1": ["m1-l1", "m1-l2", "m1-l3", "m1-l4", "m1-l5"],
+    "module-2": ["m2-l1", "m2-l2", "m2-l3", "m2-l4", "m2-l5"],
+    "module-3": ["m3-l1", "m3-l2", "m3-l3", "m3-l4", "m3-l5"],
+    "module-4": ["m4-l1", "m4-l2", "m4-l3", "m4-l4", "m4-l5"]
+  };
+
+  const SELECTEURS = {
+    "module-1": "#quiz-module-1",
+    "module-2": "#quiz-module-2",
+    "module-3": "#form-quiz-module-3",
+    "module-4": "#form-quiz-module-4"
+  };
+
+  const etatsEnCours = new Set();
+
+  function trouverBlocQuiz(moduleId) {
+    const element = document.querySelector(SELECTEURS[moduleId]);
+    if (!element) return null;
+    if (moduleId === "module-1" || moduleId === "module-2") return element;
+    return element.closest("section") || element.parentElement;
+  }
+
+  function installerPanneau(moduleId, bloc) {
+    const id = "etat-verrou-quiz-" + moduleId;
+    let panneau = document.getElementById(id);
+    if (!panneau) {
+      panneau = document.createElement("div");
+      panneau.id = id;
+      panneau.className = "notice-securite";
+      panneau.setAttribute("role", "status");
+      panneau.setAttribute("aria-live", "polite");
+      panneau.style.margin = "12px 0";
+      bloc.parentNode.insertBefore(panneau, bloc);
+    }
+    return panneau;
+  }
+
+  function afficherEtat(moduleId, bloc, panneau, nombre, erreur) {
+    if (erreur) {
+      bloc.hidden = true;
+      panneau.hidden = false;
+      panneau.textContent =
+        "Progression non vérifiable pour le moment. Actualise la page ou réessaie. " +
+        "Le serveur continuera de vérifier les cinq leçons avant d'autoriser le quiz.";
+      return;
+    }
+
+    const ouvert = nombre === 5;
+    bloc.hidden = !ouvert;
+    panneau.hidden = ouvert;
+
+    if (!ouvert) {
+      panneau.textContent =
+        "Quiz final verrouillé — " + nombre + "/5 leçons validées. " +
+        "Termine les cinq leçons et fais valider les exercices pratiques requis pour débloquer cette évaluation.";
+    }
+  }
+
+  async function actualiserVerrouQuiz(moduleId) {
+    if (!LECONS[moduleId] || etatsEnCours.has(moduleId)) return;
+    const bloc = trouverBlocQuiz(moduleId);
+    if (!bloc || !bloc.parentNode) return;
+
+    const panneau = installerPanneau(moduleId, bloc);
+    etatsEnCours.add(moduleId);
+
+    // Par défaut, ne jamais afficher le quiz avant la vérification.
+    bloc.hidden = true;
+    panneau.hidden = false;
+    panneau.textContent = "Vérification de tes cinq leçons…";
+
+    try {
+      const supabase = window.eduSupabase;
+      if (!supabase) throw new Error("Connexion Supabase indisponible.");
+
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !sessionData || !sessionData.user) {
+        throw new Error("Session apprenant introuvable.");
+      }
+
+      const { data, error } = await supabase
+        .from("lesson_progress")
+        .select("lesson_id,status")
+        .eq("user_id", sessionData.user.id)
+        .eq("course_id", "informatique")
+        .eq("module_id", moduleId)
+        .eq("status", "completed");
+
+      if (error) throw error;
+
+      const validees = new Set(
+        (data || [])
+          .filter(ligne => LECONS[moduleId].includes(ligne.lesson_id))
+          .map(ligne => ligne.lesson_id)
+      );
+
+      afficherEtat(moduleId, bloc, panneau, validees.size, false);
+    } catch (erreur) {
+      console.warn("Impossible de vérifier la progression du " + moduleId + " :", erreur);
+      afficherEtat(moduleId, bloc, panneau, 0, true);
+    } finally {
+      etatsEnCours.delete(moduleId);
+    }
+  }
+
+  window.actualiserVerrouQuiz = actualiserVerrouQuiz;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    actualiserVerrouQuiz("module-1");
+    actualiserVerrouQuiz("module-2");
+
+    // Recontrôle lorsque l'apprenant revient sur la page ou demande une actualisation.
+    window.addEventListener("focus", function () {
+      const actif = document.querySelector(".bouton-module.actif");
+      if (actif) actualiserVerrouQuiz(actif.dataset.module);
+    });
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) {
+        const actif = document.querySelector(".bouton-module.actif");
+        if (actif) actualiserVerrouQuiz(actif.dataset.module);
+      }
+    });
+
+    document.querySelectorAll(".bouton-module").forEach(function (bouton) {
+      bouton.addEventListener("click", function () {
+        actualiserVerrouQuiz(bouton.dataset.module);
+      });
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

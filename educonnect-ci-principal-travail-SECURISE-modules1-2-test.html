@@ -163,96 +163,10 @@ header {
 @media(max-width:600px){.selecteur-modules{display:grid}.bouton-module{width:100%;text-align:left}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script></head><body><header><h1>EDUCONNECT CI</h1><p>Apprendre, progresser et réussir.</p></header><main><section id="accueil-modules"><h2>Mes formations</h2><p>Choisis un module pour consulter ses leçons, réaliser les exercices et passer son quiz.</p><nav aria-label="Choix du module" class="selecteur-modules"><button aria-controls="panneau-module-1" class="btn bouton-module" data-module="module-1" type="button">Module 1 — Découverte de l’ordinateur</button><button aria-controls="panneau-module-2" class="btn bouton-module" data-module="module-2" type="button">Module 2 — Initiation à l’informatique</button><button aria-controls="panneau-module-3" class="btn bouton-module" data-module="module-3" type="button">Module 3 — Bureautique</button><button aria-controls="panneau-module-4" class="btn bouton-module" data-module="module-4" type="button">Module 4 — Internet et sécurité</button></nav></section><p class="notice-securite">Important : l’affichage par module organise la page. Avant la mise en production, l’accès aux leçons doit aussi être vérifié côté serveur selon les droits d’achat de chaque apprenant.</p><div class="panneau-module" data-panneau="module-1" id="panneau-module-1"><h2>Module 1 — Découverte de l’ordinateur</h2><section id="module-1-lecons">
-<h2>Module 1 — Découverte de l’ordinateur</h2>
-<p>Ce module est destiné aux personnes qui débutent. Avance à ton rythme, lis les explications et réalise les exercices proposés.</p>
-<h3>Leçon 1 : Qu’est-ce qu’un ordinateur ?</h3>
-<p>Un ordinateur est un appareil électronique capable de recevoir des informations, de les traiter, de les stocker et de présenter un résultat.</p>
-<div class="&lt;div class=" illustration-lecon"="">
-<div class="illustration-lecon">
-<img alt="Ordinateur de bureau avec écran, clavier, souris et unité centrale" loading="lazy" src="image/ordinateur-complet.png"/>
-<p>Les principaux éléments d'un ordinateur de bureau.</p>
-</div>
-<p>Il peut servir à rédiger une lettre, effectuer des calculs, consulter Internet, communiquer, regarder des vidéos ou conserver des photos.</p>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">⌨️</span><strong>Recevoir</strong><span>On saisit des informations avec le clavier.</span></div>
-<div class="visual-item"><span class="visual-icon">⚙️</span><strong>Traiter</strong><span>L’ordinateur effectue les opérations demandées.</span></div>
-<div class="visual-item"><span class="visual-icon">💾</span><strong>Stocker</strong><span>Il conserve les fichiers et les données.</span></div>
-<div class="visual-item"><span class="visual-icon">🖥️</span><strong>Restituer</strong><span>Il affiche ou imprime le résultat.</span></div>
-</div>
-<div class="tip"><strong>À retenir :</strong> un ordinateur aide à traiter et à conserver des informations. Il exécute les tâches selon les instructions et les logiciels utilisés.</div>
-<div class="practice"><strong>Exercice pratique :</strong> cite trois activités que tu pourrais réaliser avec un ordinateur.</div>
-<h3>Leçon 2 : Identifier les principaux composants</h3>
-<p>Un ordinateur de bureau comprend plusieurs éléments qui travaillent ensemble.</p>
-<div class="illustration-lecon">
-<img alt="Les quatre principaux composants d'un ordinateur : écran, clavier, souris et unité centrale" loading="lazy" src="image/composants-ordinateur-moderne.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">🖥️</span><strong>L’écran</strong><span>Affiche les textes, images et vidéos.</span></div>
-<div class="visual-item"><span class="visual-icon">⌨️</span><strong>Le clavier</strong><span>Permet de saisir des lettres, chiffres et caractères.</span></div>
-<div class="visual-item"><span class="visual-icon">🖱️</span><strong>La souris</strong><span>Permet de déplacer le pointeur et de sélectionner.</span></div>
-<div class="visual-item"><span class="visual-icon">🗄️</span><strong>L’unité centrale</strong><span>Contient notamment le processeur, la mémoire et le stockage.</span></div>
-</div>
-<p>L’écran montre les informations. Le clavier et la souris permettent de donner des instructions. L’unité centrale contient les composants qui exécutent les opérations.</p>
-<div class="tip"><strong>À retenir :</strong> l’écran, le clavier, la souris et l’unité centrale ont des fonctions différentes mais complémentaires.</div>
-<div class="practice"><strong>Exercice pratique :</strong> devant un ordinateur, montre chaque composant et explique son rôle avec tes propres mots.</div>
-<h3>Leçon 3 : Comprendre les périphériques d’entrée et de sortie</h3>
-<p>Un périphérique est un équipement connecté à l’ordinateur pour permettre l’échange d’informations.</p>
-<div class="illustration-lecon">
-<img alt="Exemples de périphériques d'entrée et de sortie d'un ordinateur" loading="lazy" src="image/peripheriques-entree-sortie.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">🎙️</span><strong>Entrée</strong><span>Microphone : transmet la voix à l’ordinateur.</span></div>
-<div class="visual-item"><span class="visual-icon">📷</span><strong>Entrée</strong><span>Scanner : transforme un document papier en fichier numérique.</span></div>
-<div class="visual-item"><span class="visual-icon">🖨️</span><strong>Sortie</strong><span>Imprimante : produit une version papier.</span></div>
-<div class="visual-item"><span class="visual-icon">🔊</span><strong>Sortie</strong><span>Haut-parleurs : diffusent le son.</span></div>
-</div>
-<p><strong>Périphériques d’entrée :</strong> ils envoient des informations vers l’ordinateur, par exemple le clavier, la souris, le microphone et le scanner.</p>
-<p><strong>Périphériques de sortie :</strong> ils présentent les résultats produits par l’ordinateur, par exemple l’écran, l’imprimante et les haut-parleurs.</p>
-<p>Certains équipements, comme un écran tactile, peuvent être à la fois des périphériques d’entrée et de sortie.</p>
-<div class="tip"><strong>À retenir :</strong> entrée signifie que l’information arrive dans l’ordinateur ; sortie signifie que l’ordinateur transmet un résultat.</div>
-<div class="practice"><strong>Exercice pratique :</strong> classe le clavier, le microphone, l’écran et l’imprimante en périphériques d’entrée ou de sortie.</div>
-<h3>Leçon 4 : Découvrir les logiciels et le système d’exploitation</h3>
-<p>Un logiciel est un programme qui permet à l’ordinateur d’effectuer une ou plusieurs tâches.</p>
-<div class="illustration-lecon">
-<img alt="Présentation du système d'exploitation Windows et de plusieurs logiciels" loading="lazy" src="image/logiciels-systeme-exploitation.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">📄</span><strong>Traitement de texte</strong><span>Permet de rédiger et mettre en forme des documents.</span></div>
-<div class="visual-item"><span class="visual-icon">📊</span><strong>Tableur</strong><span>Permet d’organiser des données et de faire des calculs.</span></div>
-<div class="visual-item"><span class="visual-icon">🌐</span><strong>Navigateur</strong><span>Permet de consulter des sites Web.</span></div>
-<div class="visual-item"><span class="visual-icon">💻</span><strong>Système</strong><span>Windows, Linux et macOS sont des systèmes d’exploitation.</span></div>
-</div>
-<p>Le système d’exploitation est le logiciel principal qui gère les ressources de l’ordinateur et permet d’utiliser les autres programmes.</p>
-<div class="tip"><strong>À retenir :</strong> le système d’exploitation fait fonctionner l’environnement de l’ordinateur ; les autres logiciels servent à réaliser des tâches précises.</div>
-<div class="practice"><strong>Exercice pratique :</strong> donne un exemple de logiciel pour rédiger un document et un exemple de système d’exploitation.</div>
-<h3>Leçon 5 : Allumer et éteindre correctement un ordinateur</h3>
-<p><strong>Pour allumer :</strong></p>
-<div class="illustration-lecon">
-<img alt="Étapes pour allumer, utiliser et éteindre correctement un ordinateur" loading="lazy" src="image/allumer-utiliser-eteindre.png"/>
-</div>
-<ol>
-<li>Vérifie que l’ordinateur est correctement branché.</li>
-<li>Appuie sur le bouton d’alimentation.</li>
-<li>Attends le démarrage du système.</li>
-<li>Saisis ton mot de passe si l’ordinateur en demande un.</li>
-</ol>
-<p><strong>Pour éteindre :</strong></p>
-<ol>
-<li>Enregistre ton travail.</li>
-<li>Ferme les applications ouvertes.</li>
-<li>Ouvre le menu Démarrer.</li>
-<li>Sélectionne Alimentation, puis Arrêter.</li>
-<li>Attends que l’ordinateur soit complètement éteint.</li>
-</ol>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">🔌</span><strong>1. Vérifier</strong><span>Contrôler l’alimentation.</span></div>
-<div class="visual-item"><span class="visual-icon">⏻</span><strong>2. Démarrer</strong><span>Appuyer sur le bouton d’alimentation.</span></div>
-<div class="visual-item"><span class="visual-icon">💾</span><strong>3. Enregistrer</strong><span>Ne pas perdre son travail.</span></div>
-<div class="visual-item"><span class="visual-icon">🛑</span><strong>4. Arrêter</strong><span>Utiliser la commande Arrêter.</span></div>
-</div>
-<div class="tip"><strong>À retenir :</strong> n’éteins pas brutalement l’ordinateur en retirant le câble électrique pendant son fonctionnement. Enregistre d’abord ton travail et utilise la commande d’arrêt.</div>
-<div class="practice"><strong>Exercice pratique :</strong> avec l’aide d’un formateur si nécessaire, allume un ordinateur puis arrête-le en suivant les étapes ci-dessus.</div>
-</div></section><section id="quiz-module-1">
+  <div id="cours-module-1" aria-live="polite">
+    Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 1.
+  </div>
+  </section><section id="quiz-module-1">
 <h2>Quiz final – Module 1 : Initiation à l'informatique</h2>
 <p>
         Réponds aux 7 questions. Chaque bonne réponse vaut 1 point.
@@ -314,86 +228,10 @@ header {
 </form>
 <div aria-live="polite" id="resultat-module-1" role="status"></div>
 </section></div><div class="panneau-module" data-panneau="module-2" id="panneau-module-2"><h2>Module 2 — Initiation à l’informatique</h2><section id="module-2-lecons">
-<h2>Module 2 — Maîtriser Windows 10 et Windows 11</h2>
-<p>Ce module apprend à utiliser Windows, organiser les documents, configurer l’ordinateur et adopter les bonnes pratiques de sécurité.</p>
-<h3>Leçon 1 : Découvrir le bureau Windows</h3>
-<p>Windows est un système d’exploitation développé par Microsoft. Il permet de communiquer avec l’ordinateur, de gérer ses ressources et d’utiliser des applications.</p>
-<div class="illustration-lecon">
-<img alt="Présentation du bureau Windows et de ses principaux éléments" loading="lazy" src="image/bureau-windows.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">🖥️</span><strong>Bureau</strong><span>Espace principal affiché après l’ouverture de session.</span></div>
-<div class="visual-item"><span class="visual-icon">🔖</span><strong>Icônes</strong><span>Représentent des applications, fichiers, dossiers ou raccourcis.</span></div>
-<div class="visual-item"><span class="visual-icon">📌</span><strong>Barre des tâches</strong><span>Donne accès aux applications ouvertes ou épinglées.</span></div>
-<div class="visual-item"><span class="visual-icon">⊞</span><strong>Menu Démarrer</strong><span>Permet de retrouver les applications et les options d’alimentation.</span></div>
-</div>
-<p>Une fenêtre affiche généralement une application ou un dossier. Les boutons Réduire, Agrandir et Fermer permettent de gérer son affichage.</p>
-<div class="tip"><strong>À retenir :</strong> Windows 10 et Windows 11 ont une apparence différente, mais partagent les fonctions fondamentales du bureau, des fenêtres et du menu Démarrer.</div>
-<div class="practice"><strong>Exercice pratique :</strong> repère le bureau, le menu Démarrer, la barre des tâches et les icônes sur ton ordinateur.</div>
-<h3>Leçon 2 : Utiliser le menu Démarrer et lancer les applications</h3>
-<p>Le menu Démarrer permet d’accéder aux applications, aux paramètres et aux options d’alimentation. On peut l’ouvrir en cliquant sur son icône ou en appuyant sur la touche Windows.</p>
-<p>Pour rechercher une application, ouvre le menu Démarrer, saisis son nom, puis sélectionne-la dans les résultats. Par exemple, recherche « Calculatrice » pour ouvrir la calculatrice.</p>
-<div class="illustration-lecon">
-<img alt="Présentation du menu Démarrer et des applications Windows" loading="lazy" src="image/menu-demarrer-applications.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">🧮</span><strong>Calculatrice</strong><span>Effectuer des calculs.</span></div>
-<div class="visual-item"><span class="visual-icon">📝</span><strong>Bloc-notes</strong><span>Écrire du texte simple.</span></div>
-<div class="visual-item"><span class="visual-icon">🎨</span><strong>Paint</strong><span>Créer ou modifier des images.</span></div>
-<div class="visual-item"><span class="visual-icon">🌐</span><strong>Navigateur</strong><span>Consulter des sites Web.</span></div>
-</div>
-<p>Pour passer d’une application ouverte à une autre, utilise <strong>Alt + Tab</strong>. Pour épingler une application, fais un clic droit sur son nom et choisis l’option correspondante si elle est proposée.</p>
-<div class="tip"><strong>À retenir :</strong> la recherche du menu Démarrer aide à retrouver rapidement un logiciel ; Alt + Tab permet de passer d’une fenêtre à une autre.</div>
-<div class="practice"><strong>Exercice pratique :</strong> ouvre la Calculatrice et le Bloc-notes, puis utilise Alt + Tab pour passer de l’une à l’autre.</div>
-<h3>Leçon 3 : Gérer les fichiers et les dossiers</h3>
-<p>Un fichier est un document numérique (texte, image, vidéo, audio, etc.). Un dossier sert à ranger des fichiers et d’autres dossiers.</p>
-<p>L’Explorateur de fichiers permet de parcourir les emplacements comme Documents, Images, Téléchargements, Bureau et Ce PC. Ouvre-le avec <strong>Windows + E</strong>.</p>
-<div class="illustration-lecon">
-<img alt="Présentation de l'Explorateur de fichiers Windows et de la gestion des dossiers" loading="lazy" src="image/gestion-fichiers-dossiers.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">📁</span><strong>Dossier</strong><span>Regroupe et organise des éléments.</span></div>
-<div class="visual-item"><span class="visual-icon">📄</span><strong>Fichier</strong><span>Contient un document ou des données.</span></div>
-<div class="visual-item"><span class="visual-icon">🗂️</span><strong>Documents</strong><span>Emplacement courant pour les documents.</span></div>
-<div class="visual-item"><span class="visual-icon">🗑️</span><strong>Corbeille</strong><span>Conserve généralement les éléments supprimés.</span></div>
-</div>
-<p>Pour créer un dossier : ouvre l’emplacement, fais un clic droit dans un espace vide, choisis Nouveau puis Dossier, saisis son nom et appuie sur Entrée.</p>
-<p>Raccourcis utiles : <strong>Ctrl + C</strong> copier, <strong>Ctrl + X</strong> couper, <strong>Ctrl + V</strong> coller, <strong>F2</strong> renommer et <strong>Suppr</strong> supprimer.</p>
-<div class="tip"><strong>À retenir :</strong> copier conserve l’original ; couper puis coller déplace l’élément. Les fichiers supprimés sont généralement placés dans la Corbeille.</div>
-<div class="practice"><strong>Exercice pratique :</strong> crée un dossier « EDUCONNECT CI », puis un sous-dossier « MES COURS » et entraîne-toi à renommer un fichier.</div>
-<h3>Leçon 4 : Configurer son ordinateur</h3>
-<p>Les paramètres Windows permettent de personnaliser le fonctionnement de l’ordinateur. Utilise <strong>Windows + I</strong> pour les ouvrir.</p>
-<p>Pour se connecter au Wi-Fi, ouvre les paramètres réseau ou le panneau rapide, active le Wi-Fi, sélectionne le réseau, puis saisis son mot de passe.</p>
-<div class="illustration-lecon">
-<img alt="Présentation des paramètres Windows et de la configuration de l'ordinateur" loading="lazy" src="image/configuration-ordinateur.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">📶</span><strong>Wi-Fi</strong><span>Connecter l’ordinateur à un réseau sans fil.</span></div>
-<div class="visual-item"><span class="visual-icon">🔊</span><strong>Son</strong><span>Régler le volume et choisir la sortie audio.</span></div>
-<div class="visual-item"><span class="visual-icon">☀️</span><strong>Écran</strong><span>Ajuster la luminosité si l’appareil le permet.</span></div>
-<div class="visual-item"><span class="visual-icon">⌨️</span><strong>Clavier</strong><span>Choisir une disposition comme AZERTY ou QWERTY.</span></div>
-</div>
-<p>Le raccourci <strong>Windows + Espace</strong> permet de basculer entre les dispositions de clavier installées. Les paramètres d’affichage permettent notamment de régler la résolution et la taille du texte.</p>
-<div class="tip"><strong>À retenir :</strong> Windows + I ouvre les paramètres. La langue d’affichage et la disposition du clavier sont deux réglages différents.</div>
-<div class="practice"><strong>Exercice pratique :</strong> ouvre les paramètres, repère les réglages réseau, son, affichage et langue sans modifier les paramètres dont tu ne connais pas l’effet.</div>
-<h3>Leçon 5 : Entretenir et protéger Windows</h3>
-<p>L’entretien informatique aide à conserver un ordinateur stable et sécurisé. Les mises à jour corrigent des erreurs et peuvent renforcer la sécurité.</p>
-<p>Pour rechercher des mises à jour, ouvre les paramètres, sélectionne Windows Update, puis recherche les mises à jour. Suis les instructions et évite d’éteindre brutalement l’ordinateur pendant une installation.</p>
-<div class="illustration-lecon">
-<img alt="Entretien et protection de Windows : sécurité, mises à jour et nettoyage" loading="lazy" src="image/entretien-protection-windows.png"/>
-</div>
-<div class="lesson-visual">
-<div class="visual-item"><span class="visual-icon">🔄</span><strong>Mises à jour</strong><span>Corriger et améliorer le système.</span></div>
-<div class="visual-item"><span class="visual-icon">🛡️</span><strong>Antivirus</strong><span>Détecter et bloquer des programmes malveillants.</span></div>
-<div class="visual-item"><span class="visual-icon">⚠️</span><strong>Hameçonnage</strong><span>Messages trompeurs visant à voler des informations.</span></div>
-<div class="visual-item"><span class="visual-icon">💾</span><strong>Sauvegarde</strong><span>Conserver une copie des fichiers importants.</span></div>
-</div>
-<p>Windows intègre Microsoft Defender Antivirus. On peut consulter son état dans l’application Sécurité Windows, rubrique Protection contre les virus et menaces.</p>
-<p>Ne clique pas sur les liens suspects, ne partage jamais ton mot de passe et télécharge les logiciels depuis des sources fiables. Sauvegarde régulièrement tes documents sur une clé USB, un disque externe ou un espace en ligne.</p>
-<p><strong>Information importante :</strong> le support standard de Windows 10 a pris fin le 14 octobre 2025. Il faut vérifier les possibilités de mises à jour de sécurité encore disponibles pour son appareil.</p>
-<div class="tip"><strong>À retenir :</strong> protéger un ordinateur demande des mises à jour, de la prudence face aux messages suspects et des sauvegardes régulières.</div>
-<div class="practice"><strong>Exercice pratique :</strong> ouvre Sécurité Windows, consulte l’état de la protection et identifie un emplacement où sauvegarder tes documents.</div>
-</section><section id="quiz-module-2">
+  <div id="cours-module-2" aria-live="polite">
+    Connecte-toi à ton compte pour vérifier tes droits et charger le cours du module 2.
+  </div>
+  </section><section id="quiz-module-2">
 <h2>Évaluation du module 2 — Windows</h2>
 <p>7 questions à choix multiples. Chaque bonne réponse vaut 1 point. Il faut obtenir au moins 6/7 pour valider le module.</p>
 <p class="tip"><strong>Évaluation :</strong> tes réponses sont transmises à Supabase pour une correction sécurisée. La validation officielle dépend du résultat enregistré par le serveur.</p>
@@ -1962,7 +1800,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
       if (erreurDemarrage || !tentativeId) {
-        console.error("Erreur de démarrage :", erreurDemarrage);
+      console.error(
+  "DÉTAIL ERREUR QUIZ :",
+  JSON.stringify(erreurDemarrage, null, 2)
+);
         resultatModule1.textContent =
           "Impossible de démarrer le questionnaire. Vérifie que ton accès est autorisé.";
         return;
@@ -2059,7 +1900,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
       if (erreurDemarrage || !tentativeId) {
-        console.error(erreurDemarrage);
+        console.error("DÉTAIL ERREUR QUIZ :", {
+  message: erreurDemarrage?.message,
+  code: erreurDemarrage?.code,
+  details: erreurDemarrage?.details,
+  hint: erreurDemarrage?.hint
+});
         resultat.textContent =
           "Impossible de démarrer le questionnaire. Vérifie que tu es connecté et que ton accès à ce module est autorisé.";
         return;
@@ -2296,6 +2142,152 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script><script>
+// Chargement du cours 1 depuis le bucket privé Supabase.
+(function () {
+  let module1Charge = false;
+  let module1EnCours = false;
+  const urlsImagesModule1 = [];
+
+  async function chargerCoursModule1() {
+    const zone = document.getElementById("cours-module-1");
+    const supabase = window.eduSupabase;
+    if (!zone || module1Charge || module1EnCours) return;
+    if (!supabase) {
+      zone.textContent = "La connexion à Supabase est indisponible. Réessaie plus tard.";
+      return;
+    }
+
+    module1EnCours = true;
+    zone.textContent = "Vérification de ton accès au module 1...";
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !sessionData?.user) {
+        zone.textContent = "Connecte-toi à ton compte pour consulter ce cours.";
+        return;
+      }
+
+      const stockage = supabase.storage.from("cours-prives");
+      const { data: fichier, error: fichierError } = await stockage.download("module-1/module-1.html");
+      if (fichierError || !fichier) {
+        console.error("Chargement du module 1 refusé ou impossible :", fichierError);
+        zone.textContent = "Ton accès au module 1 n'est pas autorisé ou le cours est momentanément indisponible.";
+        return;
+      }
+
+      const html = await fichier.text();
+      const documentCours = new DOMParser().parseFromString(html, "text/html");
+      const contenu = documentCours.body;
+      if (!contenu) throw new Error("Le fichier du cours ne contient pas de corps HTML.");
+
+      // Reprendre les styles du fichier du cours sans charger un second document HTML.
+      documentCours.querySelectorAll("style").forEach((styleSource) => {
+        const style = document.createElement("style");
+        style.textContent = styleSource.textContent;
+        style.dataset.modulePrive = "module-1";
+        document.head.appendChild(style);
+      });
+
+      // Les images restent privées : créer une URL signée pour chacune.
+      const images = Array.from(contenu.querySelectorAll("img[src]"));
+      for (const image of images) {
+        const cheminImage = image.getAttribute("src");
+        if (!cheminImage || /^(https?:|data:|blob:)/i.test(cheminImage)) continue;
+        const cheminNettoye = cheminImage.replace(/^\.\//, "").replace(/^\/+/, "");
+        const cheminStockage = "module-1/" + cheminNettoye;
+        const { data: urlSignee, error: imageError } = await stockage.createSignedUrl(cheminStockage, 3600);
+        if (imageError || !urlSignee?.signedUrl) {
+          throw new Error("Impossible de charger une illustration du module 1 : " + cheminNettoye);
+        }
+        image.src = urlSignee.signedUrl;
+        urlsImagesModule1.push(urlSignee.signedUrl);
+      }
+
+      zone.replaceChildren(...Array.from(contenu.childNodes));
+      module1Charge = true;
+    } catch (erreur) {
+      console.error("Erreur de chargement du module 1 :", erreur);
+      zone.textContent = "Le cours n'a pas pu être chargé. Vérifie ta connexion puis réessaie.";
+    } finally {
+      module1EnCours = false;
+    }
+  }
+
+  window.chargerCoursModule1 = chargerCoursModule1;
+})();
+</script>
+<script>
+// Chargement du cours 2 depuis le bucket privé Supabase.
+(function () {
+  let module2Charge = false;
+  let module2EnCours = false;
+
+  async function chargerCoursModule2() {
+    const zone = document.getElementById("cours-module-2");
+    const supabase = window.eduSupabase;
+    if (!zone || module2Charge || module2EnCours) return;
+    if (!supabase) {
+      zone.textContent = "La connexion à Supabase est indisponible. Réessaie plus tard.";
+      return;
+    }
+
+    module2EnCours = true;
+    zone.textContent = "Vérification de ton accès au module 2...";
+
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getUser();
+      if (sessionError || !sessionData?.user) {
+        zone.textContent = "Connecte-toi à ton compte pour consulter ce cours.";
+        return;
+      }
+
+      const stockage = supabase.storage.from("cours-prives");
+      const { data: fichier, error: fichierError } = await stockage.download("module-2/module-2.html");
+      if (fichierError || !fichier) {
+        console.error("Chargement du module 2 refusé ou impossible :", fichierError);
+        zone.textContent = "Ton accès au module 2 n'est pas autorisé ou le cours est momentanément indisponible.";
+        return;
+      }
+
+      const html = await fichier.text();
+      const documentCours = new DOMParser().parseFromString(html, "text/html");
+      const contenu = documentCours.body;
+      if (!contenu) throw new Error("Le fichier du cours ne contient pas de corps HTML.");
+
+      documentCours.querySelectorAll("style").forEach((styleSource) => {
+        const style = document.createElement("style");
+        style.textContent = styleSource.textContent;
+        style.dataset.modulePrive = "module-2";
+        document.head.appendChild(style);
+      });
+
+      const images = Array.from(contenu.querySelectorAll("img[src]"));
+      for (const image of images) {
+        const cheminImage = image.getAttribute("src");
+        if (!cheminImage || /^(https?:|data:|blob:)/i.test(cheminImage)) continue;
+        const cheminNettoye = cheminImage.replace(/^\.\//, "").replace(/^\/+/, "");
+        const cheminStockage = "module-2/" + cheminNettoye;
+        const { data: urlSignee, error: imageError } = await stockage.createSignedUrl(cheminStockage, 3600);
+        if (imageError || !urlSignee?.signedUrl) {
+          throw new Error("Impossible de charger une illustration du module 2 : " + cheminNettoye);
+        }
+        image.src = urlSignee.signedUrl;
+      }
+
+      zone.replaceChildren(...Array.from(contenu.childNodes));
+      module2Charge = true;
+    } catch (erreur) {
+      console.error("Erreur de chargement du module 2 :", erreur);
+      zone.textContent = "Le cours n'a pas pu être chargé. Vérifie ta connexion puis réessaie.";
+    } finally {
+      module2EnCours = false;
+    }
+  }
+
+  window.chargerCoursModule2 = chargerCoursModule2;
+})();
+</script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
   const boutons = document.querySelectorAll(".bouton-module");
   const panneaux = document.querySelectorAll(".panneau-module");
@@ -2309,11 +2301,35 @@ document.addEventListener("DOMContentLoaded", function () {
       bouton.setAttribute("aria-pressed", actif ? "true" : "false");
     });
     const cible = document.getElementById("panneau-" + id);
+    if (id === "module-1" && typeof window.chargerCoursModule1 === "function") {
+      window.chargerCoursModule1();
+    }
+    if (id === "module-2" && typeof window.chargerCoursModule2 === "function") {
+      window.chargerCoursModule2();
+    }
     if (cible) cible.scrollIntoView({ behavior: "smooth", block: "start" });
   }
   boutons.forEach(function (bouton) {
     bouton.addEventListener("click", function () { afficherModule(bouton.dataset.module); });
   });
-  afficherModule("module-1");
+  
+const parametres = new URLSearchParams(window.location.search);
+const moduleDemande = parametres.get("module");
+
+const modulesAutorises = [
+  "module-1",
+  "module-2",
+  "module-3",
+  "module-4"
+];
+
+afficherModule(
+  modulesAutorises.includes(moduleDemande)
+    ? moduleDemande
+    : "module-1"
+);
+
 });
-</script></body></html>
+</script>
+</body>
+</html>

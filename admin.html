@@ -109,7 +109,15 @@
       align-items: center;
       margin: 8px 0;
     }
-    .devis-ligne input { width: 100%; }
+    .devis-ligne input,
+    .devis-ligne select { width: 100%; }
+    .actions-entete {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .bouton-deconnexion { background: #8a2635; }
     .devis-total { font-size: 1.05rem; font-weight: bold; margin-top: 12px; }
     .aide { color: #555; font-size: .92rem; }
     @media (max-width: 650px) {
@@ -125,6 +133,10 @@
 <header>
   <h1>EDUCONNECT CI – Espace administrateur</h1>
   <p id="message">Chargement de l'espace administrateur...</p>
+  <div class="actions-entete">
+    <button type="button" id="bouton-connexion" hidden>Se connecter</button>
+    <button type="button" id="bouton-deconnexion" class="bouton-deconnexion" hidden>Se déconnecter</button>
+  </div>
 </header>
 
 <section id="gestion-autorisations" hidden>
@@ -230,6 +242,60 @@
 </section>
 
 
+<section id="gestion-commandes" hidden>
+  <h2>Gestion des commandes et prestations</h2>
+  <p class="aide">Transforme les devis acceptés en commandes, puis suis leur réalisation. La conversion ne déclenche aucun paiement.</p>
+
+  <h3>Transformer un devis accepté en commande</h3>
+  <label for="commande-devis">Devis accepté sans commande :</label><br>
+  <select id="commande-devis" style="width:100%">
+    <option value="">Chargement des devis acceptés...</option>
+  </select><br>
+  <button type="button" id="bouton-transformer-devis">Créer la commande</button>
+  <p id="message-transformation" class="message" role="status"></p>
+
+  <hr>
+  <h3>Commandes enregistrées</h3>
+  <div class="actions-entete">
+    <input type="search" id="recherche-commandes" placeholder="Rechercher un numéro de commande ou de devis" style="flex:1;min-width:220px">
+    <select id="filtre-statut-commande">
+      <option value="">Tous les statuts</option>
+      <option value="a_traiter">À traiter</option>
+      <option value="en_cours">En cours</option>
+      <option value="terminee">Terminée</option>
+      <option value="livree">Livrée</option>
+      <option value="annulee">Annulée</option>
+    </select>
+    <button type="button" id="bouton-actualiser-commandes">Actualiser les commandes</button>
+  </div>
+  <p id="message-commandes" class="message" role="status"></p>
+  <div id="liste-commandes">Chargement des commandes...</div>
+</section>
+
+
+<section id="historique-commandes-admin" hidden>
+  <h2>Historique des commandes</h2>
+  <p class="aide">Consulte les changements de statut enregistrés automatiquement, avec leur date et leur auteur lorsqu'il est disponible.</p>
+  <div class="actions-entete">
+    <input type="search" id="recherche-historique-commandes" placeholder="Rechercher un numéro de commande" style="flex:1;min-width:220px">
+    <button type="button" id="bouton-actualiser-historique">Actualiser l'historique</button>
+  </div>
+  <p id="message-historique-commandes" class="message" role="status"></p>
+  <div id="liste-historique-commandes">Chargement de l'historique...</div>
+</section>
+
+
+<section id="gestion-justificatifs" hidden>
+  <h2>Justificatifs de paiement déposés</h2>
+  <p class="aide">Consulte les reçus transmis par les clients depuis leur espace personnel. Les fichiers restent dans le bucket privé recus-paiements.</p>
+  <div class="actions-entete">
+    <input type="search" id="recherche-justificatifs" placeholder="Rechercher un client ou un nom de fichier" style="flex:1;min-width:220px">
+    <button type="button" id="bouton-actualiser-justificatifs">Actualiser les justificatifs</button>
+  </div>
+  <p id="message-justificatifs" class="message" role="status"></p>
+  <div id="liste-justificatifs">Chargement des justificatifs...</div>
+</section>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 
@@ -238,6 +304,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const message = document.getElementById("message");
   const supabase = window.eduSupabase;
+  const boutonConnexion = document.getElementById("bouton-connexion");
+  const boutonDeconnexion = document.getElementById("bouton-deconnexion");
+
+  boutonConnexion.addEventListener("click", function() {
+    window.location.href = "connexion.html";
+  });
+
+  boutonDeconnexion.addEventListener("click", async function() {
+    if (!supabase) return;
+    boutonDeconnexion.disabled = true;
+    boutonDeconnexion.textContent = "Déconnexion...";
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      message.textContent = "La déconnexion a échoué : " + error.message;
+      boutonDeconnexion.disabled = false;
+      boutonDeconnexion.textContent = "Se déconnecter";
+      return;
+    }
+    window.location.href = "connexion.html";
+  });
 
   if (!supabase) {
     message.textContent = "Connexion Supabase indisponible.";
@@ -254,9 +340,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (sessionError || !sessionData.user) {
       message.textContent =
         "Vous devez vous connecter pour accéder à cet espace.";
+      boutonConnexion.hidden = false;
       return;
     }
 
+    boutonDeconnexion.hidden = false;
     const utilisateur = sessionData.user;
 
     const { data: estAdmin, error: adminError } =
@@ -729,6 +817,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       return Math.round(valeur).toLocaleString("fr-FR");
     }
 
+    const categoriesCatalogue = [
+      { valeur: "depannage-maintenance", libelle: "Dépannage et maintenance" },
+      { valeur: "installation-logiciels", libelle: "Installation de logiciels" },
+      { valeur: "creation-sites-web", libelle: "Création de sites web" },
+      { valeur: "developpement-applications", libelle: "Développement d'applications" },
+      { valeur: "bases-donnees", libelle: "Bases de données" },
+      { valeur: "formation-informatique", libelle: "Formation informatique" }
+    ];
+
     function lireLignesDevis() {
       return Array.from(conteneurLignesDevis.querySelectorAll(".devis-ligne")).map(function(ligne) {
         const designation = ligne.querySelector(".ligne-designation").value.trim();
@@ -746,15 +843,33 @@ document.addEventListener("DOMContentLoaded", async function () {
       document.getElementById("devis-total-net").textContent = formaterXof(Math.max(0, total - remise));
     }
 
-    function ajouterLigneDevis() {
+    function ajouterOption(select, valeur, libelle) {
+      const option = document.createElement("option");
+      option.value = valeur;
+      option.textContent = libelle;
+      select.appendChild(option);
+    }
+
+    function ajouterLigneDevis(cataloguePrestations) {
       const ligne = document.createElement("div");
       ligne.className = "devis-ligne";
-      const designation = document.createElement("input");
+
+      const categorie = document.createElement("select");
+      categorie.className = "ligne-categorie";
+      categorie.required = true;
+      categorie.setAttribute("aria-label", "Catégorie de prestation");
+      ajouterOption(categorie, "", "Choisir une catégorie");
+      categoriesCatalogue.forEach(function(item) {
+        ajouterOption(categorie, item.valeur, item.libelle);
+      });
+
+      const designation = document.createElement("select");
       designation.className = "ligne-designation";
-      designation.type = "text";
       designation.required = true;
-      designation.maxLength = 500;
-      designation.placeholder = "Désignation de la prestation";
+      designation.disabled = true;
+      designation.setAttribute("aria-label", "Prestation");
+      ajouterOption(designation, "", "Choisir d'abord une catégorie");
+
       const quantite = document.createElement("input");
       quantite.className = "ligne-quantite";
       quantite.type = "number";
@@ -763,6 +878,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       quantite.step = "0.01";
       quantite.value = "1";
       quantite.title = "Quantité";
+      quantite.setAttribute("aria-label", "Quantité");
+
       const prix = document.createElement("input");
       prix.className = "ligne-prix";
       prix.type = "number";
@@ -771,7 +888,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       prix.step = "1";
       prix.value = "0";
       prix.placeholder = "Prix unitaire (F CFA)";
-      prix.title = "Prix unitaire en F CFA";
+      prix.title = "Prix unitaire en F CFA — modifiable";
+      prix.setAttribute("aria-label", "Prix unitaire en F CFA");
+
+      const aidePrix = document.createElement("p");
+      aidePrix.className = "aide ligne-aide-prix";
+      aidePrix.textContent = "Sélectionne une prestation pour afficher sa fourchette de prix indicative.";
+
       const supprimer = document.createElement("button");
       supprimer.type = "button";
       supprimer.className = "bouton-supprimer";
@@ -780,22 +903,89 @@ document.addEventListener("DOMContentLoaded", async function () {
         ligne.remove();
         actualiserTotauxDevis();
       });
-      [designation, quantite, prix].forEach(function(champ) {
-        champ.addEventListener("input", actualiserTotauxDevis);
-        ligne.appendChild(champ);
+
+      categorie.addEventListener("change", function() {
+        designation.replaceChildren();
+        ajouterOption(designation, "", "Sélectionner une prestation");
+        const prestations = cataloguePrestations.filter(function(item) {
+          return item.categorie === categorie.value;
+        });
+        prestations.forEach(function(item) {
+          const option = document.createElement("option");
+          option.value = item.prestation;
+          option.textContent = item.prestation;
+          option.dataset.prixMin = item.prix_min_xof == null ? "" : String(item.prix_min_xof);
+          option.dataset.prixMax = item.prix_max_xof == null ? "" : String(item.prix_max_xof);
+          designation.appendChild(option);
+        });
+        designation.disabled = prestations.length === 0;
+        prix.value = "0";
+        aidePrix.textContent = prestations.length
+          ? "Choisis une prestation pour afficher son tarif indicatif."
+          : "Aucune prestation active dans cette catégorie.";
+        actualiserTotauxDevis();
       });
+
+      designation.addEventListener("change", function() {
+        const option = designation.selectedOptions[0];
+        if (!option || !option.value) {
+          prix.value = "0";
+          aidePrix.textContent = "Sélectionne une prestation pour afficher sa fourchette de prix indicative.";
+        } else {
+          const minimum = option.dataset.prixMin;
+          const maximum = option.dataset.prixMax;
+          if (minimum !== "" && maximum !== "") {
+            prix.value = minimum;
+            aidePrix.textContent = "Tarif indicatif : " + formaterXof(Number(minimum)) + " à " + formaterXof(Number(maximum)) + " F CFA. Le prix unitaire reste modifiable.";
+          } else if (minimum !== "") {
+            prix.value = minimum;
+            aidePrix.textContent = "Tarif indicatif à partir de " + formaterXof(Number(minimum)) + " F CFA. Prix modifiable.";
+          } else if (maximum !== "") {
+            prix.value = maximum;
+            aidePrix.textContent = "Tarif indicatif jusqu'à " + formaterXof(Number(maximum)) + " F CFA. Prix modifiable.";
+          } else {
+            prix.value = "0";
+            aidePrix.textContent = "Aucun tarif indicatif défini. Saisis le prix convenu.";
+          }
+        }
+        actualiserTotauxDevis();
+      });
+
+      [quantite, prix].forEach(function(champ) {
+        champ.addEventListener("input", actualiserTotauxDevis);
+      });
+
+      ligne.appendChild(categorie);
+      ligne.appendChild(designation);
+      ligne.appendChild(quantite);
+      ligne.appendChild(prix);
       ligne.appendChild(supprimer);
+      ligne.appendChild(aidePrix);
       conteneurLignesDevis.appendChild(ligne);
     }
 
-    document.getElementById("ajouter-ligne-devis").addEventListener("click", ajouterLigneDevis);
+    document.getElementById("ajouter-ligne-devis").addEventListener("click", function() {
+      ajouterLigneDevis(cataloguePrestations);
+    });
     remiseDevis.addEventListener("input", actualiserTotauxDevis);
-    ajouterLigneDevis();
 
-    const [resultatDemandesDevis, resultatProfilsDevis] = await Promise.all([
+    const [resultatDemandesDevis, resultatProfilsDevis, resultatCatalogue] = await Promise.all([
       supabase.from("demandes_clients").select("id, direction, prestation, nom_client, telephone, email, created_at").order("created_at", { ascending: false }),
-      supabase.from("profiles").select("id, full_name").order("full_name", { ascending: true })
+      supabase.from("profiles").select("id, full_name").order("full_name", { ascending: true }),
+      supabase.from("tarifs_prestations").select("categorie, prestation, prix_min_xof, prix_max_xof").eq("actif", true).order("categorie", { ascending: true }).order("prestation", { ascending: true })
     ]);
+
+    let cataloguePrestations = [];
+    if (resultatCatalogue.error) {
+      console.error("Erreur de chargement du catalogue :", resultatCatalogue.error);
+      messageDevis.textContent = "Catalogue indisponible : " + resultatCatalogue.error.message;
+    } else {
+      cataloguePrestations = resultatCatalogue.data || [];
+      if (cataloguePrestations.length === 0) {
+        messageDevis.textContent = "Aucune prestation active n'est disponible dans le catalogue.";
+      }
+    }
+    ajouterLigneDevis(cataloguePrestations);
 
     if (resultatDemandesDevis.error) {
       selectDemandeDevis.innerHTML = '<option value="">Erreur de chargement des demandes</option>';
@@ -822,90 +1012,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         selectClientDevis.appendChild(option);
       });
     }
-
-    document.getElementById("form-devis").addEventListener("submit", async function(event) {
-      event.preventDefault();
-      messageDevis.textContent = "";
-      const demandeId = selectDemandeDevis.value;
-      const clientId = selectClientDevis.value;
-      const dateValidite = document.getElementById("devis-validite").value;
-      const lignes = lireLignesDevis();
-      const remise = Number(remiseDevis.value);
-      const totalHt = lignes.reduce((somme, ligne) => somme + ligne.montant, 0);
-      const totalNet = totalHt - remise;
-
-      if (!demandeId || !clientId || !dateValidite) {
-        messageDevis.textContent = "Sélectionne une demande, le compte vérifié du client et une date de validité.";
-        return;
-      }
-      if (!lignes.length || lignes.some(l => !l.designation || !Number.isFinite(l.quantite) || l.quantite <= 0 || !Number.isSafeInteger(l.prix) || l.prix < 0)) {
-        messageDevis.textContent = "Vérifie chaque désignation, quantité et prix unitaire.";
-        return;
-      }
-      if (!Number.isSafeInteger(remise) || remise < 0 || remise > totalHt || totalNet < 0) {
-        messageDevis.textContent = "La remise doit être un montant entier compris entre 0 et le total HT.";
-        return;
-      }
-      if (dateValidite < new Date().toISOString().slice(0, 10)) {
-        messageDevis.textContent = "La date de validité ne peut pas être dans le passé.";
-        return;
-      }
-
-      boutonCreerDevis.disabled = true;
-      boutonCreerDevis.textContent = "Enregistrement...";
-      let devisCreeId = null;
-      try {
-        const numero = "DEV-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 7).toUpperCase();
-        const { data: devisCree, error: erreurDevis } = await supabase
-          .from("devis")
-          .insert({
-            numero_devis: numero,
-            demande_id: demandeId,
-            client_user_id: clientId,
-            admin_user_id: utilisateur.id,
-            statut: "brouillon",
-            date_emission: new Date().toISOString().slice(0, 10),
-            date_validite: dateValidite,
-            montant_ht_xof: totalHt,
-            remise_xof: remise,
-            montant_total_xof: totalNet,
-            conditions: document.getElementById("devis-conditions").value.trim() || null,
-            delai_execution: document.getElementById("devis-delai").value.trim() || null
-          })
-          .select("id")
-          .single();
-
-        if (erreurDevis) throw erreurDevis;
-        devisCreeId = devisCree.id;
-        const lignesAInserer = lignes.map(function(ligne) {
-          return {
-            devis_id: devisCreeId,
-            designation: ligne.designation,
-            quantite: ligne.quantite,
-            prix_unitaire_xof: ligne.prix,
-            montant_ligne_xof: ligne.montant
-          };
-        });
-        const { error: erreurLignes } = await supabase.from("lignes_devis").insert(lignesAInserer);
-        if (erreurLignes) {
-          await supabase.from("devis").delete().eq("id", devisCreeId);
-          devisCreeId = null;
-          throw erreurLignes;
-        }
-        messageDevis.textContent = "Devis " + numero + " enregistré en brouillon. Il n'est pas encore visible par le client.";
-        document.getElementById("form-devis").reset();
-        conteneurLignesDevis.replaceChildren();
-        ajouterLigneDevis();
-        actualiserTotauxDevis();
-      } catch (erreur) {
-        console.error("Erreur de création du devis :", erreur);
-        messageDevis.textContent = "Création impossible : " + (erreur.message || "erreur inconnue");
-      } finally {
-        boutonCreerDevis.disabled = false;
-        boutonCreerDevis.textContent = "Enregistrer le devis en brouillon";
-      }
-    });
-
 
     // =====================================
     // CONSULTATION ET PUBLICATION DES DEVIS
@@ -1012,53 +1118,80 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
           }
 
-          if (d.statut === "brouillon") {
-            const boutonPublier = document.createElement("button");
-            boutonPublier.type = "button";
-            boutonPublier.textContent = "Valider et rendre visible au client";
+         
+if (d.statut === "brouillon") {
+  const boutonPublier = document.createElement("button");
+  boutonPublier.type = "button";
+  boutonPublier.textContent = "Valider et rendre visible au client";
 
-            boutonPublier.addEventListener("click", async function() {
-              if (!d.client_user_id) {
-                messageListeDevis.textContent = "Publication impossible : aucun compte client n'est associé à ce devis.";
-                return;
-              }
+  boutonPublier.addEventListener("click", async function() {
+    if (!d.client_user_id) {
+      messageListeDevis.textContent =
+        "Publication impossible : aucun compte client n'est associé à ce devis.";
+      return;
+    }
 
-              const confirmation = window.confirm(
-                "Confirmer la publication du devis " + d.numero_devis +
-                " dans l'espace personnel du client ? Cette action le rendra visible au client."
-              );
-              if (!confirmation) return;
+    const confirmation = window.confirm(
+      "Confirmer la publication du devis " + d.numero_devis +
+      " dans l'espace personnel du client ? Cette action le rendra visible au client."
+    );
 
-              boutonPublier.disabled = true;
-              boutonPublier.textContent = "Publication en cours...";
+    if (!confirmation) return;
 
-              try {
-                const { error: erreurPublication } = await supabase
-                  .from("devis")
-                  .update({
-                    statut: "envoye",
-                    date_emission: d.date_emission || new Date().toISOString().slice(0, 10),
-                    updated_at: new Date().toISOString()
-                  })
-                  .eq("id", d.id)
-                  .eq("statut", "brouillon");
+    boutonPublier.disabled = true;
+    boutonPublier.textContent = "Publication en cours...";
 
-                if (erreurPublication) throw erreurPublication;
+    try {
+      const { data: devisPublie, error: erreurPublication } =
+        await supabase
+          .from("devis")
+          .update({
+            statut: "envoye",
+            date_emission: d.date_emission ||
+              new Date().toISOString().slice(0, 10),
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", d.id)
+          .eq("client_user_id", d.client_user_id)
+          .eq("statut", "brouillon")
+          .select("id, numero_devis, statut")
+          .maybeSingle();
 
-                messageListeDevis.textContent =
-                  "Le devis " + d.numero_devis +
-                  " est maintenant visible dans l'espace du client. Aucune notification e-mail n'a été envoyée.";
-                await chargerListeDevis();
-              } catch (erreur) {
-                console.error("Erreur de publication du devis :", erreur);
-                messageListeDevis.textContent = "Publication impossible : " + (erreur.message || "erreur inconnue");
-                boutonPublier.disabled = false;
-                boutonPublier.textContent = "Valider et rendre visible au client";
-              }
-            });
+      if (erreurPublication) throw erreurPublication;
 
-            carte.appendChild(boutonPublier);
-          }
+      if (!devisPublie) {
+        throw new Error(
+          "Aucun devis n'a été modifié. Vérifie son statut et les droits administrateur."
+        );
+      }
+
+      if (devisPublie.statut !== "envoye") {
+        throw new Error("Le devis n'a pas obtenu le statut attendu.");
+      }
+
+      messageListeDevis.textContent =
+        "Le devis " + devisPublie.numero_devis +
+        " est maintenant visible dans l'espace du client. " +
+        "Aucune notification e-mail n'a été envoyée.";
+
+      await chargerListeDevis();
+
+    } catch (erreur) {
+      console.error("Erreur de publication du devis :", erreur);
+
+      messageListeDevis.textContent =
+        "Publication impossible : " +
+        (erreur.message || "erreur inconnue");
+
+      boutonPublier.disabled = false;
+      boutonPublier.textContent =
+        "Valider et rendre visible au client";
+    }
+  });
+
+  // Ajouter le bouton uniquement pour les devis en brouillon.
+  carte.appendChild(boutonPublier);
+}
 
           contenuListeDevis.appendChild(carte);
         });
@@ -1072,6 +1205,681 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     boutonActualiserDevis.addEventListener("click", chargerListeDevis);
     await chargerListeDevis();
+
+
+    // =====================================
+    // GESTION DES COMMANDES
+    // =====================================
+    const sectionCommandes = document.getElementById("gestion-commandes");
+    sectionCommandes.hidden = false;
+
+    const selectDevisCommande = document.getElementById("commande-devis");
+    const boutonTransformerDevis = document.getElementById("bouton-transformer-devis");
+    const messageTransformation = document.getElementById("message-transformation");
+    const listeCommandes = document.getElementById("liste-commandes");
+    const messageCommandes = document.getElementById("message-commandes");
+    const rechercheCommandes = document.getElementById("recherche-commandes");
+    const filtreStatutCommande = document.getElementById("filtre-statut-commande");
+
+    const libellesStatutCommande = {
+      a_traiter: "À traiter",
+      en_cours: "En cours",
+      terminee: "Terminée",
+      livree: "Livrée",
+      annulee: "Annulée"
+    };
+
+    let commandesChargees = [];
+
+    async function chargerDevisConvertibles() {
+      selectDevisCommande.innerHTML = '<option value="">Chargement...</option>';
+
+      const { data: devis, error: erreurDevis } = await supabase
+        .from("devis")
+        .select("id, numero_devis, client_user_id, montant_total_xof")
+        .eq("statut", "accepte")
+        .order("created_at", { ascending: false });
+
+      if (erreurDevis) {
+        console.error("Erreur devis convertibles :", erreurDevis);
+        selectDevisCommande.innerHTML = '<option value="">Impossible de charger les devis acceptés</option>';
+        messageTransformation.textContent = "Chargement impossible : " + erreurDevis.message;
+        return;
+      }
+
+      const { data: commandesExistantes, error: erreurCommandes } = await supabase
+        .from("commandes")
+        .select("devis_id");
+
+      if (erreurCommandes) {
+        console.error("Erreur commandes existantes :", erreurCommandes);
+        selectDevisCommande.innerHTML = '<option value="">Impossible de vérifier les commandes existantes</option>';
+        messageTransformation.textContent = "Vérification impossible : " + erreurCommandes.message;
+        return;
+      }
+
+      const dejaConvertis = new Set((commandesExistantes || []).map(c => c.devis_id));
+      const convertibles = (devis || []).filter(d => d.client_user_id && !dejaConvertis.has(d.id));
+
+      selectDevisCommande.replaceChildren();
+      const optionInitiale = document.createElement("option");
+      optionInitiale.value = "";
+      optionInitiale.textContent = "Sélectionner un devis accepté";
+      selectDevisCommande.appendChild(optionInitiale);
+
+      convertibles.forEach(d => {
+        const option = document.createElement("option");
+        option.value = d.id;
+        option.textContent = (d.numero_devis || "Devis sans numéro") +
+          " — " + formaterXof(d.montant_total_xof) + " F CFA";
+        selectDevisCommande.appendChild(option);
+      });
+
+      if (convertibles.length === 0) {
+        optionInitiale.textContent = "Aucun devis accepté disponible pour conversion";
+      }
+    }
+
+    function afficherCommandesFiltrees() {
+      const recherche = rechercheCommandes.value.trim().toLowerCase();
+      const statutChoisi = filtreStatutCommande.value;
+      const resultats = commandesChargees.filter(c => {
+        const correspondRecherche =
+          !recherche ||
+          (c.numero_commande || "").toLowerCase().includes(recherche) ||
+          (c.numero_devis || "").toLowerCase().includes(recherche) ||
+          (c.nom_client || "").toLowerCase().includes(recherche);
+        const correspondStatut = !statutChoisi || c.statut === statutChoisi;
+        return correspondRecherche && correspondStatut;
+      });
+
+      listeCommandes.replaceChildren();
+      if (resultats.length === 0) {
+        listeCommandes.textContent = "Aucune commande ne correspond aux critères sélectionnés.";
+        return;
+      }
+
+      ajouterTexte(listeCommandes, "p", resultats.length + " commande(s) affichée(s).");
+
+      resultats.forEach(c => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", c.numero_commande);
+        afficherChamp(carte, "Devis d'origine", c.numero_devis || "Non renseigné");
+        afficherChamp(carte, "Client", c.nom_client || c.client_user_id);
+        afficherChamp(carte, "Statut actuel", libellesStatutCommande[c.statut] || c.statut);
+        afficherChamp(carte, "Montant HT", formaterXof(c.montant_ht_xof) + " F CFA");
+        afficherChamp(carte, "Remise", formaterXof(c.remise_xof) + " F CFA");
+        afficherChamp(carte, "Total net", formaterXof(c.montant_total_xof) + " F CFA");
+
+        ajouterTexte(carte, "h4", "Prestations commandées");
+        if (!c.lignes || c.lignes.length === 0) {
+          ajouterTexte(carte, "p", "Aucune ligne de prestation trouvée.");
+        } else {
+          c.lignes.forEach(l => {
+            ajouterTexte(
+              carte,
+              "p",
+              l.designation + " — Qté : " + l.quantite +
+              " — Prix unitaire : " + formaterXof(l.prix_unitaire_xof) +
+              " F CFA — Montant : " + formaterXof(l.montant_ligne_xof) + " F CFA"
+            );
+          });
+        }
+
+        const statut = document.createElement("select");
+        Object.entries(libellesStatutCommande).forEach(([valeur, libelle]) => {
+          const option = document.createElement("option");
+          option.value = valeur;
+          option.textContent = libelle;
+          statut.appendChild(option);
+        });
+        statut.value = c.statut;
+
+        const labelStatut = document.createElement("label");
+        labelStatut.textContent = "Mettre à jour le statut : ";
+        labelStatut.appendChild(statut);
+        carte.appendChild(labelStatut);
+
+        const dateDebut = document.createElement("input");
+        dateDebut.type = "date";
+        dateDebut.value = c.date_debut_prevue || "";
+        const labelDebut = document.createElement("label");
+        labelDebut.textContent = "Date de début prévue : ";
+        labelDebut.appendChild(dateDebut);
+        carte.appendChild(labelDebut);
+
+        const dateLivraisonPrevue = document.createElement("input");
+        dateLivraisonPrevue.type = "date";
+        dateLivraisonPrevue.value = c.date_livraison_prevue || "";
+        const labelLivraison = document.createElement("label");
+        labelLivraison.textContent = "Date de livraison prévue : ";
+        labelLivraison.appendChild(dateLivraisonPrevue);
+        carte.appendChild(labelLivraison);
+
+        const notes = document.createElement("textarea");
+        notes.rows = 2;
+        notes.maxLength = 5000;
+        notes.className = "champ-note";
+        notes.placeholder = "Notes de suivi réservées à l'administration...";
+        notes.value = c.notes_admin || "";
+        carte.appendChild(notes);
+
+        const boutonEnregistrer = document.createElement("button");
+        boutonEnregistrer.type = "button";
+        boutonEnregistrer.textContent = "Enregistrer le suivi";
+        boutonEnregistrer.addEventListener("click", async function() {
+          boutonEnregistrer.disabled = true;
+          boutonEnregistrer.textContent = "Enregistrement...";
+          messageCommandes.textContent = "";
+          try {
+            const miseAJour = {
+              statut: statut.value,
+              date_debut_prevue: dateDebut.value || null,
+              date_livraison_prevue: dateLivraisonPrevue.value || null,
+              notes_admin: notes.value.trim() || null,
+              updated_at: new Date().toISOString()
+            };
+            if (statut.value === "livree" && !c.date_livraison_reelle) {
+              miseAJour.date_livraison_reelle = new Date().toISOString().slice(0, 10);
+            }
+            const { error } = await supabase
+              .from("commandes")
+              .update(miseAJour)
+              .eq("id", c.id);
+            if (error) throw error;
+            await chargerCommandes();
+            await chargerHistoriqueCommandes();
+            messageCommandes.textContent = "Suivi de la commande " + c.numero_commande + " mis à jour.";
+          } catch (erreur) {
+            console.error("Erreur mise à jour commande :", erreur);
+            messageCommandes.textContent = "Mise à jour impossible : " + (erreur.message || "erreur inconnue");
+          } finally {
+            boutonEnregistrer.disabled = false;
+            boutonEnregistrer.textContent = "Enregistrer le suivi";
+          }
+        });
+        carte.appendChild(boutonEnregistrer);
+        listeCommandes.appendChild(carte);
+      });
+    }
+
+    async function chargerCommandes() {
+      listeCommandes.textContent = "Chargement des commandes...";
+      messageCommandes.textContent = "";
+
+      const { data: commandes, error } = await supabase
+        .from("commandes")
+        .select("id, numero_commande, devis_id, client_user_id, statut, montant_ht_xof, remise_xof, montant_total_xof, date_debut_prevue, date_livraison_prevue, date_livraison_reelle, notes_admin, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Erreur chargement commandes :", error);
+        listeCommandes.textContent = "Impossible de charger les commandes : " + error.message;
+        return;
+      }
+
+      const commandesData = commandes || [];
+      const devisIds = [...new Set(commandesData.map(c => c.devis_id).filter(Boolean))];
+      const clientIds = [...new Set(commandesData.map(c => c.client_user_id).filter(Boolean))];
+      const commandeIds = commandesData.map(c => c.id);
+
+      const [resultatDevis, resultatProfils, resultatLignes] = await Promise.all([
+        devisIds.length
+          ? supabase.from("devis").select("id, numero_devis").in("id", devisIds)
+          : Promise.resolve({ data: [], error: null }),
+        clientIds.length
+          ? supabase.from("profiles").select("id, full_name").in("id", clientIds)
+          : Promise.resolve({ data: [], error: null }),
+        commandeIds.length
+          ? supabase.from("lignes_commandes").select("id, commande_id, designation, quantite, prix_unitaire_xof, montant_ligne_xof").in("commande_id", commandeIds)
+          : Promise.resolve({ data: [], error: null })
+      ]);
+
+      if (resultatDevis.error) {
+        listeCommandes.textContent = "Impossible de charger les devis associés : " + resultatDevis.error.message;
+        return;
+      }
+      if (resultatProfils.error) {
+        listeCommandes.textContent = "Impossible de charger les profils clients : " + resultatProfils.error.message;
+        return;
+      }
+      if (resultatLignes.error) {
+        listeCommandes.textContent = "Impossible de charger les prestations : " + resultatLignes.error.message;
+        return;
+      }
+
+      const devisParId = new Map((resultatDevis.data || []).map(d => [d.id, d]));
+      const profilsParId = new Map((resultatProfils.data || []).map(p => [p.id, p]));
+      const lignesParCommande = new Map();
+      (resultatLignes.data || []).forEach(l => {
+        if (!lignesParCommande.has(l.commande_id)) lignesParCommande.set(l.commande_id, []);
+        lignesParCommande.get(l.commande_id).push(l);
+      });
+
+      commandesChargees = commandesData.map(c => ({
+        ...c,
+        numero_devis: (devisParId.get(c.devis_id) || {}).numero_devis || "",
+        nom_client: (profilsParId.get(c.client_user_id) || {}).full_name || "",
+        lignes: lignesParCommande.get(c.id) || []
+      }));
+      afficherCommandesFiltrees();
+    }
+
+
+    // =====================================
+    // HISTORIQUE DES COMMANDES
+    // =====================================
+    const sectionHistoriqueCommandes = document.getElementById("historique-commandes-admin");
+    sectionHistoriqueCommandes.hidden = false;
+    const listeHistoriqueCommandes = document.getElementById("liste-historique-commandes");
+    const messageHistoriqueCommandes = document.getElementById("message-historique-commandes");
+    const rechercheHistoriqueCommandes = document.getElementById("recherche-historique-commandes");
+
+    const libellesStatutHistorique = {
+      a_traiter: "À traiter",
+      en_cours: "En cours",
+      terminee: "Terminée",
+      livree: "Livrée",
+      annulee: "Annulée"
+    };
+
+    let historiqueCommandesCharge = [];
+
+    function afficherHistoriqueCommandes() {
+      const recherche = rechercheHistoriqueCommandes.value.trim().toLowerCase();
+      const resultats = historiqueCommandesCharge.filter(item =>
+        !recherche || (item.numero_commande || "").toLowerCase().includes(recherche)
+      );
+
+      listeHistoriqueCommandes.replaceChildren();
+      if (resultats.length === 0) {
+        listeHistoriqueCommandes.textContent = historiqueCommandesCharge.length
+          ? "Aucune entrée ne correspond à cette recherche."
+          : "Aucun changement de statut enregistré pour le moment.";
+        return;
+      }
+
+      resultats.forEach(item => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", item.numero_commande || "Commande sans numéro");
+        afficherChamp(carte, "Ancien statut",
+          item.ancien_statut ? (libellesStatutHistorique[item.ancien_statut] || item.ancien_statut) : "Création / statut initial");
+        afficherChamp(carte, "Nouveau statut",
+          libellesStatutHistorique[item.nouveau_statut] || item.nouveau_statut);
+        afficherChamp(carte, "Date et heure",
+          item.date_modification ? new Date(item.date_modification).toLocaleString("fr-FR") : "Non renseignée");
+        afficherChamp(carte, "Modifié par", item.nom_admin || (item.modifie_par ? item.modifie_par : "Auteur non identifié (modification hors session utilisateur)"));
+        afficherChamp(carte, "Commentaire", item.commentaire || "Aucun commentaire");
+        listeHistoriqueCommandes.appendChild(carte);
+      });
+    }
+
+    async function chargerHistoriqueCommandes() {
+      listeHistoriqueCommandes.textContent = "Chargement de l'historique...";
+      messageHistoriqueCommandes.textContent = "";
+
+      try {
+        const { data: historique, error } = await supabase
+          .from("historique_commandes")
+          .select("id, commande_id, ancien_statut, nouveau_statut, modifie_par, date_modification, commentaire")
+          .order("date_modification", { ascending: false });
+
+        if (error) throw error;
+
+        const entrees = historique || [];
+        const commandeIds = [...new Set(entrees.map(x => x.commande_id).filter(Boolean))];
+        const adminIds = [...new Set(entrees.map(x => x.modifie_par).filter(Boolean))];
+
+        const [resultatCommandes, resultatAdmins] = await Promise.all([
+          commandeIds.length
+            ? supabase.from("commandes").select("id, numero_commande").in("id", commandeIds)
+            : Promise.resolve({ data: [], error: null }),
+          adminIds.length
+            ? supabase.from("profiles").select("id, full_name").in("id", adminIds)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+
+        if (resultatCommandes.error) throw resultatCommandes.error;
+        if (resultatAdmins.error) throw resultatAdmins.error;
+
+        const commandesParId = new Map((resultatCommandes.data || []).map(x => [x.id, x]));
+        const adminsParId = new Map((resultatAdmins.data || []).map(x => [x.id, x]));
+
+        historiqueCommandesCharge = entrees.map(x => ({
+          ...x,
+          numero_commande: (commandesParId.get(x.commande_id) || {}).numero_commande || "",
+          nom_admin: x.modifie_par
+            ? ((adminsParId.get(x.modifie_par) || {}).full_name || "")
+            : ""
+        }));
+
+        afficherHistoriqueCommandes();
+        messageHistoriqueCommandes.textContent =
+          historiqueCommandesCharge.length + " changement(s) enregistré(s).";
+      } catch (erreur) {
+        console.error("Erreur de chargement de l'historique :", erreur);
+        listeHistoriqueCommandes.textContent =
+          "Impossible de charger l'historique : " + (erreur.message || "erreur inconnue");
+      }
+    }
+
+    document.getElementById("bouton-actualiser-historique")
+      .addEventListener("click", chargerHistoriqueCommandes);
+    rechercheHistoriqueCommandes.addEventListener("input", afficherHistoriqueCommandes);
+
+    boutonTransformerDevis.addEventListener("click", async function() {
+      const devisId = selectDevisCommande.value;
+      if (!devisId) {
+        messageTransformation.textContent = "Sélectionne un devis accepté.";
+        return;
+      }
+      const confirmation = window.confirm(
+        "Confirmer la transformation de ce devis accepté en commande ? Cette opération ne peut être effectuée qu'une seule fois."
+      );
+      if (!confirmation) return;
+
+      boutonTransformerDevis.disabled = true;
+      boutonTransformerDevis.textContent = "Création de la commande...";
+      messageTransformation.textContent = "";
+      try {
+        const { data, error } = await supabase.rpc(
+          "transformer_devis_en_commande",
+          { p_devis_id: devisId }
+        );
+        if (error) throw error;
+        if (!data) throw new Error("La fonction n'a retourné aucun identifiant de commande.");
+        messageTransformation.textContent = "Commande créée avec succès. Identifiant : " + data;
+        await Promise.all([
+      chargerCommandes(),
+      chargerDevisConvertibles(),
+      chargerHistoriqueCommandes()
+    ]);
+      } catch (erreur) {
+        console.error("Erreur de transformation :", erreur);
+        messageTransformation.textContent = "Transformation impossible : " + (erreur.message || "erreur inconnue");
+      } finally {
+        boutonTransformerDevis.disabled = false;
+        boutonTransformerDevis.textContent = "Créer la commande";
+      }
+    });
+
+    document.getElementById("bouton-actualiser-commandes").addEventListener("click", async function() {
+      await Promise.all([
+        chargerCommandes(),
+        chargerDevisConvertibles(),
+        chargerHistoriqueCommandes()
+      ]);
+    });
+    rechercheCommandes.addEventListener("input", afficherCommandesFiltrees);
+    filtreStatutCommande.addEventListener("change", afficherCommandesFiltrees);
+
+    await Promise.all([chargerCommandes(), chargerDevisConvertibles()]);
+
+    document.getElementById("form-devis").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      messageDevis.textContent = "";
+      const demandeId = selectDemandeDevis.value;
+      const clientId = selectClientDevis.value;
+      const dateValidite = document.getElementById("devis-validite").value;
+      const lignes = lireLignesDevis();
+      const remise = Number(remiseDevis.value);
+      const totalHt = lignes.reduce((somme, ligne) => somme + ligne.montant, 0);
+      const totalNet = totalHt - remise;
+
+      if (!demandeId || !clientId || !dateValidite) {
+        messageDevis.textContent = "Sélectionne une demande, le compte vérifié du client et une date de validité.";
+        return;
+      }
+      if (!lignes.length || lignes.some(l => !l.designation || !Number.isFinite(l.quantite) || l.quantite <= 0 || !Number.isSafeInteger(l.prix) || l.prix < 0)) {
+        messageDevis.textContent = "Vérifie chaque désignation, quantité et prix unitaire.";
+        return;
+      }
+      if (!Number.isSafeInteger(remise) || remise < 0 || remise > totalHt || totalNet < 0) {
+        messageDevis.textContent = "La remise doit être un montant entier compris entre 0 et le total HT.";
+        return;
+      }
+      if (dateValidite < new Date().toISOString().slice(0, 10)) {
+        messageDevis.textContent = "La date de validité ne peut pas être dans le passé.";
+        return;
+      }
+
+      boutonCreerDevis.disabled = true;
+      boutonCreerDevis.textContent = "Enregistrement...";
+      let devisCreeId = null;
+      try {
+        const numero = "DEV-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+        const { data: devisCree, error: erreurDevis } = await supabase
+          .from("devis")
+          .insert({
+            numero_devis: numero,
+            demande_id: demandeId,
+            client_user_id: clientId,
+            admin_user_id: utilisateur.id,
+            statut: "brouillon",
+            date_emission: new Date().toISOString().slice(0, 10),
+            date_validite: dateValidite,
+            montant_ht_xof: totalHt,
+            remise_xof: remise,
+            montant_total_xof: totalNet,
+            conditions: document.getElementById("devis-conditions").value.trim() || null,
+            delai_execution: document.getElementById("devis-delai").value.trim() || null
+          })
+          .select("id")
+          .single();
+
+        if (erreurDevis) throw erreurDevis;
+        devisCreeId = devisCree.id;
+        const lignesAInserer = lignes.map(function(ligne) {
+          return {
+            devis_id: devisCreeId,
+            designation: ligne.designation,
+            quantite: ligne.quantite,
+            prix_unitaire_xof: ligne.prix,
+            montant_ligne_xof: ligne.montant
+          };
+        });
+        const { error: erreurLignes } = await supabase.from("lignes_devis").insert(lignesAInserer);
+        if (erreurLignes) {
+          await supabase.from("devis").delete().eq("id", devisCreeId);
+          devisCreeId = null;
+          throw erreurLignes;
+        }
+        messageDevis.textContent = "Devis " + numero + " enregistré en brouillon. Il n'est pas encore visible par le client.";
+        document.getElementById("form-devis").reset();
+        conteneurLignesDevis.replaceChildren();
+        ajouterLigneDevis(cataloguePrestations);
+        actualiserTotauxDevis();
+        await chargerListeDevis();
+      } catch (erreur) {
+        console.error("Erreur de création du devis :", erreur);
+        messageDevis.textContent = "Création impossible : " + (erreur.message || "erreur inconnue");
+      } finally {
+        boutonCreerDevis.disabled = false;
+        boutonCreerDevis.textContent = "Enregistrer le devis en brouillon";
+      }
+    });
+
+
+
+    // =====================================
+    // CONSULTATION DES JUSTIFICATIFS CLIENTS
+    // =====================================
+    const sectionJustificatifs = document.getElementById("gestion-justificatifs");
+    const listeJustificatifs = document.getElementById("liste-justificatifs");
+    const messageJustificatifs = document.getElementById("message-justificatifs");
+    const rechercheJustificatifs = document.getElementById("recherche-justificatifs");
+    const boutonActualiserJustificatifs = document.getElementById("bouton-actualiser-justificatifs");
+    const bucketRecus = "recus-paiements";
+    let justificatifsCharges = [];
+
+    sectionJustificatifs.hidden = false;
+
+    function afficherJustificatifs() {
+      const terme = rechercheJustificatifs.value.trim().toLowerCase();
+      const resultats = justificatifsCharges.filter(item =>
+        !terme ||
+        (item.nom_client || "").toLowerCase().includes(terme) ||
+        (item.nom_fichier || "").toLowerCase().includes(terme) ||
+        (item.course_title || "").toLowerCase().includes(terme) ||
+        (item.transaction_reference || "").toLowerCase().includes(terme) ||
+        (item.status || "").toLowerCase().includes(terme)
+      );
+      listeJustificatifs.replaceChildren();
+      if (resultats.length === 0) {
+        listeJustificatifs.textContent = justificatifsCharges.length
+          ? "Aucun justificatif ne correspond à cette recherche."
+          : "Aucun justificatif déposé pour le moment.";
+        return;
+      }
+      ajouterTexte(listeJustificatifs, "p", resultats.length + " justificatif(s) affiché(s).");
+      resultats.forEach(item => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", item.nom_client || "Client non identifié");
+        afficherChamp(carte, "Identifiant client", item.user_id);
+        afficherChamp(carte, "Fichier", item.nom_fichier);
+        if (item.paiement) {
+          afficherChamp(carte, "Formation / prestation", item.paiement.course_title || item.paiement.course_id || "Non renseignée");
+          afficherChamp(carte, "Montant", Number(item.paiement.amount_xof || 0).toLocaleString("fr-FR") + " FCFA");
+          afficherChamp(carte, "Méthode de paiement", item.paiement.payment_method || "Non renseignée");
+          afficherChamp(carte, "Référence PayDunya", item.paiement.transaction_reference || "Non renseignée");
+          afficherChamp(carte, "Statut du paiement", item.paiement.status || "Non renseigné");
+          afficherChamp(carte, "Date du paiement", item.paiement.created_at ? new Date(item.paiement.created_at).toLocaleString("fr-FR") : "Non renseignée");
+        } else {
+          afficherChamp(carte, "Transaction associée", "Aucune transaction retrouvée pour ce justificatif.");
+        }
+        afficherChamp(carte, "Date de dépôt",
+          item.created_at ? new Date(item.created_at).toLocaleString("fr-FR") : "Date non disponible");
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+        const boutonOuvrir = document.createElement("button");
+        boutonOuvrir.type = "button";
+        boutonOuvrir.textContent = "Consulter / télécharger";
+        boutonOuvrir.addEventListener("click", async function() {
+          boutonOuvrir.disabled = true;
+          boutonOuvrir.textContent = "Préparation du lien...";
+          try {
+            const { data, error } = await supabase.storage
+              .from(bucketRecus)
+              .createSignedUrl(item.chemin, 60);
+            if (error) throw error;
+            if (!data || !data.signedUrl) throw new Error("Aucun lien temporaire n'a été retourné.");
+            window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+          } catch (erreur) {
+            console.error("Erreur d'ouverture du justificatif :", erreur);
+            messageJustificatifs.textContent =
+              "Consultation impossible : " + (erreur.message || "erreur inconnue");
+          } finally {
+            boutonOuvrir.disabled = false;
+            boutonOuvrir.textContent = "Consulter / télécharger";
+          }
+        });
+        actions.appendChild(boutonOuvrir);
+        carte.appendChild(actions);
+        listeJustificatifs.appendChild(carte);
+      });
+    }
+
+    async function chargerJustificatifs() {
+      listeJustificatifs.textContent = "Chargement des justificatifs...";
+      messageJustificatifs.textContent = "";
+      justificatifsCharges = [];
+
+      try {
+        // Source principale : un enregistrement par justificatif déposé.
+        const { data: recus, error: erreurRecus } = await supabase
+          .from("justificatifs_paiement")
+          .select("id, paiement_id, user_id, receipt_path, created_at")
+          .order("created_at", { ascending: false });
+
+        if (erreurRecus) throw erreurRecus;
+
+        const recusNormalises = (recus || []).map(recu => ({
+          id: recu.id,
+          paiement_id: recu.paiement_id,
+          user_id: recu.user_id,
+          chemin: recu.receipt_path,
+          nom_fichier: (recu.receipt_path || "").split("/").pop() || "Justificatif",
+          created_at: recu.created_at,
+          ancien_format: false
+        }));
+
+        // Compatibilité : récupérer aussi les anciens reçus stockés directement
+        // dans paiements.receipt_path, sans modifier les données existantes.
+        const { data: paiementsAvecAncienRecu, error: erreurAnciensRecus } = await supabase
+          .from("paiements")
+          .select("id, user_id, course_id, course_title, amount_xof, payment_method, transaction_reference, status, created_at, receipt_path")
+          .not("receipt_path", "is", null);
+
+        if (erreurAnciensRecus) throw erreurAnciensRecus;
+
+        const cheminsDejaEnregistres = new Set(recusNormalises.map(r => r.chemin));
+        const anciensRecus = (paiementsAvecAncienRecu || [])
+          .filter(p => p.receipt_path && !cheminsDejaEnregistres.has(p.receipt_path))
+          .map(p => ({
+            paiement_id: p.id,
+            user_id: p.user_id,
+            chemin: p.receipt_path,
+            nom_fichier: p.receipt_path.split("/").pop() || "Ancien justificatif",
+            created_at: p.created_at,
+            ancien_format: true,
+            paiement: p
+          }));
+
+        justificatifsCharges = [...recusNormalises, ...anciensRecus];
+
+        const idsPaiements = [...new Set(justificatifsCharges.map(r => r.paiement_id).filter(Boolean))];
+        const idsClients = [...new Set(justificatifsCharges.map(r => r.user_id).filter(Boolean))];
+
+        const [resultatPaiements, resultatProfils] = await Promise.all([
+          idsPaiements.length
+            ? supabase.from("paiements")
+                .select("id, user_id, course_id, course_title, amount_xof, payment_method, transaction_reference, status, created_at")
+                .in("id", idsPaiements)
+            : Promise.resolve({ data: [], error: null }),
+          idsClients.length
+            ? supabase.from("profiles")
+                .select("id, full_name")
+                .in("id", idsClients)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+
+        if (resultatPaiements.error) throw resultatPaiements.error;
+        if (resultatProfils.error) throw resultatProfils.error;
+
+        const paiementsParId = new Map((resultatPaiements.data || []).map(p => [p.id, p]));
+        const nomsClients = new Map((resultatProfils.data || []).map(p =>
+          [p.id, p.full_name || "Client sans nom"]
+        ));
+
+        justificatifsCharges = justificatifsCharges.map(item => ({
+          ...item,
+          nom_client: nomsClients.get(item.user_id) || "Client non identifié",
+          paiement: item.paiement || paiementsParId.get(item.paiement_id) || null
+        }));
+
+        justificatifsCharges.sort((a, b) =>
+          new Date(b.created_at || 0) - new Date(a.created_at || 0)
+        );
+
+        afficherJustificatifs();
+        messageJustificatifs.textContent =
+          justificatifsCharges.length + " justificatif(s) chargé(s), y compris les anciens reçus conservés.";
+      } catch (erreur) {
+        console.error("Erreur de chargement des justificatifs :", erreur);
+        listeJustificatifs.textContent =
+          "Impossible de charger les justificatifs : " +
+          (erreur.message || "erreur inconnue") +
+          ". Vérifie les droits de lecture de la table justificatifs_paiement et du bucket privé.";
+      }
+    }
+
+    boutonActualiserJustificatifs.addEventListener("click", chargerJustificatifs);
+    rechercheJustificatifs.addEventListener("input", afficherJustificatifs);
+    await chargerJustificatifs();
+
 
     boutonActualiser.addEventListener(
       "click",

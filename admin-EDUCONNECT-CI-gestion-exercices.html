@@ -1,0 +1,2290 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration | EDUCONNECT CI</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f6f9;
+      color: #222;
+    }
+
+    header {
+      background: #123b65;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+
+    h2 {
+      color: #123b65;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+      padding: 10px;
+      margin: 5px 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    input, select, textarea {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      background: #1264a3;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .bouton-supprimer {
+      background: #b42318;
+    }
+
+    .demande {
+      border: 1px solid #ddd;
+      border-left: 5px solid #1264a3;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      background: #fff;
+    }
+
+    .demande p {
+      overflow-wrap: anywhere;
+    }
+
+    .actions-demande {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .champ-note {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .message {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+
+    nav a { color:#123b65; font-weight:bold; text-decoration:none; padding:8px 10px; background:white; border-radius:6px; }
+    nav a:hover { text-decoration:underline; }
+    #gestion-questions input:not([type=checkbox]), #gestion-questions select, #gestion-questions textarea { width:100%; }
+    [hidden] {
+      display: none !important;
+    }
+  
+
+    .devis-ligne {
+      display: grid;
+      grid-template-columns: minmax(180px, 2fr) minmax(90px, .7fr) minmax(120px, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      margin: 8px 0;
+    }
+    .devis-ligne input,
+    .devis-ligne select { width: 100%; }
+    .actions-entete {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .bouton-deconnexion { background: #8a2635; }
+    .devis-total { font-size: 1.05rem; font-weight: bold; margin-top: 12px; }
+    .aide { color: #555; font-size: .92rem; }
+    @media (max-width: 650px) {
+      .devis-ligne { grid-template-columns: 1fr 1fr; }
+      .devis-ligne input:first-child { grid-column: 1 / -1; }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>EDUCONNECT CI – Espace administrateur</h1>
+  <p id="message">Chargement de l'espace administrateur...</p>
+  <div class="actions-entete">
+    <button type="button" id="bouton-connexion" hidden>Se connecter</button>
+    <button type="button" id="bouton-deconnexion" class="bouton-deconnexion" hidden>Se déconnecter</button>
+  </div>
+</header>
+
+<nav class="actions-entete" aria-label="Navigation administration" style="background:#e8eef5;padding:12px;border-radius:10px;margin-bottom:20px">
+  <a href="#gestion-autorisations">Autorisations</a>
+  <a href="#gestion-demandes">Demandes</a>
+  <a href="#gestion-devis">Devis</a>
+  <a href="#gestion-commandes">Commandes</a>
+  <a href="#gestion-justificatifs">Justificatifs</a>
+  <a href="#gestion-travaux-pratiques">Correction des travaux</a>
+  <a href="#gestion-questions">Gestion des exercices</a>
+</nav>
+
+<section id="gestion-autorisations" hidden>
+
+  <h2>Gestion des autorisations de quiz</h2>
+
+  <p>Sélectionne un apprenant et le module concerné.</p>
+
+  <form id="form-autorisation">
+
+    <label for="apprenant">Choisir un apprenant :</label><br>
+
+    <select id="apprenant" required>
+      <option value="">Chargement des apprenants...</option>
+    </select>
+
+    <br><br>
+
+    <label for="module">Choisir un module :</label><br>
+
+    <select id="module" required>
+      <option value="">Sélectionner un module</option>
+      <option value="module-1">Module 1</option>
+      <option value="module-2">Module 2</option>
+      <option value="module-3">Module 3</option>
+      <option value="module-4">Module 4</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit" id="bouton-autorisation">
+      Accorder l'autorisation
+    </button>
+
+  </form>
+
+  <p id="message-autorisation" class="message" role="status"></p>
+
+</section>
+
+<section id="gestion-demandes" hidden>
+
+  <h2>Gestion des demandes clients</h2>
+
+  <p>
+    Consulte les demandes reçues, modifie leur statut
+    ou supprime-les si nécessaire.
+  </p>
+
+  <button type="button" id="bouton-actualiser">
+    Actualiser les demandes
+  </button>
+
+  <p id="message-demandes" class="message" role="status"></p>
+
+  <div id="liste-demandes">
+    Chargement des demandes...
+  </div>
+
+</section>
+
+
+
+<section id="gestion-devis" hidden>
+  <h2>Gestion des devis</h2>
+  <p>Crée un devis détaillé à partir d'une demande client. Le devis sera enregistré en brouillon : il ne sera pas encore visible par le client.</p>
+  <p class="aide">Associe uniquement le compte dont l'identité a été vérifiée avec le client. La sélection d'un compte est obligatoire pour lui permettre de consulter ensuite son devis.</p>
+  <form id="form-devis">
+    <label for="devis-demande">Demande client :</label><br>
+    <select id="devis-demande" required style="width:100%">
+      <option value="">Chargement des demandes...</option>
+    </select><br>
+    <label for="devis-client">Compte client vérifié :</label><br>
+    <select id="devis-client" required style="width:100%">
+      <option value="">Chargement des comptes...</option>
+    </select>
+    <p class="aide">Le nom et l'identifiant du compte sont affichés pour éviter toute attribution par simple ressemblance d'adresse e-mail.</p>
+    <label for="devis-validite">Date limite de validité :</label><br>
+    <input type="date" id="devis-validite" required><br>
+    <label for="devis-delai">Délai d'exécution :</label><br>
+    <input type="text" id="devis-delai" maxlength="250" placeholder="Ex. : 5 jours ouvrables" style="width:100%"><br>
+    <label for="devis-conditions">Conditions particulières :</label><br>
+    <textarea id="devis-conditions" rows="3" maxlength="5000" style="width:100%" placeholder="Conditions de paiement, modalités, précisions..."></textarea>
+    <h3>Prestations et prix</h3>
+    <div id="devis-lignes"></div>
+    <button type="button" id="ajouter-ligne-devis">Ajouter une ligne</button>
+    <div class="devis-total">Total HT : <span id="devis-total-ht">0</span> F CFA</div>
+    <label for="devis-remise">Remise (F CFA) :</label><br>
+    <input type="number" id="devis-remise" min="0" step="1" value="0"><br>
+    <div class="devis-total">Total net : <span id="devis-total-net">0</span> F CFA</div>
+    <button type="submit" id="bouton-creer-devis">Enregistrer le devis en brouillon</button>
+  </form>
+  <p id="message-devis" class="message" role="status"></p>
+</section>
+
+
+<section id="liste-devis-admin" hidden>
+  <h2>Consultation et validation des devis</h2>
+  <p>Consulte les devis enregistrés. La publication rend le devis visible dans l'espace du compte client associé ; elle n'envoie pas encore de notification par e-mail.</p>
+  <button type="button" id="bouton-actualiser-devis">Actualiser les devis</button>
+  <p id="message-liste-devis" class="message" role="status"></p>
+  <div id="contenu-liste-devis">Chargement des devis...</div>
+</section>
+
+
+<section id="gestion-commandes" hidden>
+  <h2>Gestion des commandes et prestations</h2>
+  <p class="aide">Transforme les devis acceptés en commandes, puis suis leur réalisation. La conversion ne déclenche aucun paiement.</p>
+
+  <h3>Transformer un devis accepté en commande</h3>
+  <label for="commande-devis">Devis accepté sans commande :</label><br>
+  <select id="commande-devis" style="width:100%">
+    <option value="">Chargement des devis acceptés...</option>
+  </select><br>
+  <button type="button" id="bouton-transformer-devis">Créer la commande</button>
+  <p id="message-transformation" class="message" role="status"></p>
+
+  <hr>
+  <h3>Commandes enregistrées</h3>
+  <div class="actions-entete">
+    <input type="search" id="recherche-commandes" placeholder="Rechercher un numéro de commande ou de devis" style="flex:1;min-width:220px">
+    <select id="filtre-statut-commande">
+      <option value="">Tous les statuts</option>
+      <option value="a_traiter">À traiter</option>
+      <option value="en_cours">En cours</option>
+      <option value="terminee">Terminée</option>
+      <option value="livree">Livrée</option>
+      <option value="annulee">Annulée</option>
+    </select>
+    <button type="button" id="bouton-actualiser-commandes">Actualiser les commandes</button>
+  </div>
+  <p id="message-commandes" class="message" role="status"></p>
+  <div id="liste-commandes">Chargement des commandes...</div>
+</section>
+
+
+<section id="historique-commandes-admin" hidden>
+  <h2>Historique des commandes</h2>
+  <p class="aide">Consulte les changements de statut enregistrés automatiquement, avec leur date et leur auteur lorsqu'il est disponible.</p>
+  <div class="actions-entete">
+    <input type="search" id="recherche-historique-commandes" placeholder="Rechercher un numéro de commande" style="flex:1;min-width:220px">
+    <button type="button" id="bouton-actualiser-historique">Actualiser l'historique</button>
+  </div>
+  <p id="message-historique-commandes" class="message" role="status"></p>
+  <div id="liste-historique-commandes">Chargement de l'historique...</div>
+</section>
+
+
+<section id="gestion-justificatifs" hidden>
+  <h2>Justificatifs de paiement déposés</h2>
+  <p class="aide">Consulte les reçus transmis par les clients depuis leur espace personnel. Les fichiers restent dans le bucket privé recus-paiements.</p>
+  <div class="actions-entete">
+    <input type="search" id="recherche-justificatifs" placeholder="Rechercher un client ou un nom de fichier" style="flex:1;min-width:220px">
+    <button type="button" id="bouton-actualiser-justificatifs">Actualiser les justificatifs</button>
+  </div>
+  <p id="message-justificatifs" class="message" role="status"></p>
+  <div id="liste-justificatifs">Chargement des justificatifs...</div>
+</section>
+
+
+<section id="gestion-travaux-pratiques" hidden>
+  <h2>Correction des travaux pratiques</h2>
+  <p class="aide">Consulte les fichiers envoyés par les apprenants, puis valide ou rejette chaque dépôt. La décision est enregistrée par la fonction sécurisée examiner_depot_lecon.</p>
+  <div class="actions-entete">
+    <input type="search" id="recherche-travaux" placeholder="Rechercher un apprenant, module ou leçon" style="flex:1;min-width:220px">
+    <select id="filtre-travaux">
+      <option value="pending">En attente</option>
+      <option value="approved">Validés</option>
+      <option value="rejected">Rejetés</option>
+      <option value="">Tous les dépôts</option>
+    </select>
+    <button type="button" id="actualiser-travaux">Actualiser les dépôts</button>
+  </div>
+  <p id="message-travaux" class="message" role="status"></p>
+  <div id="liste-travaux">Chargement des travaux pratiques...</div>
+</section>
+
+<section id="gestion-questions" hidden>
+  <h2>Gestion des exercices et quiz des leçons</h2>
+  <p class="aide">Crée, modifie, active/désactive ou supprime les questions enregistrées dans lesson_questions. Les questions existantes restent conservées.</p>
+  <form id="form-question">
+    <label for="question-module">Module</label><br>
+    <select id="question-module" required>
+      <option value="module-1">Module 1</option><option value="module-2">Module 2</option>
+      <option value="module-3">Module 3</option><option value="module-4">Module 4</option>
+    </select><br>
+    <label for="question-lecon">Leçon (identifiant, ex. lecon-1)</label><br>
+    <input id="question-lecon" required maxlength="100" placeholder="lecon-1" style="width:100%"><br>
+    <label for="question-texte">Énoncé de la question</label><br>
+    <textarea id="question-texte" required maxlength="5000" rows="3" style="width:100%"></textarea><br>
+    <div class="devis-ligne">
+      <input id="option-a" required maxlength="1000" placeholder="Réponse A">
+      <input id="option-b" required maxlength="1000" placeholder="Réponse B">
+      <input id="option-c" required maxlength="1000" placeholder="Réponse C">
+      <input id="option-d" required maxlength="1000" placeholder="Réponse D">
+    </div>
+    <label for="bonne-reponse">Bonne réponse</label><br>
+    <select id="bonne-reponse" required>
+      <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option>
+    </select><br>
+    <label for="explication-question">Explication (facultative)</label><br>
+    <textarea id="explication-question" maxlength="3000" rows="2" style="width:100%"></textarea><br>
+    <label><input type="checkbox" id="question-active" checked> Question active</label><br>
+    <div class="actions-entete">
+      <button type="submit" id="enregistrer-question">Ajouter la question</button>
+      <button type="button" id="annuler-modification-question" class="bouton-deconnexion" hidden>Annuler la modification</button>
+    </div>
+  </form>
+  <p id="message-questions" class="message" role="status"></p>
+  <hr>
+  <div class="actions-entete">
+    <select id="filtre-questions-module">
+      <option value="">Tous les modules</option>
+      <option value="module-1">Module 1</option><option value="module-2">Module 2</option>
+      <option value="module-3">Module 3</option><option value="module-4">Module 4</option>
+    </select>
+    <input type="search" id="recherche-questions" placeholder="Rechercher une question ou une leçon" style="flex:1;min-width:220px">
+    <button type="button" id="actualiser-questions">Actualiser les questions</button>
+  </div>
+  <div id="liste-questions">Chargement des questions...</div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+
+  const message = document.getElementById("message");
+  const supabase = window.eduSupabase;
+  const boutonConnexion = document.getElementById("bouton-connexion");
+  const boutonDeconnexion = document.getElementById("bouton-deconnexion");
+
+  boutonConnexion.addEventListener("click", function() {
+    window.location.href = "connexion.html";
+  });
+
+  boutonDeconnexion.addEventListener("click", async function() {
+    if (!supabase) return;
+    boutonDeconnexion.disabled = true;
+    boutonDeconnexion.textContent = "Déconnexion...";
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      message.textContent = "La déconnexion a échoué : " + error.message;
+      boutonDeconnexion.disabled = false;
+      boutonDeconnexion.textContent = "Se déconnecter";
+      return;
+    }
+    window.location.href = "connexion.html";
+  });
+
+  if (!supabase) {
+    message.textContent = "Connexion Supabase indisponible.";
+    return;
+  }
+
+  try {
+
+    message.textContent = "Vérification de votre accès...";
+
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getUser();
+
+    if (sessionError || !sessionData.user) {
+      message.textContent =
+        "Vous devez vous connecter pour accéder à cet espace.";
+      boutonConnexion.hidden = false;
+      return;
+    }
+
+    boutonDeconnexion.hidden = false;
+    const utilisateur = sessionData.user;
+
+    const { data: estAdmin, error: adminError } =
+      await supabase.rpc("is_admin");
+
+    if (adminError) {
+      console.error("Erreur de vérification :", adminError);
+      message.textContent =
+        "Impossible de vérifier vos droits administrateur.";
+      return;
+    }
+
+    if (estAdmin !== true) {
+      message.textContent =
+        "Accès refusé : cet espace est réservé aux administrateurs.";
+      return;
+    }
+
+    message.textContent =
+      "Bienvenue dans votre espace administrateur EDUCONNECT CI.";
+
+    document.getElementById("gestion-autorisations").hidden = false;
+    document.getElementById("gestion-demandes").hidden = false;
+
+    // =====================================
+    // GESTION DES AUTORISATIONS DE QUIZ
+    // =====================================
+
+    const listeApprenants =
+      document.getElementById("apprenant");
+
+    const { data: profils, error: erreurProfils } =
+      await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .order("full_name", { ascending: true });
+
+    if (erreurProfils) {
+
+      console.error("Erreur profils :", erreurProfils);
+
+      listeApprenants.innerHTML =
+        '<option value="">Impossible de charger les apprenants</option>';
+
+    } else if (!profils || profils.length === 0) {
+
+      listeApprenants.innerHTML =
+        '<option value="">Aucun apprenant enregistré</option>';
+
+    } else {
+
+      listeApprenants.innerHTML =
+        '<option value="">Sélectionner un apprenant</option>';
+
+      profils.forEach(function (profil) {
+
+        const option = document.createElement("option");
+
+        option.value = profil.id;
+        option.textContent =
+          profil.full_name || "Apprenant sans nom";
+
+        listeApprenants.appendChild(option);
+
+      });
+    }
+
+    const formulaireAutorisation =
+      document.getElementById("form-autorisation");
+
+    const messageAutorisation =
+      document.getElementById("message-autorisation");
+
+    const boutonAutorisation =
+      document.getElementById("bouton-autorisation");
+
+    formulaireAutorisation.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const apprenantId = listeApprenants.value;
+        const moduleId =
+          document.getElementById("module").value;
+
+        if (!apprenantId || !moduleId) {
+          messageAutorisation.textContent =
+            "Sélectionne un apprenant et un module.";
+          return;
+        }
+
+        boutonAutorisation.disabled = true;
+        boutonAutorisation.textContent =
+          "Autorisation en cours...";
+
+        try {
+
+          const { data, error } = await supabase.rpc(
+            "autoriser_quiz_test",
+            {
+              p_user_id: apprenantId,
+              p_module_id: moduleId
+            }
+          );
+
+          if (error) {
+            console.error("Erreur d'autorisation :", error);
+
+            messageAutorisation.textContent =
+              "Impossible d'accorder l'autorisation : " +
+              error.message;
+
+            return;
+          }
+
+          messageAutorisation.textContent =
+            "Autorisation accordée avec succès. Identifiant : " +
+            data;
+
+          formulaireAutorisation.reset();
+
+        } catch (erreur) {
+
+          console.error("Erreur inattendue :", erreur);
+
+          messageAutorisation.textContent =
+            "Une erreur inattendue est survenue.";
+
+        } finally {
+
+          boutonAutorisation.disabled = false;
+          boutonAutorisation.textContent =
+            "Accorder l'autorisation";
+
+        }
+      }
+    );
+
+    // =====================================
+    // GESTION DES DEMANDES CLIENTS
+    // =====================================
+
+    const listeDemandes =
+      document.getElementById("liste-demandes");
+
+    const messageDemandes =
+      document.getElementById("message-demandes");
+
+    const boutonActualiser =
+      document.getElementById("bouton-actualiser");
+
+    function ajouterTexte(parent, balise, texte) {
+
+      const element = document.createElement(balise);
+      element.textContent = texte;
+      parent.appendChild(element);
+
+      return element;
+    }
+
+    function afficherChamp(parent, titre, valeur) {
+
+      const paragraphe = document.createElement("p");
+      const fort = document.createElement("strong");
+
+      fort.textContent = titre + " : ";
+
+      paragraphe.appendChild(fort);
+
+      const contenu = document.createTextNode(
+        valeur || "Non renseigné"
+      );
+
+      paragraphe.appendChild(contenu);
+      parent.appendChild(paragraphe);
+
+    }
+
+    async function chargerDemandes() {
+
+      listeDemandes.textContent =
+        "Chargement des demandes...";
+
+      messageDemandes.textContent = "";
+
+      const { data: demandes, error } =
+        await supabase
+          .from("demandes_clients")
+          .select(
+            "id, direction, prestation, nom_client, telephone, email, description, statut, note_admin, created_at"
+          )
+          .order("created_at", { ascending: false });
+
+      if (error) {
+
+        console.error("Erreur de chargement :", error);
+
+        listeDemandes.textContent =
+          "Impossible de charger les demandes : " +
+          error.message;
+
+        return;
+      }
+
+      listeDemandes.replaceChildren();
+
+      if (!demandes || demandes.length === 0) {
+
+        listeDemandes.textContent =
+          "Aucune demande client enregistrée pour le moment.";
+
+        return;
+      }
+
+      ajouterTexte(
+        listeDemandes,
+        "p",
+        demandes.length + " demande(s) enregistrée(s)."
+      );
+
+      demandes.forEach(function(demande) {
+
+        const carte = document.createElement("article");
+        carte.className = "demande";
+
+        const titre = ajouterTexte(
+          carte,
+          "h3",
+          demande.prestation
+        );
+
+        afficherChamp(
+          carte,
+          "Direction",
+          demande.direction
+        );
+
+        afficherChamp(
+          carte,
+          "Client",
+          demande.nom_client
+        );
+
+        afficherChamp(
+          carte,
+          "Téléphone",
+          demande.telephone
+        );
+
+        afficherChamp(
+          carte,
+          "E-mail",
+          demande.email
+        );
+
+        afficherChamp(
+          carte,
+          "Description",
+          demande.description
+        );
+
+        afficherChamp(
+          carte,
+          "Date de réception",
+          new Date(demande.created_at).toLocaleString("fr-FR")
+        );
+
+        afficherChamp(
+          carte,
+          "Statut actuel",
+          demande.statut
+        );
+
+        const statut = document.createElement("select");
+
+        const statuts = [
+          ["en_attente", "En attente"],
+          ["en_cours", "En cours"],
+          ["traitee", "Traitée"],
+          ["refusee", "Refusée"]
+        ];
+
+        statuts.forEach(function(item) {
+
+          const option = document.createElement("option");
+
+          option.value = item[0];
+          option.textContent = item[1];
+
+          statut.appendChild(option);
+
+        });
+
+        statut.value = demande.statut;
+
+        const labelStatut = document.createElement("label");
+        labelStatut.textContent = "Modifier le statut : ";
+        labelStatut.appendChild(statut);
+
+        carte.appendChild(labelStatut);
+
+        const note = document.createElement("textarea");
+
+        note.className = "champ-note";
+        note.rows = 3;
+        note.maxLength = 5000;
+        note.placeholder = "Ajouter une note administrative...";
+        note.value = demande.note_admin || "";
+
+        carte.appendChild(note);
+
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+
+        const boutonModifier =
+          document.createElement("button");
+
+        boutonModifier.type = "button";
+        boutonModifier.textContent = "Enregistrer les modifications";
+
+        boutonModifier.addEventListener(
+          "click",
+          async function() {
+
+            boutonModifier.disabled = true;
+            boutonModifier.textContent = "Enregistrement...";
+
+            try {
+
+              const { error: erreurModification } =
+                await supabase
+                  .from("demandes_clients")
+                  .update({
+                    statut: statut.value,
+                    note_admin: note.value.trim() || null,
+                    traite_par: utilisateur.id,
+                    date_traitement: new Date().toISOString()
+                  })
+                  .eq("id", demande.id);
+
+              if (erreurModification) {
+
+                console.error(
+                  "Erreur de modification :",
+                  erreurModification
+                );
+
+                messageDemandes.textContent =
+                  "Modification impossible : " +
+                  erreurModification.message;
+
+                return;
+              }
+
+              messageDemandes.textContent =
+                "Demande mise à jour avec succès.";
+
+              await chargerDemandes();
+
+
+
+
+            } catch(erreur) {
+
+              console.error(erreur);
+
+              messageDemandes.textContent =
+                "Une erreur est survenue pendant la modification.";
+
+            } finally {
+
+              boutonModifier.disabled = false;
+              boutonModifier.textContent =
+                "Enregistrer les modifications";
+
+            }
+
+          }
+        );
+
+        const boutonSupprimer =
+          document.createElement("button");
+
+        boutonSupprimer.type = "button";
+        boutonSupprimer.className = "bouton-supprimer";
+        boutonSupprimer.textContent = "Supprimer";
+
+        boutonSupprimer.addEventListener(
+          "click",
+          async function() {
+
+            const confirmation = window.confirm(
+              "Attention ! Voulez-vous vraiment supprimer définitivement cette demande ?"
+            );
+
+            if (!confirmation) return;
+
+            boutonSupprimer.disabled = true;
+            boutonSupprimer.textContent = "Suppression...";
+
+            try {
+
+              const { error: erreurSuppression } =
+                await supabase
+                  .from("demandes_clients")
+                  .delete()
+                  .eq("id", demande.id);
+
+              if (erreurSuppression) {
+
+                console.error(
+                  "Erreur de suppression :",
+                  erreurSuppression
+                );
+
+                messageDemandes.textContent =
+                  "Suppression impossible : " +
+                  erreurSuppression.message;
+
+                return;
+              }
+
+              messageDemandes.textContent =
+                "Demande supprimée avec succès.";
+
+              await chargerDemandes();
+
+            } catch(erreur) {
+
+              console.error(erreur);
+
+              messageDemandes.textContent =
+                "Une erreur est survenue pendant la suppression.";
+
+            } finally {
+
+              boutonSupprimer.disabled = false;
+              boutonSupprimer.textContent = "Supprimer";
+
+            }
+
+          }
+        );
+
+        actions.appendChild(boutonModifier);
+        actions.appendChild(boutonSupprimer);
+
+        carte.appendChild(actions);
+
+        listeDemandes.appendChild(carte);
+
+      });
+
+    }
+
+    // =====================================
+    // CREATION DES DEVIS (EN BROUILLON)
+    // =====================================
+    const sectionDevis = document.getElementById("gestion-devis");
+    sectionDevis.hidden = false;
+    const selectDemandeDevis = document.getElementById("devis-demande");
+    const selectClientDevis = document.getElementById("devis-client");
+    const conteneurLignesDevis = document.getElementById("devis-lignes");
+    const messageDevis = document.getElementById("message-devis");
+    const remiseDevis = document.getElementById("devis-remise");
+    const boutonCreerDevis = document.getElementById("bouton-creer-devis");
+
+    function formaterXof(valeur) {
+      return Math.round(valeur).toLocaleString("fr-FR");
+    }
+
+    const categoriesCatalogue = [
+      { valeur: "depannage-maintenance", libelle: "Dépannage et maintenance" },
+      { valeur: "installation-logiciels", libelle: "Installation de logiciels" },
+      { valeur: "creation-sites-web", libelle: "Création de sites web" },
+      { valeur: "developpement-applications", libelle: "Développement d'applications" },
+      { valeur: "bases-donnees", libelle: "Bases de données" },
+      { valeur: "formation-informatique", libelle: "Formation informatique" }
+    ];
+
+    function lireLignesDevis() {
+      return Array.from(conteneurLignesDevis.querySelectorAll(".devis-ligne")).map(function(ligne) {
+        const designation = ligne.querySelector(".ligne-designation").value.trim();
+        const quantite = Number(ligne.querySelector(".ligne-quantite").value);
+        const prix = Number(ligne.querySelector(".ligne-prix").value);
+        return { designation, quantite, prix, montant: Math.round(quantite * prix) };
+      });
+    }
+
+    function actualiserTotauxDevis() {
+      const lignes = lireLignesDevis();
+      const total = lignes.reduce((somme, ligne) => somme + (Number.isFinite(ligne.montant) ? ligne.montant : 0), 0);
+      const remise = Math.max(0, Number(remiseDevis.value) || 0);
+      document.getElementById("devis-total-ht").textContent = formaterXof(total);
+      document.getElementById("devis-total-net").textContent = formaterXof(Math.max(0, total - remise));
+    }
+
+    function ajouterOption(select, valeur, libelle) {
+      const option = document.createElement("option");
+      option.value = valeur;
+      option.textContent = libelle;
+      select.appendChild(option);
+    }
+
+    function ajouterLigneDevis(cataloguePrestations) {
+      const ligne = document.createElement("div");
+      ligne.className = "devis-ligne";
+
+      const categorie = document.createElement("select");
+      categorie.className = "ligne-categorie";
+      categorie.required = true;
+      categorie.setAttribute("aria-label", "Catégorie de prestation");
+      ajouterOption(categorie, "", "Choisir une catégorie");
+      categoriesCatalogue.forEach(function(item) {
+        ajouterOption(categorie, item.valeur, item.libelle);
+      });
+
+      const designation = document.createElement("select");
+      designation.className = "ligne-designation";
+      designation.required = true;
+      designation.disabled = true;
+      designation.setAttribute("aria-label", "Prestation");
+      ajouterOption(designation, "", "Choisir d'abord une catégorie");
+
+      const quantite = document.createElement("input");
+      quantite.className = "ligne-quantite";
+      quantite.type = "number";
+      quantite.required = true;
+      quantite.min = "0.01";
+      quantite.step = "0.01";
+      quantite.value = "1";
+      quantite.title = "Quantité";
+      quantite.setAttribute("aria-label", "Quantité");
+
+      const prix = document.createElement("input");
+      prix.className = "ligne-prix";
+      prix.type = "number";
+      prix.required = true;
+      prix.min = "0";
+      prix.step = "1";
+      prix.value = "0";
+      prix.placeholder = "Prix unitaire (F CFA)";
+      prix.title = "Prix unitaire en F CFA — modifiable";
+      prix.setAttribute("aria-label", "Prix unitaire en F CFA");
+
+      const aidePrix = document.createElement("p");
+      aidePrix.className = "aide ligne-aide-prix";
+      aidePrix.textContent = "Sélectionne une prestation pour afficher sa fourchette de prix indicative.";
+
+      const supprimer = document.createElement("button");
+      supprimer.type = "button";
+      supprimer.className = "bouton-supprimer";
+      supprimer.textContent = "Retirer";
+      supprimer.addEventListener("click", function() {
+        ligne.remove();
+        actualiserTotauxDevis();
+      });
+
+      categorie.addEventListener("change", function() {
+        designation.replaceChildren();
+        ajouterOption(designation, "", "Sélectionner une prestation");
+        const prestations = cataloguePrestations.filter(function(item) {
+          return item.categorie === categorie.value;
+        });
+        prestations.forEach(function(item) {
+          const option = document.createElement("option");
+          option.value = item.prestation;
+          option.textContent = item.prestation;
+          option.dataset.prixMin = item.prix_min_xof == null ? "" : String(item.prix_min_xof);
+          option.dataset.prixMax = item.prix_max_xof == null ? "" : String(item.prix_max_xof);
+          designation.appendChild(option);
+        });
+        designation.disabled = prestations.length === 0;
+        prix.value = "0";
+        aidePrix.textContent = prestations.length
+          ? "Choisis une prestation pour afficher son tarif indicatif."
+          : "Aucune prestation active dans cette catégorie.";
+        actualiserTotauxDevis();
+      });
+
+      designation.addEventListener("change", function() {
+        const option = designation.selectedOptions[0];
+        if (!option || !option.value) {
+          prix.value = "0";
+          aidePrix.textContent = "Sélectionne une prestation pour afficher sa fourchette de prix indicative.";
+        } else {
+          const minimum = option.dataset.prixMin;
+          const maximum = option.dataset.prixMax;
+          if (minimum !== "" && maximum !== "") {
+            prix.value = minimum;
+            aidePrix.textContent = "Tarif indicatif : " + formaterXof(Number(minimum)) + " à " + formaterXof(Number(maximum)) + " F CFA. Le prix unitaire reste modifiable.";
+          } else if (minimum !== "") {
+            prix.value = minimum;
+            aidePrix.textContent = "Tarif indicatif à partir de " + formaterXof(Number(minimum)) + " F CFA. Prix modifiable.";
+          } else if (maximum !== "") {
+            prix.value = maximum;
+            aidePrix.textContent = "Tarif indicatif jusqu'à " + formaterXof(Number(maximum)) + " F CFA. Prix modifiable.";
+          } else {
+            prix.value = "0";
+            aidePrix.textContent = "Aucun tarif indicatif défini. Saisis le prix convenu.";
+          }
+        }
+        actualiserTotauxDevis();
+      });
+
+      [quantite, prix].forEach(function(champ) {
+        champ.addEventListener("input", actualiserTotauxDevis);
+      });
+
+      ligne.appendChild(categorie);
+      ligne.appendChild(designation);
+      ligne.appendChild(quantite);
+      ligne.appendChild(prix);
+      ligne.appendChild(supprimer);
+      ligne.appendChild(aidePrix);
+      conteneurLignesDevis.appendChild(ligne);
+    }
+
+    document.getElementById("ajouter-ligne-devis").addEventListener("click", function() {
+      ajouterLigneDevis(cataloguePrestations);
+    });
+    remiseDevis.addEventListener("input", actualiserTotauxDevis);
+
+    const [resultatDemandesDevis, resultatProfilsDevis, resultatCatalogue] = await Promise.all([
+      supabase.from("demandes_clients").select("id, direction, prestation, nom_client, telephone, email, created_at").order("created_at", { ascending: false }),
+      supabase.from("profiles").select("id, full_name").order("full_name", { ascending: true }),
+      supabase.from("tarifs_prestations").select("categorie, prestation, prix_min_xof, prix_max_xof").eq("actif", true).order("categorie", { ascending: true }).order("prestation", { ascending: true })
+    ]);
+
+    let cataloguePrestations = [];
+    if (resultatCatalogue.error) {
+      console.error("Erreur de chargement du catalogue :", resultatCatalogue.error);
+      messageDevis.textContent = "Catalogue indisponible : " + resultatCatalogue.error.message;
+    } else {
+      cataloguePrestations = resultatCatalogue.data || [];
+      if (cataloguePrestations.length === 0) {
+        messageDevis.textContent = "Aucune prestation active n'est disponible dans le catalogue.";
+      }
+    }
+    ajouterLigneDevis(cataloguePrestations);
+
+    if (resultatDemandesDevis.error) {
+      selectDemandeDevis.innerHTML = '<option value="">Erreur de chargement des demandes</option>';
+      messageDevis.textContent = "Demandes indisponibles : " + resultatDemandesDevis.error.message;
+    } else {
+      selectDemandeDevis.innerHTML = '<option value="">Sélectionner une demande client</option>';
+      (resultatDemandesDevis.data || []).forEach(function(demande) {
+        const option = document.createElement("option");
+        option.value = demande.id;
+        option.textContent = demande.prestation + " — " + demande.nom_client + " — " + demande.telephone;
+        selectDemandeDevis.appendChild(option);
+      });
+    }
+
+    if (resultatProfilsDevis.error) {
+      selectClientDevis.innerHTML = '<option value="">Erreur de chargement des comptes</option>';
+      messageDevis.textContent += " Comptes indisponibles : " + resultatProfilsDevis.error.message;
+    } else {
+      selectClientDevis.innerHTML = '<option value="">Sélectionner le compte vérifié du client</option>';
+      (resultatProfilsDevis.data || []).forEach(function(profil) {
+        const option = document.createElement("option");
+        option.value = profil.id;
+        option.textContent = (profil.full_name || "Compte sans nom") + " — " + profil.id;
+        selectClientDevis.appendChild(option);
+      });
+    }
+
+    // =====================================
+    // CONSULTATION ET PUBLICATION DES DEVIS
+    // =====================================
+    const sectionListeDevis = document.getElementById("liste-devis-admin");
+    sectionListeDevis.hidden = false;
+
+    const contenuListeDevis = document.getElementById("contenu-liste-devis");
+    const messageListeDevis = document.getElementById("message-liste-devis");
+    const boutonActualiserDevis = document.getElementById("bouton-actualiser-devis");
+
+    function libelleStatutDevis(statut) {
+      const libelles = {
+        brouillon: "Brouillon",
+        envoye: "Publié dans l'espace client",
+        accepte: "Accepté par le client",
+        refuse: "Refusé par le client",
+        expire: "Expiré"
+      };
+      return libelles[statut] || statut;
+    }
+
+    async function chargerListeDevis() {
+      contenuListeDevis.textContent = "Chargement des devis...";
+      messageListeDevis.textContent = "";
+
+      try {
+        const { data: devis, error } = await supabase
+          .from("devis")
+          .select("id, numero_devis, demande_id, client_user_id, statut, date_emission, date_validite, reponse_client_at, montant_ht_xof, remise_xof, montant_total_xof, conditions, delai_execution, created_at")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        contenuListeDevis.replaceChildren();
+
+        if (!devis || devis.length === 0) {
+          contenuListeDevis.textContent = "Aucun devis enregistré pour le moment.";
+          return;
+        }
+
+        const demandeIds = [...new Set(devis.map(d => d.demande_id).filter(Boolean))];
+        const clientIds = [...new Set(devis.map(d => d.client_user_id).filter(Boolean))];
+        const devisIds = devis.map(d => d.id);
+
+        const [resultatDemandes, resultatProfils, resultatLignes] = await Promise.all([
+          demandeIds.length
+            ? supabase.from("demandes_clients").select("id, nom_client, telephone, prestation").in("id", demandeIds)
+            : Promise.resolve({ data: [], error: null }),
+          clientIds.length
+            ? supabase.from("profiles").select("id, full_name").in("id", clientIds)
+            : Promise.resolve({ data: [], error: null }),
+          devisIds.length
+            ? supabase.from("lignes_devis").select("id, devis_id, designation, quantite, prix_unitaire_xof, montant_ligne_xof").in("devis_id", devisIds)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+
+        if (resultatDemandes.error) throw resultatDemandes.error;
+        if (resultatProfils.error) throw resultatProfils.error;
+        if (resultatLignes.error) throw resultatLignes.error;
+
+        const demandesParId = new Map((resultatDemandes.data || []).map(x => [x.id, x]));
+        const profilsParId = new Map((resultatProfils.data || []).map(x => [x.id, x]));
+        const lignesParDevis = new Map();
+
+        (resultatLignes.data || []).forEach(ligne => {
+          if (!lignesParDevis.has(ligne.devis_id)) lignesParDevis.set(ligne.devis_id, []);
+          lignesParDevis.get(ligne.devis_id).push(ligne);
+        });
+
+        devis.forEach(d => {
+          const carte = document.createElement("article");
+          carte.className = "demande";
+
+          const demande = demandesParId.get(d.demande_id);
+          const profil = profilsParId.get(d.client_user_id);
+
+          ajouterTexte(carte, "h3", d.numero_devis || "Devis sans numéro");
+          afficherChamp(carte, "Client", (profil && profil.full_name) || (demande && demande.nom_client) || "Compte non identifié");
+          afficherChamp(carte, "Prestation demandée", (demande && demande.prestation) || "Non renseignée");
+          afficherChamp(carte, "Statut", libelleStatutDevis(d.statut));
+          afficherChamp(carte, "Date d'émission", d.date_emission || "Non renseignée");
+          afficherChamp(carte, "Date de validité", d.date_validite || "Non renseignée");
+          afficherChamp(carte, "Date de réponse du client", d.reponse_client_at ? new Date(d.reponse_client_at).toLocaleString("fr-FR") : "Aucune réponse enregistrée");
+          afficherChamp(carte, "Total HT", formaterXof(d.montant_ht_xof) + " F CFA");
+          afficherChamp(carte, "Remise", formaterXof(d.remise_xof) + " F CFA");
+          afficherChamp(carte, "Total net", formaterXof(d.montant_total_xof) + " F CFA");
+          afficherChamp(carte, "Délai d'exécution", d.delai_execution || "Non renseigné");
+          afficherChamp(carte, "Conditions", d.conditions || "Aucune condition particulière");
+
+          const listeLignes = lignesParDevis.get(d.id) || [];
+          ajouterTexte(carte, "h4", "Détail des prestations");
+          if (listeLignes.length === 0) {
+            ajouterTexte(carte, "p", "Aucune ligne de prestation trouvée.");
+          } else {
+            listeLignes.forEach(l => {
+              ajouterTexte(
+                carte,
+                "p",
+                l.designation + " — Qté : " + l.quantite +
+                " — Prix unitaire : " + formaterXof(l.prix_unitaire_xof) +
+                " F CFA — Montant : " + formaterXof(l.montant_ligne_xof) + " F CFA"
+              );
+            });
+          }
+
+         
+if (d.statut === "brouillon") {
+  const boutonPublier = document.createElement("button");
+  boutonPublier.type = "button";
+  boutonPublier.textContent = "Valider et rendre visible au client";
+
+  boutonPublier.addEventListener("click", async function() {
+    if (!d.client_user_id) {
+      messageListeDevis.textContent =
+        "Publication impossible : aucun compte client n'est associé à ce devis.";
+      return;
+    }
+
+    const confirmation = window.confirm(
+      "Confirmer la publication du devis " + d.numero_devis +
+      " dans l'espace personnel du client ? Cette action le rendra visible au client."
+    );
+
+    if (!confirmation) return;
+
+    boutonPublier.disabled = true;
+    boutonPublier.textContent = "Publication en cours...";
+
+    try {
+      const { data: devisPublie, error: erreurPublication } =
+        await supabase
+          .from("devis")
+          .update({
+            statut: "envoye",
+            date_emission: d.date_emission ||
+              new Date().toISOString().slice(0, 10),
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", d.id)
+          .eq("client_user_id", d.client_user_id)
+          .eq("statut", "brouillon")
+          .select("id, numero_devis, statut")
+          .maybeSingle();
+
+      if (erreurPublication) throw erreurPublication;
+
+      if (!devisPublie) {
+        throw new Error(
+          "Aucun devis n'a été modifié. Vérifie son statut et les droits administrateur."
+        );
+      }
+
+      if (devisPublie.statut !== "envoye") {
+        throw new Error("Le devis n'a pas obtenu le statut attendu.");
+      }
+
+      messageListeDevis.textContent =
+        "Le devis " + devisPublie.numero_devis +
+        " est maintenant visible dans l'espace du client. " +
+        "Aucune notification e-mail n'a été envoyée.";
+
+      await chargerListeDevis();
+
+    } catch (erreur) {
+      console.error("Erreur de publication du devis :", erreur);
+
+      messageListeDevis.textContent =
+        "Publication impossible : " +
+        (erreur.message || "erreur inconnue");
+
+      boutonPublier.disabled = false;
+      boutonPublier.textContent =
+        "Valider et rendre visible au client";
+    }
+  });
+
+  // Ajouter le bouton uniquement pour les devis en brouillon.
+  carte.appendChild(boutonPublier);
+}
+
+          contenuListeDevis.appendChild(carte);
+        });
+
+        messageListeDevis.textContent = devis.length + " devis chargé(s).";
+      } catch (erreur) {
+        console.error("Erreur de chargement des devis :", erreur);
+        contenuListeDevis.textContent = "Impossible de charger les devis : " + (erreur.message || "erreur inconnue");
+      }
+    }
+
+    boutonActualiserDevis.addEventListener("click", chargerListeDevis);
+    await chargerListeDevis();
+
+
+    // =====================================
+    // GESTION DES COMMANDES
+    // =====================================
+    const sectionCommandes = document.getElementById("gestion-commandes");
+    sectionCommandes.hidden = false;
+
+    const selectDevisCommande = document.getElementById("commande-devis");
+    const boutonTransformerDevis = document.getElementById("bouton-transformer-devis");
+    const messageTransformation = document.getElementById("message-transformation");
+    const listeCommandes = document.getElementById("liste-commandes");
+    const messageCommandes = document.getElementById("message-commandes");
+    const rechercheCommandes = document.getElementById("recherche-commandes");
+    const filtreStatutCommande = document.getElementById("filtre-statut-commande");
+
+    const libellesStatutCommande = {
+      a_traiter: "À traiter",
+      en_cours: "En cours",
+      terminee: "Terminée",
+      livree: "Livrée",
+      annulee: "Annulée"
+    };
+
+    let commandesChargees = [];
+
+    async function chargerDevisConvertibles() {
+      selectDevisCommande.innerHTML = '<option value="">Chargement...</option>';
+
+      const { data: devis, error: erreurDevis } = await supabase
+        .from("devis")
+        .select("id, numero_devis, client_user_id, montant_total_xof")
+        .eq("statut", "accepte")
+        .order("created_at", { ascending: false });
+
+      if (erreurDevis) {
+        console.error("Erreur devis convertibles :", erreurDevis);
+        selectDevisCommande.innerHTML = '<option value="">Impossible de charger les devis acceptés</option>';
+        messageTransformation.textContent = "Chargement impossible : " + erreurDevis.message;
+        return;
+      }
+
+      const { data: commandesExistantes, error: erreurCommandes } = await supabase
+        .from("commandes")
+        .select("devis_id");
+
+      if (erreurCommandes) {
+        console.error("Erreur commandes existantes :", erreurCommandes);
+        selectDevisCommande.innerHTML = '<option value="">Impossible de vérifier les commandes existantes</option>';
+        messageTransformation.textContent = "Vérification impossible : " + erreurCommandes.message;
+        return;
+      }
+
+      const dejaConvertis = new Set((commandesExistantes || []).map(c => c.devis_id));
+      const convertibles = (devis || []).filter(d => d.client_user_id && !dejaConvertis.has(d.id));
+
+      selectDevisCommande.replaceChildren();
+      const optionInitiale = document.createElement("option");
+      optionInitiale.value = "";
+      optionInitiale.textContent = "Sélectionner un devis accepté";
+      selectDevisCommande.appendChild(optionInitiale);
+
+      convertibles.forEach(d => {
+        const option = document.createElement("option");
+        option.value = d.id;
+        option.textContent = (d.numero_devis || "Devis sans numéro") +
+          " — " + formaterXof(d.montant_total_xof) + " F CFA";
+        selectDevisCommande.appendChild(option);
+      });
+
+      if (convertibles.length === 0) {
+        optionInitiale.textContent = "Aucun devis accepté disponible pour conversion";
+      }
+    }
+
+    function afficherCommandesFiltrees() {
+      const recherche = rechercheCommandes.value.trim().toLowerCase();
+      const statutChoisi = filtreStatutCommande.value;
+      const resultats = commandesChargees.filter(c => {
+        const correspondRecherche =
+          !recherche ||
+          (c.numero_commande || "").toLowerCase().includes(recherche) ||
+          (c.numero_devis || "").toLowerCase().includes(recherche) ||
+          (c.nom_client || "").toLowerCase().includes(recherche);
+        const correspondStatut = !statutChoisi || c.statut === statutChoisi;
+        return correspondRecherche && correspondStatut;
+      });
+
+      listeCommandes.replaceChildren();
+      if (resultats.length === 0) {
+        listeCommandes.textContent = "Aucune commande ne correspond aux critères sélectionnés.";
+        return;
+      }
+
+      ajouterTexte(listeCommandes, "p", resultats.length + " commande(s) affichée(s).");
+
+      resultats.forEach(c => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", c.numero_commande);
+        afficherChamp(carte, "Devis d'origine", c.numero_devis || "Non renseigné");
+        afficherChamp(carte, "Client", c.nom_client || c.client_user_id);
+        afficherChamp(carte, "Statut actuel", libellesStatutCommande[c.statut] || c.statut);
+        afficherChamp(carte, "Montant HT", formaterXof(c.montant_ht_xof) + " F CFA");
+        afficherChamp(carte, "Remise", formaterXof(c.remise_xof) + " F CFA");
+        afficherChamp(carte, "Total net", formaterXof(c.montant_total_xof) + " F CFA");
+
+        ajouterTexte(carte, "h4", "Prestations commandées");
+        if (!c.lignes || c.lignes.length === 0) {
+          ajouterTexte(carte, "p", "Aucune ligne de prestation trouvée.");
+        } else {
+          c.lignes.forEach(l => {
+            ajouterTexte(
+              carte,
+              "p",
+              l.designation + " — Qté : " + l.quantite +
+              " — Prix unitaire : " + formaterXof(l.prix_unitaire_xof) +
+              " F CFA — Montant : " + formaterXof(l.montant_ligne_xof) + " F CFA"
+            );
+          });
+        }
+
+        const statut = document.createElement("select");
+        Object.entries(libellesStatutCommande).forEach(([valeur, libelle]) => {
+          const option = document.createElement("option");
+          option.value = valeur;
+          option.textContent = libelle;
+          statut.appendChild(option);
+        });
+        statut.value = c.statut;
+
+        const labelStatut = document.createElement("label");
+        labelStatut.textContent = "Mettre à jour le statut : ";
+        labelStatut.appendChild(statut);
+        carte.appendChild(labelStatut);
+
+        const dateDebut = document.createElement("input");
+        dateDebut.type = "date";
+        dateDebut.value = c.date_debut_prevue || "";
+        const labelDebut = document.createElement("label");
+        labelDebut.textContent = "Date de début prévue : ";
+        labelDebut.appendChild(dateDebut);
+        carte.appendChild(labelDebut);
+
+        const dateLivraisonPrevue = document.createElement("input");
+        dateLivraisonPrevue.type = "date";
+        dateLivraisonPrevue.value = c.date_livraison_prevue || "";
+        const labelLivraison = document.createElement("label");
+        labelLivraison.textContent = "Date de livraison prévue : ";
+        labelLivraison.appendChild(dateLivraisonPrevue);
+        carte.appendChild(labelLivraison);
+
+        const notes = document.createElement("textarea");
+        notes.rows = 2;
+        notes.maxLength = 5000;
+        notes.className = "champ-note";
+        notes.placeholder = "Notes de suivi réservées à l'administration...";
+        notes.value = c.notes_admin || "";
+        carte.appendChild(notes);
+
+        const boutonEnregistrer = document.createElement("button");
+        boutonEnregistrer.type = "button";
+        boutonEnregistrer.textContent = "Enregistrer le suivi";
+        boutonEnregistrer.addEventListener("click", async function() {
+          boutonEnregistrer.disabled = true;
+          boutonEnregistrer.textContent = "Enregistrement...";
+          messageCommandes.textContent = "";
+          try {
+            const miseAJour = {
+              statut: statut.value,
+              date_debut_prevue: dateDebut.value || null,
+              date_livraison_prevue: dateLivraisonPrevue.value || null,
+              notes_admin: notes.value.trim() || null,
+              updated_at: new Date().toISOString()
+            };
+            if (statut.value === "livree" && !c.date_livraison_reelle) {
+              miseAJour.date_livraison_reelle = new Date().toISOString().slice(0, 10);
+            }
+            const { error } = await supabase
+              .from("commandes")
+              .update(miseAJour)
+              .eq("id", c.id);
+            if (error) throw error;
+            await chargerCommandes();
+            await chargerHistoriqueCommandes();
+            messageCommandes.textContent = "Suivi de la commande " + c.numero_commande + " mis à jour.";
+          } catch (erreur) {
+            console.error("Erreur mise à jour commande :", erreur);
+            messageCommandes.textContent = "Mise à jour impossible : " + (erreur.message || "erreur inconnue");
+          } finally {
+            boutonEnregistrer.disabled = false;
+            boutonEnregistrer.textContent = "Enregistrer le suivi";
+          }
+        });
+        carte.appendChild(boutonEnregistrer);
+        listeCommandes.appendChild(carte);
+      });
+    }
+
+    async function chargerCommandes() {
+      listeCommandes.textContent = "Chargement des commandes...";
+      messageCommandes.textContent = "";
+
+      const { data: commandes, error } = await supabase
+        .from("commandes")
+        .select("id, numero_commande, devis_id, client_user_id, statut, montant_ht_xof, remise_xof, montant_total_xof, date_debut_prevue, date_livraison_prevue, date_livraison_reelle, notes_admin, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Erreur chargement commandes :", error);
+        listeCommandes.textContent = "Impossible de charger les commandes : " + error.message;
+        return;
+      }
+
+      const commandesData = commandes || [];
+      const devisIds = [...new Set(commandesData.map(c => c.devis_id).filter(Boolean))];
+      const clientIds = [...new Set(commandesData.map(c => c.client_user_id).filter(Boolean))];
+      const commandeIds = commandesData.map(c => c.id);
+
+      const [resultatDevis, resultatProfils, resultatLignes] = await Promise.all([
+        devisIds.length
+          ? supabase.from("devis").select("id, numero_devis").in("id", devisIds)
+          : Promise.resolve({ data: [], error: null }),
+        clientIds.length
+          ? supabase.from("profiles").select("id, full_name").in("id", clientIds)
+          : Promise.resolve({ data: [], error: null }),
+        commandeIds.length
+          ? supabase.from("lignes_commandes").select("id, commande_id, designation, quantite, prix_unitaire_xof, montant_ligne_xof").in("commande_id", commandeIds)
+          : Promise.resolve({ data: [], error: null })
+      ]);
+
+      if (resultatDevis.error) {
+        listeCommandes.textContent = "Impossible de charger les devis associés : " + resultatDevis.error.message;
+        return;
+      }
+      if (resultatProfils.error) {
+        listeCommandes.textContent = "Impossible de charger les profils clients : " + resultatProfils.error.message;
+        return;
+      }
+      if (resultatLignes.error) {
+        listeCommandes.textContent = "Impossible de charger les prestations : " + resultatLignes.error.message;
+        return;
+      }
+
+      const devisParId = new Map((resultatDevis.data || []).map(d => [d.id, d]));
+      const profilsParId = new Map((resultatProfils.data || []).map(p => [p.id, p]));
+      const lignesParCommande = new Map();
+      (resultatLignes.data || []).forEach(l => {
+        if (!lignesParCommande.has(l.commande_id)) lignesParCommande.set(l.commande_id, []);
+        lignesParCommande.get(l.commande_id).push(l);
+      });
+
+      commandesChargees = commandesData.map(c => ({
+        ...c,
+        numero_devis: (devisParId.get(c.devis_id) || {}).numero_devis || "",
+        nom_client: (profilsParId.get(c.client_user_id) || {}).full_name || "",
+        lignes: lignesParCommande.get(c.id) || []
+      }));
+      afficherCommandesFiltrees();
+    }
+
+
+    // =====================================
+    // HISTORIQUE DES COMMANDES
+    // =====================================
+    const sectionHistoriqueCommandes = document.getElementById("historique-commandes-admin");
+    sectionHistoriqueCommandes.hidden = false;
+    const listeHistoriqueCommandes = document.getElementById("liste-historique-commandes");
+    const messageHistoriqueCommandes = document.getElementById("message-historique-commandes");
+    const rechercheHistoriqueCommandes = document.getElementById("recherche-historique-commandes");
+
+    const libellesStatutHistorique = {
+      a_traiter: "À traiter",
+      en_cours: "En cours",
+      terminee: "Terminée",
+      livree: "Livrée",
+      annulee: "Annulée"
+    };
+
+    let historiqueCommandesCharge = [];
+
+    function afficherHistoriqueCommandes() {
+      const recherche = rechercheHistoriqueCommandes.value.trim().toLowerCase();
+      const resultats = historiqueCommandesCharge.filter(item =>
+        !recherche || (item.numero_commande || "").toLowerCase().includes(recherche)
+      );
+
+      listeHistoriqueCommandes.replaceChildren();
+      if (resultats.length === 0) {
+        listeHistoriqueCommandes.textContent = historiqueCommandesCharge.length
+          ? "Aucune entrée ne correspond à cette recherche."
+          : "Aucun changement de statut enregistré pour le moment.";
+        return;
+      }
+
+      resultats.forEach(item => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", item.numero_commande || "Commande sans numéro");
+        afficherChamp(carte, "Ancien statut",
+          item.ancien_statut ? (libellesStatutHistorique[item.ancien_statut] || item.ancien_statut) : "Création / statut initial");
+        afficherChamp(carte, "Nouveau statut",
+          libellesStatutHistorique[item.nouveau_statut] || item.nouveau_statut);
+        afficherChamp(carte, "Date et heure",
+          item.date_modification ? new Date(item.date_modification).toLocaleString("fr-FR") : "Non renseignée");
+        afficherChamp(carte, "Modifié par", item.nom_admin || (item.modifie_par ? item.modifie_par : "Auteur non identifié (modification hors session utilisateur)"));
+        afficherChamp(carte, "Commentaire", item.commentaire || "Aucun commentaire");
+        listeHistoriqueCommandes.appendChild(carte);
+      });
+    }
+
+    async function chargerHistoriqueCommandes() {
+      listeHistoriqueCommandes.textContent = "Chargement de l'historique...";
+      messageHistoriqueCommandes.textContent = "";
+
+      try {
+        const { data: historique, error } = await supabase
+          .from("historique_commandes")
+          .select("id, commande_id, ancien_statut, nouveau_statut, modifie_par, date_modification, commentaire")
+          .order("date_modification", { ascending: false });
+
+        if (error) throw error;
+
+        const entrees = historique || [];
+        const commandeIds = [...new Set(entrees.map(x => x.commande_id).filter(Boolean))];
+        const adminIds = [...new Set(entrees.map(x => x.modifie_par).filter(Boolean))];
+
+        const [resultatCommandes, resultatAdmins] = await Promise.all([
+          commandeIds.length
+            ? supabase.from("commandes").select("id, numero_commande").in("id", commandeIds)
+            : Promise.resolve({ data: [], error: null }),
+          adminIds.length
+            ? supabase.from("profiles").select("id, full_name").in("id", adminIds)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+
+        if (resultatCommandes.error) throw resultatCommandes.error;
+        if (resultatAdmins.error) throw resultatAdmins.error;
+
+        const commandesParId = new Map((resultatCommandes.data || []).map(x => [x.id, x]));
+        const adminsParId = new Map((resultatAdmins.data || []).map(x => [x.id, x]));
+
+        historiqueCommandesCharge = entrees.map(x => ({
+          ...x,
+          numero_commande: (commandesParId.get(x.commande_id) || {}).numero_commande || "",
+          nom_admin: x.modifie_par
+            ? ((adminsParId.get(x.modifie_par) || {}).full_name || "")
+            : ""
+        }));
+
+        afficherHistoriqueCommandes();
+        messageHistoriqueCommandes.textContent =
+          historiqueCommandesCharge.length + " changement(s) enregistré(s).";
+      } catch (erreur) {
+        console.error("Erreur de chargement de l'historique :", erreur);
+        listeHistoriqueCommandes.textContent =
+          "Impossible de charger l'historique : " + (erreur.message || "erreur inconnue");
+      }
+    }
+
+    document.getElementById("bouton-actualiser-historique")
+      .addEventListener("click", chargerHistoriqueCommandes);
+    rechercheHistoriqueCommandes.addEventListener("input", afficherHistoriqueCommandes);
+
+    boutonTransformerDevis.addEventListener("click", async function() {
+      const devisId = selectDevisCommande.value;
+      if (!devisId) {
+        messageTransformation.textContent = "Sélectionne un devis accepté.";
+        return;
+      }
+      const confirmation = window.confirm(
+        "Confirmer la transformation de ce devis accepté en commande ? Cette opération ne peut être effectuée qu'une seule fois."
+      );
+      if (!confirmation) return;
+
+      boutonTransformerDevis.disabled = true;
+      boutonTransformerDevis.textContent = "Création de la commande...";
+      messageTransformation.textContent = "";
+      try {
+        const { data, error } = await supabase.rpc(
+          "transformer_devis_en_commande",
+          { p_devis_id: devisId }
+        );
+        if (error) throw error;
+        if (!data) throw new Error("La fonction n'a retourné aucun identifiant de commande.");
+        messageTransformation.textContent = "Commande créée avec succès. Identifiant : " + data;
+        await Promise.all([
+      chargerCommandes(),
+      chargerDevisConvertibles(),
+      chargerHistoriqueCommandes()
+    ]);
+      } catch (erreur) {
+        console.error("Erreur de transformation :", erreur);
+        messageTransformation.textContent = "Transformation impossible : " + (erreur.message || "erreur inconnue");
+      } finally {
+        boutonTransformerDevis.disabled = false;
+        boutonTransformerDevis.textContent = "Créer la commande";
+      }
+    });
+
+    document.getElementById("bouton-actualiser-commandes").addEventListener("click", async function() {
+      await Promise.all([
+        chargerCommandes(),
+        chargerDevisConvertibles(),
+        chargerHistoriqueCommandes()
+      ]);
+    });
+    rechercheCommandes.addEventListener("input", afficherCommandesFiltrees);
+    filtreStatutCommande.addEventListener("change", afficherCommandesFiltrees);
+
+    await Promise.all([chargerCommandes(), chargerDevisConvertibles()]);
+
+    document.getElementById("form-devis").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      messageDevis.textContent = "";
+      const demandeId = selectDemandeDevis.value;
+      const clientId = selectClientDevis.value;
+      const dateValidite = document.getElementById("devis-validite").value;
+      const lignes = lireLignesDevis();
+      const remise = Number(remiseDevis.value);
+      const totalHt = lignes.reduce((somme, ligne) => somme + ligne.montant, 0);
+      const totalNet = totalHt - remise;
+
+      if (!demandeId || !clientId || !dateValidite) {
+        messageDevis.textContent = "Sélectionne une demande, le compte vérifié du client et une date de validité.";
+        return;
+      }
+      if (!lignes.length || lignes.some(l => !l.designation || !Number.isFinite(l.quantite) || l.quantite <= 0 || !Number.isSafeInteger(l.prix) || l.prix < 0)) {
+        messageDevis.textContent = "Vérifie chaque désignation, quantité et prix unitaire.";
+        return;
+      }
+      if (!Number.isSafeInteger(remise) || remise < 0 || remise > totalHt || totalNet < 0) {
+        messageDevis.textContent = "La remise doit être un montant entier compris entre 0 et le total HT.";
+        return;
+      }
+      if (dateValidite < new Date().toISOString().slice(0, 10)) {
+        messageDevis.textContent = "La date de validité ne peut pas être dans le passé.";
+        return;
+      }
+
+      boutonCreerDevis.disabled = true;
+      boutonCreerDevis.textContent = "Enregistrement...";
+      let devisCreeId = null;
+      try {
+        const numero = "DEV-" + new Date().toISOString().slice(0, 10).replace(/-/g, "") + "-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+        const { data: devisCree, error: erreurDevis } = await supabase
+          .from("devis")
+          .insert({
+            numero_devis: numero,
+            demande_id: demandeId,
+            client_user_id: clientId,
+            admin_user_id: utilisateur.id,
+            statut: "brouillon",
+            date_emission: new Date().toISOString().slice(0, 10),
+            date_validite: dateValidite,
+            montant_ht_xof: totalHt,
+            remise_xof: remise,
+            montant_total_xof: totalNet,
+            conditions: document.getElementById("devis-conditions").value.trim() || null,
+            delai_execution: document.getElementById("devis-delai").value.trim() || null
+          })
+          .select("id")
+          .single();
+
+        if (erreurDevis) throw erreurDevis;
+        devisCreeId = devisCree.id;
+        const lignesAInserer = lignes.map(function(ligne) {
+          return {
+            devis_id: devisCreeId,
+            designation: ligne.designation,
+            quantite: ligne.quantite,
+            prix_unitaire_xof: ligne.prix,
+            montant_ligne_xof: ligne.montant
+          };
+        });
+        const { error: erreurLignes } = await supabase.from("lignes_devis").insert(lignesAInserer);
+        if (erreurLignes) {
+          await supabase.from("devis").delete().eq("id", devisCreeId);
+          devisCreeId = null;
+          throw erreurLignes;
+        }
+        messageDevis.textContent = "Devis " + numero + " enregistré en brouillon. Il n'est pas encore visible par le client.";
+        document.getElementById("form-devis").reset();
+        conteneurLignesDevis.replaceChildren();
+        ajouterLigneDevis(cataloguePrestations);
+        actualiserTotauxDevis();
+        await chargerListeDevis();
+      } catch (erreur) {
+        console.error("Erreur de création du devis :", erreur);
+        messageDevis.textContent = "Création impossible : " + (erreur.message || "erreur inconnue");
+      } finally {
+        boutonCreerDevis.disabled = false;
+        boutonCreerDevis.textContent = "Enregistrer le devis en brouillon";
+      }
+    });
+
+
+
+    // =====================================
+    // CONSULTATION DES JUSTIFICATIFS CLIENTS
+    // =====================================
+    const sectionJustificatifs = document.getElementById("gestion-justificatifs");
+    const listeJustificatifs = document.getElementById("liste-justificatifs");
+    const messageJustificatifs = document.getElementById("message-justificatifs");
+    const rechercheJustificatifs = document.getElementById("recherche-justificatifs");
+    const boutonActualiserJustificatifs = document.getElementById("bouton-actualiser-justificatifs");
+    const bucketRecus = "recus-paiements";
+    let justificatifsCharges = [];
+
+    sectionJustificatifs.hidden = false;
+
+    function afficherJustificatifs() {
+      const terme = rechercheJustificatifs.value.trim().toLowerCase();
+      const resultats = justificatifsCharges.filter(item =>
+        !terme ||
+        (item.nom_client || "").toLowerCase().includes(terme) ||
+        (item.nom_fichier || "").toLowerCase().includes(terme) ||
+        (item.course_title || "").toLowerCase().includes(terme) ||
+        (item.transaction_reference || "").toLowerCase().includes(terme) ||
+        (item.status || "").toLowerCase().includes(terme)
+      );
+      listeJustificatifs.replaceChildren();
+      if (resultats.length === 0) {
+        listeJustificatifs.textContent = justificatifsCharges.length
+          ? "Aucun justificatif ne correspond à cette recherche."
+          : "Aucun justificatif déposé pour le moment.";
+        return;
+      }
+      ajouterTexte(listeJustificatifs, "p", resultats.length + " justificatif(s) affiché(s).");
+      resultats.forEach(item => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", item.nom_client || "Client non identifié");
+        afficherChamp(carte, "Identifiant client", item.user_id);
+        afficherChamp(carte, "Fichier", item.nom_fichier);
+        if (item.paiement) {
+          afficherChamp(carte, "Formation / prestation", item.paiement.course_title || item.paiement.course_id || "Non renseignée");
+          afficherChamp(carte, "Montant", Number(item.paiement.amount_xof || 0).toLocaleString("fr-FR") + " FCFA");
+          afficherChamp(carte, "Méthode de paiement", item.paiement.payment_method || "Non renseignée");
+          afficherChamp(carte, "Référence PayDunya", item.paiement.transaction_reference || "Non renseignée");
+          afficherChamp(carte, "Statut du paiement", item.paiement.status || "Non renseigné");
+          afficherChamp(carte, "Date du paiement", item.paiement.created_at ? new Date(item.paiement.created_at).toLocaleString("fr-FR") : "Non renseignée");
+        } else {
+          afficherChamp(carte, "Transaction associée", "Aucune transaction retrouvée pour ce justificatif.");
+        }
+        afficherChamp(carte, "Date de dépôt",
+          item.created_at ? new Date(item.created_at).toLocaleString("fr-FR") : "Date non disponible");
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+        const boutonOuvrir = document.createElement("button");
+        boutonOuvrir.type = "button";
+        boutonOuvrir.textContent = "Consulter / télécharger";
+        boutonOuvrir.addEventListener("click", async function() {
+          boutonOuvrir.disabled = true;
+          boutonOuvrir.textContent = "Préparation du lien...";
+          try {
+            const { data, error } = await supabase.storage
+              .from(bucketRecus)
+              .createSignedUrl(item.chemin, 60);
+            if (error) throw error;
+            if (!data || !data.signedUrl) throw new Error("Aucun lien temporaire n'a été retourné.");
+            window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+          } catch (erreur) {
+            console.error("Erreur d'ouverture du justificatif :", erreur);
+            messageJustificatifs.textContent =
+              "Consultation impossible : " + (erreur.message || "erreur inconnue");
+          } finally {
+            boutonOuvrir.disabled = false;
+            boutonOuvrir.textContent = "Consulter / télécharger";
+          }
+        });
+        actions.appendChild(boutonOuvrir);
+        carte.appendChild(actions);
+        listeJustificatifs.appendChild(carte);
+      });
+    }
+
+    async function chargerJustificatifs() {
+      listeJustificatifs.textContent = "Chargement des justificatifs...";
+      messageJustificatifs.textContent = "";
+      justificatifsCharges = [];
+
+      try {
+        // Source principale : un enregistrement par justificatif déposé.
+        const { data: recus, error: erreurRecus } = await supabase
+          .from("justificatifs_paiement")
+          .select("id, paiement_id, user_id, receipt_path, created_at")
+          .order("created_at", { ascending: false });
+
+        if (erreurRecus) throw erreurRecus;
+
+        const recusNormalises = (recus || []).map(recu => ({
+          id: recu.id,
+          paiement_id: recu.paiement_id,
+          user_id: recu.user_id,
+          chemin: recu.receipt_path,
+          nom_fichier: (recu.receipt_path || "").split("/").pop() || "Justificatif",
+          created_at: recu.created_at,
+          ancien_format: false
+        }));
+
+        // Compatibilité : récupérer aussi les anciens reçus stockés directement
+        // dans paiements.receipt_path, sans modifier les données existantes.
+        const { data: paiementsAvecAncienRecu, error: erreurAnciensRecus } = await supabase
+          .from("paiements")
+          .select("id, user_id, course_id, course_title, amount_xof, payment_method, transaction_reference, status, created_at, receipt_path")
+          .not("receipt_path", "is", null);
+
+        if (erreurAnciensRecus) throw erreurAnciensRecus;
+
+        const cheminsDejaEnregistres = new Set(recusNormalises.map(r => r.chemin));
+        const anciensRecus = (paiementsAvecAncienRecu || [])
+          .filter(p => p.receipt_path && !cheminsDejaEnregistres.has(p.receipt_path))
+          .map(p => ({
+            paiement_id: p.id,
+            user_id: p.user_id,
+            chemin: p.receipt_path,
+            nom_fichier: p.receipt_path.split("/").pop() || "Ancien justificatif",
+            created_at: p.created_at,
+            ancien_format: true,
+            paiement: p
+          }));
+
+        justificatifsCharges = [...recusNormalises, ...anciensRecus];
+
+        const idsPaiements = [...new Set(justificatifsCharges.map(r => r.paiement_id).filter(Boolean))];
+        const idsClients = [...new Set(justificatifsCharges.map(r => r.user_id).filter(Boolean))];
+
+        const [resultatPaiements, resultatProfils] = await Promise.all([
+          idsPaiements.length
+            ? supabase.from("paiements")
+                .select("id, user_id, course_id, course_title, amount_xof, payment_method, transaction_reference, status, created_at")
+                .in("id", idsPaiements)
+            : Promise.resolve({ data: [], error: null }),
+          idsClients.length
+            ? supabase.from("profiles")
+                .select("id, full_name")
+                .in("id", idsClients)
+            : Promise.resolve({ data: [], error: null })
+        ]);
+
+        if (resultatPaiements.error) throw resultatPaiements.error;
+        if (resultatProfils.error) throw resultatProfils.error;
+
+        const paiementsParId = new Map((resultatPaiements.data || []).map(p => [p.id, p]));
+        const nomsClients = new Map((resultatProfils.data || []).map(p =>
+          [p.id, p.full_name || "Client sans nom"]
+        ));
+
+        justificatifsCharges = justificatifsCharges.map(item => ({
+          ...item,
+          nom_client: nomsClients.get(item.user_id) || "Client non identifié",
+          paiement: item.paiement || paiementsParId.get(item.paiement_id) || null
+        }));
+
+        justificatifsCharges.sort((a, b) =>
+          new Date(b.created_at || 0) - new Date(a.created_at || 0)
+        );
+
+        afficherJustificatifs();
+        messageJustificatifs.textContent =
+          justificatifsCharges.length + " justificatif(s) chargé(s), y compris les anciens reçus conservés.";
+      } catch (erreur) {
+        console.error("Erreur de chargement des justificatifs :", erreur);
+        listeJustificatifs.textContent =
+          "Impossible de charger les justificatifs : " +
+          (erreur.message || "erreur inconnue") +
+          ". Vérifie les droits de lecture de la table justificatifs_paiement et du bucket privé.";
+      }
+    }
+
+    boutonActualiserJustificatifs.addEventListener("click", chargerJustificatifs);
+    rechercheJustificatifs.addEventListener("input", afficherJustificatifs);
+    await chargerJustificatifs();
+
+
+
+    // =====================================
+    // CORRECTION DES TRAVAUX PRATIQUES
+    // =====================================
+    const sectionTravaux = document.getElementById("gestion-travaux-pratiques");
+    const listeTravaux = document.getElementById("liste-travaux");
+    const messageTravaux = document.getElementById("message-travaux");
+    const rechercheTravaux = document.getElementById("recherche-travaux");
+    const filtreTravaux = document.getElementById("filtre-travaux");
+    let travauxCharges = [];
+    sectionTravaux.hidden = false;
+
+    function libelleDecisionTravail(statut) {
+      return ({ pending: "En attente de correction", approved: "Validé", rejected: "Rejeté" })[statut] || statut;
+    }
+
+    function afficherTravaux() {
+      const terme = rechercheTravaux.value.trim().toLowerCase();
+      const statut = filtreTravaux.value;
+      const resultats = travauxCharges.filter(t =>
+        (!statut || t.review_status === statut) &&
+        (!terme || [t.nom_apprenant, t.module_id, t.lesson_id, t.original_filename]
+          .some(v => String(v || "").toLowerCase().includes(terme)))
+      );
+      listeTravaux.replaceChildren();
+      if (!resultats.length) {
+        listeTravaux.textContent = "Aucun dépôt ne correspond aux critères.";
+        return;
+      }
+      ajouterTexte(listeTravaux, "p", resultats.length + " dépôt(s) affiché(s).");
+      resultats.forEach(t => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", t.nom_apprenant || "Apprenant non identifié");
+        afficherChamp(carte, "Module", t.module_id);
+        afficherChamp(carte, "Leçon", t.lesson_id);
+        afficherChamp(carte, "Fichier", t.original_filename);
+        afficherChamp(carte, "Type", t.mime_type);
+        afficherChamp(carte, "Taille", Math.round(Number(t.file_size_bytes || 0) / 1024) + " Ko");
+        afficherChamp(carte, "Date d'envoi", t.submitted_at ? new Date(t.submitted_at).toLocaleString("fr-FR") : "Non renseignée");
+        afficherChamp(carte, "Statut", libelleDecisionTravail(t.review_status));
+        if (t.feedback) afficherChamp(carte, "Commentaire existant", t.feedback);
+
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+        const ouvrir = document.createElement("button");
+        ouvrir.type = "button";
+        ouvrir.textContent = "Ouvrir le fichier";
+        ouvrir.addEventListener("click", async () => {
+          ouvrir.disabled = true;
+          try {
+            const { data, error } = await supabase.storage.from(t.bucket_id).createSignedUrl(t.object_path, 120);
+            if (error) throw error;
+            if (!data || !data.signedUrl) throw new Error("Lien temporaire indisponible.");
+            window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+          } catch (e) {
+            messageTravaux.textContent = "Ouverture impossible : " + (e.message || "erreur inconnue");
+          } finally { ouvrir.disabled = false; }
+        });
+        actions.appendChild(ouvrir);
+
+        if (t.review_status === "pending") {
+          const commentaire = document.createElement("textarea");
+          commentaire.className = "champ-note";
+          commentaire.maxLength = 1000;
+          commentaire.rows = 2;
+          commentaire.placeholder = "Commentaire destiné à l'apprenant (facultatif, 1000 caractères maximum)";
+          carte.appendChild(commentaire);
+
+          [["approved", "Valider le travail"], ["rejected", "Rejeter le travail"]].forEach(([decision, libelle]) => {
+            const bouton = document.createElement("button");
+            bouton.type = "button";
+            bouton.textContent = libelle;
+            if (decision === "rejected") bouton.className = "bouton-supprimer";
+            bouton.addEventListener("click", async () => {
+              const confirmation = decision === "approved"
+                ? "Confirmer la validation de ce travail pratique ?"
+                : "Confirmer le rejet de ce travail pratique ?";
+              if (!window.confirm(confirmation)) return;
+              bouton.disabled = true;
+              try {
+                const { data, error } = await supabase.rpc("examiner_depot_lecon", {
+                  p_submission_id: t.id,
+                  p_decision: decision,
+                  p_feedback: commentaire.value.trim() || null
+                });
+                if (error) throw error;
+                messageTravaux.textContent = decision === "approved"
+                  ? "Travail validé. La leçon sera terminée si le score de l'évaluation atteint au moins 80 %."
+                  : "Travail rejeté. L'apprenant devra corriger puis soumettre à nouveau son travail.";
+                await chargerTravaux();
+              } catch (e) {
+                console.error("Correction du travail impossible :", e);
+                messageTravaux.textContent = "Correction impossible : " + (e.message || "erreur inconnue");
+              } finally { bouton.disabled = false; }
+            });
+            actions.appendChild(bouton);
+          });
+        }
+        carte.appendChild(actions);
+        listeTravaux.appendChild(carte);
+      });
+    }
+
+    async function chargerTravaux() {
+      listeTravaux.textContent = "Chargement des dépôts...";
+      messageTravaux.textContent = "";
+      try {
+        const { data, error } = await supabase.from("lesson_submissions")
+          .select("id, progress_id, user_id, module_id, lesson_id, bucket_id, object_path, original_filename, mime_type, file_size_bytes, submission_number, review_status, feedback, submitted_at")
+          .order("submitted_at", { ascending: false });
+        if (error) throw error;
+        const rows = data || [];
+        const userIds = [...new Set(rows.map(x => x.user_id).filter(Boolean))];
+        const profils = userIds.length
+          ? await supabase.from("profiles").select("id, full_name").in("id", userIds)
+          : { data: [], error: null };
+        if (profils.error) throw profils.error;
+        const noms = new Map((profils.data || []).map(x => [x.id, x.full_name || "Apprenant sans nom"]));
+        travauxCharges = rows.map(x => ({ ...x, nom_apprenant: noms.get(x.user_id) || "Apprenant non identifié" }));
+        afficherTravaux();
+        messageTravaux.textContent = travauxCharges.length + " dépôt(s) chargé(s).";
+      } catch (e) {
+        console.error("Chargement des travaux impossible :", e);
+        listeTravaux.textContent = "Impossible de charger les dépôts : " + (e.message || "erreur inconnue");
+      }
+    }
+    document.getElementById("actualiser-travaux").addEventListener("click", chargerTravaux);
+    rechercheTravaux.addEventListener("input", afficherTravaux);
+    filtreTravaux.addEventListener("change", afficherTravaux);
+    await chargerTravaux();
+
+    // =====================================
+    // GESTION DES QUESTIONS DES LEÇONS
+    // =====================================
+    const sectionQuestions = document.getElementById("gestion-questions");
+    const formQuestion = document.getElementById("form-question");
+    const messageQuestions = document.getElementById("message-questions");
+    const listeQuestions = document.getElementById("liste-questions");
+    const filtreQuestionsModule = document.getElementById("filtre-questions-module");
+    const rechercheQuestions = document.getElementById("recherche-questions");
+    const boutonEnregistrerQuestion = document.getElementById("enregistrer-question");
+    const boutonAnnulerQuestion = document.getElementById("annuler-modification-question");
+    let questionsChargees = [];
+    let questionEnEdition = null;
+    sectionQuestions.hidden = false;
+
+    function viderFormQuestion() {
+      questionEnEdition = null;
+      formQuestion.reset();
+      document.getElementById("question-active").checked = true;
+      boutonEnregistrerQuestion.textContent = "Ajouter la question";
+      boutonAnnulerQuestion.hidden = true;
+    }
+
+    function afficherQuestions() {
+      const module = filtreQuestionsModule.value;
+      const terme = rechercheQuestions.value.trim().toLowerCase();
+      const resultats = questionsChargees.filter(q =>
+        (!module || q.module_id === module) &&
+        (!terme || [q.question_text, q.lesson_id, q.module_id].some(v => String(v || "").toLowerCase().includes(terme)))
+      );
+      listeQuestions.replaceChildren();
+      if (!resultats.length) {
+        listeQuestions.textContent = "Aucune question ne correspond aux critères.";
+        return;
+      }
+      resultats.forEach(q => {
+        const carte = document.createElement("article");
+        carte.className = "demande";
+        ajouterTexte(carte, "h3", q.module_id + " — " + q.lesson_id + " — Question " + q.question_order);
+        ajouterTexte(carte, "p", q.question_text);
+        [["A",q.option_a],["B",q.option_b],["C",q.option_c],["D",q.option_d]].forEach(([lettre, valeur]) =>
+          afficherChamp(carte, "Option " + lettre, valeur));
+        afficherChamp(carte, "Bonne réponse", q.correct_option);
+        if (q.explanation) afficherChamp(carte, "Explication", q.explanation);
+        afficherChamp(carte, "État", q.active ? "Active" : "Désactivée");
+
+        const actions = document.createElement("div");
+        actions.className = "actions-demande";
+        const modifier = document.createElement("button");
+        modifier.type = "button";
+        modifier.textContent = "Modifier";
+        modifier.addEventListener("click", () => {
+          questionEnEdition = q.id;
+          document.getElementById("question-module").value = q.module_id;
+          document.getElementById("question-lecon").value = q.lesson_id;
+          document.getElementById("question-texte").value = q.question_text;
+          document.getElementById("option-a").value = q.option_a;
+          document.getElementById("option-b").value = q.option_b;
+          document.getElementById("option-c").value = q.option_c;
+          document.getElementById("option-d").value = q.option_d;
+          document.getElementById("bonne-reponse").value = q.correct_option;
+          document.getElementById("explication-question").value = q.explanation || "";
+          document.getElementById("question-active").checked = q.active !== false;
+          boutonEnregistrerQuestion.textContent = "Enregistrer les modifications";
+          boutonAnnulerQuestion.hidden = false;
+          formQuestion.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        actions.appendChild(modifier);
+
+        const bascule = document.createElement("button");
+        bascule.type = "button";
+        bascule.textContent = q.active ? "Désactiver" : "Activer";
+        bascule.addEventListener("click", async () => {
+          bascule.disabled = true;
+          try {
+            const { error } = await supabase.from("lesson_questions").update({ active: !q.active }).eq("id", q.id);
+            if (error) throw error;
+            await chargerQuestions();
+            messageQuestions.textContent = q.active ? "Question désactivée." : "Question activée.";
+          } catch (e) {
+            messageQuestions.textContent = "Modification impossible : " + (e.message || "erreur inconnue");
+          } finally { bascule.disabled = false; }
+        });
+        actions.appendChild(bascule);
+
+        const supprimer = document.createElement("button");
+        supprimer.type = "button";
+        supprimer.className = "bouton-supprimer";
+        supprimer.textContent = "Supprimer";
+        supprimer.addEventListener("click", async () => {
+          if (!window.confirm("Supprimer définitivement cette question ?")) return;
+          supprimer.disabled = true;
+          try {
+            const { error } = await supabase.from("lesson_questions").delete().eq("id", q.id);
+            if (error) throw error;
+            await chargerQuestions();
+            messageQuestions.textContent = "Question supprimée.";
+            if (questionEnEdition === q.id) viderFormQuestion();
+          } catch (e) {
+            messageQuestions.textContent = "Suppression impossible : " + (e.message || "erreur inconnue");
+          } finally { supprimer.disabled = false; }
+        });
+        actions.appendChild(supprimer);
+        carte.appendChild(actions);
+        listeQuestions.appendChild(carte);
+      });
+    }
+
+    async function chargerQuestions() {
+      listeQuestions.textContent = "Chargement des questions...";
+      try {
+        const { data, error } = await supabase.from("lesson_questions")
+          .select("id, course_id, module_id, lesson_id, question_order, question_text, option_a, option_b, option_c, option_d, correct_option, explanation, active, created_at")
+          .order("module_id", { ascending: true })
+          .order("lesson_id", { ascending: true })
+          .order("question_order", { ascending: true });
+        if (error) throw error;
+        questionsChargees = data || [];
+        afficherQuestions();
+      } catch (e) {
+        console.error("Chargement des questions impossible :", e);
+        listeQuestions.textContent = "Impossible de charger les questions : " + (e.message || "erreur inconnue");
+      }
+    }
+
+    formQuestion.addEventListener("submit", async event => {
+      event.preventDefault();
+      const moduleId = document.getElementById("question-module").value;
+      const lessonId = document.getElementById("question-lecon").value.trim();
+      const questionText = document.getElementById("question-texte").value.trim();
+      const payload = {
+        course_id: "informatique",
+        module_id: moduleId,
+        lesson_id: lessonId,
+        question_text: questionText,
+        option_a: document.getElementById("option-a").value.trim(),
+        option_b: document.getElementById("option-b").value.trim(),
+        option_c: document.getElementById("option-c").value.trim(),
+        option_d: document.getElementById("option-d").value.trim(),
+        correct_option: document.getElementById("bonne-reponse").value,
+        explanation: document.getElementById("explication-question").value.trim() || null,
+        active: document.getElementById("question-active").checked
+      };
+      if (!payload.question_text || !lessonId || [payload.option_a,payload.option_b,payload.option_c,payload.option_d].some(v => !v)) {
+        messageQuestions.textContent = "Renseigne l'énoncé, l'identifiant de leçon et les quatre options.";
+        return;
+      }
+      boutonEnregistrerQuestion.disabled = true;
+      try {
+        if (questionEnEdition) {
+          const { error } = await supabase.from("lesson_questions").update(payload).eq("id", questionEnEdition);
+          if (error) throw error;
+          messageQuestions.textContent = "Question mise à jour.";
+        } else {
+          const { data: existantes, error: erreurExistantes } = await supabase.from("lesson_questions")
+            .select("question_order").eq("course_id", "informatique").eq("module_id", moduleId).eq("lesson_id", lessonId)
+            .order("question_order", { ascending: false }).limit(1);
+          if (erreurExistantes) throw erreurExistantes;
+          payload.question_order = (existantes && existantes.length ? Number(existantes[0].question_order) : 0) + 1;
+          const { error } = await supabase.from("lesson_questions").insert(payload);
+          if (error) throw error;
+          messageQuestions.textContent = "Question ajoutée. Numéro d'ordre : " + payload.question_order + ".";
+        }
+        viderFormQuestion();
+        await chargerQuestions();
+      } catch (e) {
+        console.error("Enregistrement de la question impossible :", e);
+        messageQuestions.textContent = "Enregistrement impossible : " + (e.message || "erreur inconnue");
+      } finally { boutonEnregistrerQuestion.disabled = false; }
+    });
+    boutonAnnulerQuestion.addEventListener("click", viderFormQuestion);
+    document.getElementById("actualiser-questions").addEventListener("click", chargerQuestions);
+    filtreQuestionsModule.addEventListener("change", afficherQuestions);
+    rechercheQuestions.addEventListener("input", afficherQuestions);
+    await chargerQuestions();
+
+
+    boutonActualiser.addEventListener(
+      "click",
+      chargerDemandes
+    );
+
+    await chargerDemandes();
+
+  } catch (erreur) {
+
+    console.error("Erreur inattendue :", erreur);
+
+    message.textContent =
+      "Une erreur est survenue pendant la vérification.";
+
+  }
+
+});
+</script>
+
+</body>
+</html>

@@ -153,19 +153,39 @@ exports.handler = async function (event) {
       }
     );
 
-    const facture = await paydunyaResponse.json();
+    // Lire d'abord le corps en texte pour diagnostiquer les réponses
+    // HTML/vides sans provoquer une erreur JSON non maîtrisée.
+    const paydunyaBody = await paydunyaResponse.text();
+    const paydunyaContentType =
+      paydunyaResponse.headers.get("content-type") || "non précisé";
+
+    let facture;
+    try {
+      facture = paydunyaBody ? JSON.parse(paydunyaBody) : null;
+    } catch (parseError) {
+      console.error("Réponse PayDunya non JSON :", {
+        httpStatus: paydunyaResponse.status,
+        contentType: paydunyaContentType,
+        urlFinale: paydunyaResponse.url,
+        redirection: paydunyaResponse.redirected,
+        debutReponse: paydunyaBody.slice(0, 300).replace(/[\r\n\t]+/g, " ")
+      });
+      throw new Error("PayDunya a renvoyé une réponse non JSON.");
+    }
 
     if (
       !paydunyaResponse.ok ||
+      !facture ||
       facture.response_code !== "00" ||
       !facture.token ||
       !facture.response_text
     ) {
       console.error("Réponse PayDunya :", {
         httpStatus: paydunyaResponse.status,
-        responseCode: facture.response_code || null,
-        tokenPresent: Boolean(facture.token),
-        urlPresent: Boolean(facture.response_text)
+        contentType: paydunyaContentType,
+        responseCode: facture?.response_code || null,
+        responseTextPresent: Boolean(facture?.response_text),
+        tokenPresent: Boolean(facture?.token)
       });
 
       throw new Error("PayDunya n'a pas pu créer la facture.");

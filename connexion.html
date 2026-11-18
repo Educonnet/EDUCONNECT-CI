@@ -156,11 +156,27 @@ lienMotDePasseOublie.addEventListener("click", async function(event) {
 
         if (error) throw error;
 
-        if (data.user) {
-          window.location.href = "educonnect-ci-principal-travail.html";
-        }
-      } catch (erreur) {
-        console.error("Erreur de connexion :", erreur);
+      if (data.user) {
+  const { data: estAdmin, error: roleError } =
+    await window.eduSupabase.rpc("is_admin");
+
+  if (roleError) {
+    console.error("Erreur vérification administrateur :", roleError);
+    message.textContent = "Impossible de vérifier les droits du compte.";
+    return;
+  }
+
+  if (estAdmin === true) {
+    window.location.replace("admin.html");
+  } else {
+    // Tous les apprenants passent d'abord par leur espace personnel.
+    // Le paramètre "redirect" est volontairement ignoré pour éviter
+    // de contourner l'étape de sélection du module depuis mon-compte.html.
+    window.location.replace("mon-compte.html");
+  }
+      } // Fin du bloc if (data.user)
+
+      } catch (erreur) {        console.error("Erreur de connexion :", erreur);
         message.textContent =
           "Connexion impossible. Vérifie ton e-mail et ton mot de passe, ou confirme ton adresse e-mail si nécessaire.";
       } finally {
@@ -170,4 +186,4 @@ lienMotDePasseOublie.addEventListener("click", async function(event) {
     });
   </script>
 </body>
-</html
+</html>
