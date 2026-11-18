@@ -130,7 +130,6 @@
 </form>
 
 <p id="message" role="status" aria-live="polite"></p>
-      <p id="message" role="status" aria-live="polite"></p>
     </section>
 
     <nav class="liens">
@@ -250,12 +249,6 @@ const data = await response.json();
 if (!response.ok) {
   throw new Error(
     data.error || "Impossible de préparer le paiement."
-  );
-}
-     if (!data || !data.success || !data.payment_url) {
-  console.error("Réponse PayDunya :", data);
-  throw new Error(
-    data?.error || "La facture PayDunya n'a pas pu être créée."
   );
 }
 
