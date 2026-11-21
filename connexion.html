@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion | EDUCONNECT CI</title>
+  <title>Réinitialiser mon mot de passe | EDUCONNECT CI</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      color: #17324d;
       background: #f4f8fc;
+      color: #17324d;
     }
     header {
       padding: 22px;
@@ -50,144 +50,127 @@
       color: white;
       font-size: 16px;
       font-weight: bold;
+      cursor: pointer;
     }
-    a { color: #087b55; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
     #message { line-height: 1.5; overflow-wrap: anywhere; }
+    a { color: #087b55; }
   </style>
 </head>
 <body>
   <header>
     <h1>EDUCONNECT CI</h1>
-    <p>Heureux de te retrouver !</p>
+    <p>Nouveau mot de passe</p>
   </header>
 
   <main>
-    <h2>Connexion</h2>
-    <p>Connecte-toi à ton espace apprenant.</p>
+    <h2>Réinitialiser mon mot de passe</h2>
+    <p>Choisis un nouveau mot de passe pour ton compte.</p>
 
-    <form id="formConnexion">
-      <label for="email">Adresse e-mail</label>
-      <input id="email" type="email" autocomplete="email" required>
+    <form id="formReset" hidden>
+      <label for="nouveauMotDePasse">Nouveau mot de passe</label>
+      <input id="nouveauMotDePasse" type="password"
+             autocomplete="new-password" minlength="8" required>
 
-      <label for="motdepasse">Mot de passe</label>
-      <input id="motdepasse" type="password"
-             autocomplete="current-password" required>
+      <label for="confirmationMotDePasse">Confirmer le mot de passe</label>
+      <input id="confirmationMotDePasse" type="password"
+             autocomplete="new-password" minlength="8" required>
 
-      <button id="boutonConnexion" type="submit">
-  Se connecter
-</button>
+      <button id="boutonReset" type="submit">
+        Enregistrer le nouveau mot de passe
+      </button>
+    </form>
 
-<p style="text-align:center; margin-top:15px;">
-  <a href="#" id="motDePasseOublie">
-    Mot de passe oublié ?
-  </a>
-</p>
-
-<p id="message-reinitialisation"></p>
-
-</form>
-    <p id="message" role="status" aria-live="polite"></p>
-    <p>Pas encore de compte ?
-      <a href="inscription.html">Créer un compte</a>
+    <p id="message" role="status" aria-live="polite">
+      Vérification du lien de récupération...
     </p>
-    <p><a href="index.html">Retour à l’accueil</a></p>
+
+    <p><a href="connexion.html">Retour à la connexion</a></p>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
+
   <script>
-    const formulaire = document.getElementById("formConnexion");
+    const formulaire = document.getElementById("formReset");
     const message = document.getElementById("message");
-    const lienMotDePasseOublie = document.getElementById("motDePasseOublie");
-const messageReinitialisation = document.getElementById("message-reinitialisation");
+    const bouton = document.getElementById("boutonReset");
 
-lienMotDePasseOublie.addEventListener("click", async function(event) {
-  event.preventDefault();
+    async function initialiser() {
+      try {
+        if (!window.eduSupabase) {
+          throw new Error("Service Supabase indisponible.");
+        }
 
-  const email = document.getElementById("email").value.trim();
+        // Supabase JS v2 récupère la session du lien de récupération.
+        const { data, error } =
+          await window.eduSupabase.auth.getSession();
 
-  if (!email) {
-    messageReinitialisation.textContent =
-      "Saisis d'abord ton adresse e-mail.";
-    return;
-  }
+        if (error) throw error;
 
-  try {
-    messageReinitialisation.textContent = "Envoi en cours...";
+        const session = data.session;
 
-    const { error } = await window.eduSupabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://educonnect-ci.net/reinitialiser-mot-de-passe.html"
-    });
+        if (!session) {
+          throw new Error(
+            "Lien invalide ou expiré. Demande un nouveau lien de récupération."
+          );
+        }
 
-    if (error) throw error;
+        formulaire.hidden = false;
+        message.textContent =
+          "Lien vérifié. Tu peux maintenant choisir ton nouveau mot de passe.";
 
-    messageReinitialisation.textContent =
-      "Si cette adresse est enregistrée, un e-mail de réinitialisation va être envoyé.";
-  } catch (erreur) {
-    console.error("Erreur de réinitialisation :", erreur);
-    messageReinitialisation.textContent =
-      "Impossible d'envoyer le lien. Réessaie plus tard.";
-  }
-});
-    const bouton = document.getElementById("boutonConnexion");
+      } catch (erreur) {
+        console.error("Erreur de récupération :", erreur);
+        message.textContent = erreur.message;
+      }
+    }
 
     formulaire.addEventListener("submit", async function(event) {
       event.preventDefault();
-      message.textContent = "";
 
-      const email = document.getElementById("email").value.trim();
-      const motdepasse = document.getElementById("motdepasse").value;
+      const nouveau = document.getElementById("nouveauMotDePasse").value;
+      const confirmation =
+        document.getElementById("confirmationMotDePasse").value;
 
-      if (!window.eduSupabase) {
+      if (nouveau.length < 8) {
         message.textContent =
-          "Service indisponible. Réessaie plus tard.";
+          "Le mot de passe doit contenir au moins 8 caractères.";
+        return;
+      }
+
+      if (nouveau !== confirmation) {
+        message.textContent =
+          "Les deux mots de passe ne correspondent pas.";
         return;
       }
 
       bouton.disabled = true;
-      bouton.textContent = "Connexion en cours...";
+      bouton.textContent = "Enregistrement en cours...";
 
-     
       try {
-        const { data, error } =
-          await window.eduSupabase.auth.signInWithPassword({
-            email: email,
-            password: motdepasse
-          });
+        const { error } = await window.eduSupabase.auth.updateUser({
+          password: nouveau
+        });
 
         if (error) throw error;
 
-        if (data.user) {
-          const { data: estAdmin, error: roleError } =
-            await window.eduSupabase.rpc("is_admin");
-
-          if (roleError) {
-            console.error("Erreur vérification administrateur :", roleError);
-            message.textContent =
-              "Impossible de vérifier les droits du compte.";
-            return;
-          }
-
-          if (estAdmin === true) {
-            window.location.replace("admin.html");
-          } else {
-            // Tous les apprenants passent d'abord par leur espace personnel.
-            // Le paramètre "redirect" est volontairement ignoré.
-            window.location.replace("mon-compte.html");
-          }
-        }
+        formulaire.hidden = true;
+        message.textContent =
+          "Ton mot de passe a été modifié avec succès. Tu peux maintenant te connecter.";
 
       } catch (erreur) {
-        console.error("Erreur de connexion :", erreur);
+        console.error("Erreur de modification :", erreur);
         message.textContent =
-          "Connexion impossible. Vérifie ton e-mail et ton mot de passe, ou confirme ton adresse e-mail si nécessaire.";
+          "Impossible de modifier le mot de passe : " + erreur.message;
 
       } finally {
         bouton.disabled = false;
-        bouton.textContent = "Se connecter";
+        bouton.textContent = "Enregistrer le nouveau mot de passe";
       }
     });
 
+    initialiser();
   </script>
 </body>
 </html>
