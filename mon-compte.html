@@ -354,6 +354,25 @@
     }
     .bouton-refuser { background: #8a2635; }
     .note-client { margin-top: 12px; color: #43576b; }
+
+    .attestation-info {
+      padding: 15px;
+      margin: 14px 0;
+      border: 1px solid #a9dfbf;
+      border-radius: 9px;
+      background: #eaf8ef;
+      color: #145c36;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+    .attestation-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    #message-attestation { line-height: 1.6; overflow-wrap: anywhere; }
+
     @media (max-width: 560px) {
       main { margin: 12px auto; padding: 12px; }
       .carte { padding: 16px; }
@@ -515,6 +534,27 @@
 
 </section>
 <!-- FIN RUBRIQUE MA PROGRESSION -->
+
+    <section class="carte" id="section-mon-attestation">
+      <h2>Mon attestation de réussite</h2>
+      <p>
+        Consulte ton attestation de réussite à la Formation aux Compétences
+        Numériques Fondamentales lorsque les quatre modules sont validés.
+      </p>
+      <p id="message-attestation" role="status" aria-live="polite">
+        Clique sur le bouton pour consulter ton attestation.
+      </p>
+      <div id="details-attestation" aria-live="polite"></div>
+      <div class="attestation-actions">
+        <button id="consulter-attestation" type="button">
+          Consulter mon attestation
+        </button>
+        <button id="telecharger-attestation" type="button" disabled>
+          Télécharger mon attestation en PDF
+        </button>
+      </div>
+    </section>
+
     <section class="carte" id="section-mes-commandes">
       <h2>Mes commandes et leur suivi</h2>
       <p>Consulte l'état de tes commandes et les changements de statut communiqués par l'administration.</p>
@@ -655,6 +695,165 @@ async function chargerMaProgression() {
       "Impossible de charger ta progression. Réessaie plus tard.";
   }
 }
+
+    let attestationCourante = null;
+
+    function echapperHTMLAttestation(valeur) {
+      return String(valeur == null ? "" : valeur)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    async function consulterMonAttestation() {
+      const message = document.getElementById("message-attestation");
+      const details = document.getElementById("details-attestation");
+      const boutonConsulter = document.getElementById("consulter-attestation");
+      const boutonPDF = document.getElementById("telecharger-attestation");
+
+      if (!window.eduSupabase || !utilisateurConnecte) {
+        message.textContent = "Connecte-toi pour consulter ton attestation.";
+        return;
+      }
+
+      boutonConsulter.disabled = true;
+      boutonPDF.disabled = true;
+      details.replaceChildren();
+      attestationCourante = null;
+      message.textContent = "Vérification de tes modules et récupération de ton attestation...";
+
+      try {
+        // La fonction est idempotente : si l'attestation existe déjà,
+        // elle retourne son numéro sans créer de doublon.
+        const { data: numero, error: erreurGeneration } =
+          await window.eduSupabase.rpc("generer_attestation_modules");
+
+        if (erreurGeneration) throw erreurGeneration;
+        if (typeof numero !== "string" || !numero.trim()) {
+          throw new Error("Aucun numéro d'attestation n'a été retourné.");
+        }
+
+        const { data, error: erreurVerification } =
+          await window.eduSupabase.rpc("verifier_attestation_modules", {
+            numero: numero
+          });
+
+        if (erreurVerification) throw erreurVerification;
+
+        const resultat = Array.isArray(data) ? data[0] : data;
+        if (!resultat || resultat.valide !== true ||
+            Number(resultat.modules_valides) !== 4 ||
+            Number(resultat.total_modules) !== 4) {
+          throw new Error("L'attestation n'est pas valide ou les quatre modules ne sont pas confirmés.");
+        }
+
+        attestationCourante = {
+          numero: resultat.numero_attestation,
+          formation: resultat.formation,
+          modules_valides: Number(resultat.modules_valides),
+          total_modules: Number(resultat.total_modules),
+          nom: nomUtilisateur || "Nom non renseigné",
+          email: utilisateurConnecte.email || "Non renseigné",
+          dateEdition: new Date().toLocaleDateString("fr-FR")
+        };
+
+        const carte = document.createElement("div");
+        carte.className = "attestation-info";
+        ajouterTexte(carte, "strong", "Attestation vérifiée avec succès");
+        ajouterTexte(carte, "p", "Titulaire : " + attestationCourante.nom);
+        ajouterTexte(carte, "p", "Formation : " + attestationCourante.formation);
+        ajouterTexte(carte, "p", "Modules validés : 4 sur 4");
+        ajouterTexte(carte, "p", "Numéro : " + attestationCourante.numero);
+        details.appendChild(carte);
+
+        message.textContent = "Ton attestation est disponible.";
+        boutonPDF.disabled = false;
+      } catch (erreur) {
+        console.error("Erreur de consultation de l'attestation :", erreur);
+        message.textContent = erreur && erreur.message
+          ? "Impossible de récupérer ton attestation : " + erreur.message
+          : "Impossible de récupérer ton attestation. Réessaie plus tard.";
+      } finally {
+        boutonConsulter.disabled = false;
+      }
+    }
+
+    function telechargerMonAttestationPDF() {
+      if (!attestationCourante) {
+        window.alert("Consulte d'abord ton attestation.");
+        return;
+      }
+
+      const fenetre = window.open("", "_blank");
+      if (!fenetre) {
+        window.alert("La fenêtre PDF a été bloquée. Autorise les fenêtres pop-up pour ce site puis réessaie.");
+        return;
+      }
+
+      const a = attestationCourante;
+      const esc = echapperHTMLAttestation;
+      const verificationUrl = "https://educonnect-ci.net/verifier-attestation.html";
+
+      const documentHTML = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attestation - ${esc(a.numero)}</title>
+<style>
+  @page { size: A4 landscape; margin: 16mm; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; color:#17324d; }
+  .cadre { min-height:175mm; border:7px double #073b70; padding:18mm 20mm; text-align:center; position:relative; }
+  .marque { font-family:Arial,sans-serif; color:#073b70; font-size:15pt; font-weight:bold; letter-spacing:2px; }
+  h1 { color:#073b70; font-size:27pt; margin:13mm 0 4mm; text-transform:uppercase; }
+  .sous-titre { font-family:Arial,sans-serif; font-size:13pt; color:#526579; }
+  .intro { margin-top:13mm; font-size:14pt; }
+  .nom { font-size:25pt; font-weight:bold; color:#073b70; margin:7mm 0; }
+  .formation { font-size:17pt; font-weight:bold; margin:6mm auto; max-width:220mm; }
+  .details { font-family:Arial,sans-serif; font-size:11pt; line-height:1.8; margin-top:8mm; }
+  .numero { margin:9mm auto 0; padding:4mm; border:1px solid #b8c9d9; font-family:Arial,sans-serif; font-size:10pt; overflow-wrap:anywhere; max-width:220mm; }
+  .pied { position:absolute; bottom:10mm; left:15mm; right:15mm; font-family:Arial,sans-serif; font-size:9pt; color:#526579; }
+  .mention { margin-top:5mm; font-style:italic; }
+  @media print { body { print-color-adjust:exact; -webkit-print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+  <main class="cadre">
+    <div class="marque">EDUCONNECT CI</div>
+    <h1>Attestation de réussite</h1>
+    <div class="sous-titre">Formation aux Compétences Numériques Fondamentales</div>
+    <p class="intro">Il est attesté que</p>
+    <div class="nom">${esc(a.nom)}</div>
+    <p class="intro">a satisfait aux exigences de validation de la formation.</p>
+    <div class="formation">${esc(a.formation)}</div>
+    <div class="details">
+      <strong>Modules validés : ${esc(a.modules_valides)} sur ${esc(a.total_modules)}</strong><br>
+      Document édité le : ${esc(a.dateEdition)}
+    </div>
+    <div class="numero">
+      <strong>Numéro officiel de l'attestation</strong><br>${esc(a.numero)}
+    </div>
+    <div class="pied">
+      Vérification publique : ${esc(verificationUrl)}<br>
+      Saisir le numéro officiel ci-dessus sur la page de vérification.
+      <div class="mention">EDUCONNECT CI — Apprendre aujourd'hui, réussir demain.</div>
+    </div>
+ <\/script>
+</body>
+</html>`;
+
+      fenetre.document.open();
+      fenetre.document.write(documentHTML);
+      fenetre.document.close();
+      setTimeout(function () {
+        fenetre.focus();
+        fenetre.print();
+      }, 700);
+    }
+
     async function chargerCompte() {
       const nom = document.getElementById("nom");
       const email = document.getElementById("email");
@@ -1487,7 +1686,7 @@ ${contenuReponseClient}
   ${contenuDelai}
   ${contenuConditions}
   <div class="pied">EDUCONNECT CI — Apprendre aujourd'hui, réussir demain.<br>${echapperHTML(devis.numero_devis)}</div>
-<\/body>
+  <\/body>
 </html>`;
      fenetre.document.open();
       fenetre.document.write(documentHTML);
@@ -1562,6 +1761,17 @@ if (formulaireDepotRecu) {
 const boutonActualiserRecus = document.getElementById("actualiser-recus-client");
 if (boutonActualiserRecus) {
   boutonActualiserRecus.addEventListener("click", chargerMesRecus);
+}
+
+
+const boutonConsulterAttestation = document.getElementById("consulter-attestation");
+if (boutonConsulterAttestation) {
+  boutonConsulterAttestation.addEventListener("click", consulterMonAttestation);
+}
+
+const boutonTelechargerAttestation = document.getElementById("telecharger-attestation");
+if (boutonTelechargerAttestation) {
+  boutonTelechargerAttestation.addEventListener("click", telechargerMonAttestationPDF);
 }
 
 const boutonDeconnexion = document.getElementById("deconnexion");
