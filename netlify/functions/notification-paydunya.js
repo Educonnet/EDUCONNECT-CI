@@ -306,4 +306,5 @@ if (!autorisationId) {
     success: false,
     error: "Traitement du paiement impossible."
   });
+}
 };
