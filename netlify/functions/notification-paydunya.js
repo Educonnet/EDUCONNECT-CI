@@ -125,7 +125,7 @@ exports.handler = async function (event) {
       error: "Méthode non autorisée."
     });
   }
-
+let etape = "initialisation";
   try {
     const {
       PAYDUNYA_MASTER_KEY,
