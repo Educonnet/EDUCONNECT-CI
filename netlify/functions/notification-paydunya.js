@@ -249,15 +249,17 @@ const confirmationResponse = await fetchAvecDelai(
       throw new Error("Montant du paiement incorrect.");
     }
 
-   // 6. Valider le paiement dans Supabase.
+  // 6. Valider le paiement dans Supabase.
+etape = "validation_supabase";
+
 const validationResponse = await fetchAvecDelai(
   `${SUPABASE_URL}/rest/v1/rpc/valider_paiement_paydunya`,
   {
     method: "POST",
     headers: {
-  "Content-Type": "application/json",
-  "apikey": SUPABASE_SECRET_KEY
-},
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_SECRET_KEY
+    },
     body: JSON.stringify({
       p_invoice_token: token,
       p_confirmed_amount: montant
@@ -265,22 +267,33 @@ const validationResponse = await fetchAvecDelai(
   },
   15000
 );
-    if (!validationResponse.ok) {
-  console.error(
-    "Validation Supabase refusée. Code HTTP :",
-    validationResponse.status
+
+const texteReponse = await validationResponse.text();
+
+console.log("Résultat de validation Supabase :", {
+  etape,
+  codeHTTP: validationResponse.status,
+  succes: validationResponse.ok,
+  reponse: texteReponse.substring(0, 1500)
+});
+
+if (!validationResponse.ok) {
+  throw new Error(
+    `Supabase HTTP ${validationResponse.status} : ${texteReponse}`
   );
-
-  throw new Error("Validation Supabase impossible.");
 }
-    const autorisationId = await validationResponse.json();
 
-    if (!autorisationId) {
-      throw new Error(
-        "Aucune autorisation de module retournée."
-      );
-    }
+let autorisationId;
 
+try {
+  autorisationId = JSON.parse(texteReponse);
+} catch {
+  throw new Error("Réponse RPC Supabase non JSON.");
+}
+
+if (!autorisationId) {
+  throw new Error("Aucune autorisation de module retournée.");
+}
     return reponse(200, {
       success: true,
       message: "Paiement confirmé."
