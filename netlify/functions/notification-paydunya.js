@@ -300,12 +300,13 @@ if (!autorisationId) {
     });
 
   } catch (erreur) {
-  console.error(
-    "Échec du traitement de la notification PayDunya."
-  );
-    return reponse(500, {
-      success: false,
-      error: "Traitement du paiement impossible."
-    });
-  }
-};
+  console.error("ÉCHEC NOTIFICATION PAYDUNYA :", {
+    etape,
+    message: erreur.message
+  });
+
+  return reponse(500, {
+    success: false,
+    error: "Traitement du paiement impossible."
+  });
+}
