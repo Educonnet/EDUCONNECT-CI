@@ -147,24 +147,21 @@ let etape = "initialisation";
       throw new Error("Configuration serveur incorrecte.");
     }
 
-    // 1. Lire la notification reçue.
-    const tailleMaximale = 64 * 1024; // 64 Ko
+   // 1. Lire la notification reçue.
+const corps = event.isBase64Encoded
+  ? Buffer.from(event.body || "", "base64").toString("utf8")
+  : event.body || "";
 
-if (
-  typeof event.body !== "string" ||
-  Buffer.byteLength(event.body, "utf8") > tailleMaximale
-) {
+const tailleMaximale = 64 * 1024;
+
+if (Buffer.byteLength(corps, "utf8") > tailleMaximale) {
   return reponse(413, {
     success: false,
     error: "Notification trop volumineuse."
   });
 }
-    const corps = event.isBase64Encoded
-      ? Buffer.from(event.body || "", "base64").toString("utf8")
-      : event.body || "";
 
-    const notification = lireNotification(corps);
-
+const notification = lireNotification(corps);
     if (
       !notification.hash ||
       !notification.status ||
