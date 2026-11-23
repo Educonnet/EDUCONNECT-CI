@@ -119,13 +119,13 @@ function lireNotification(corps) {
 }
 
 exports.handler = async function (event) {
+  let etape = "initialisation";
   if (event.httpMethod !== "POST") {
     return reponse(405, {
       success: false,
       error: "Méthode non autorisée."
     });
   }
-let etape = "initialisation";
   try {
     const {
       PAYDUNYA_MASTER_KEY,
