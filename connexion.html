@@ -99,7 +99,9 @@ const clientSupabase = window.eduSupabase;
 // Vérification du lien de récupération
 async function initialiser() {
   try {
-    if (!supabase) {
+    const clientSupabase = window.eduSupabase;
+
+    if (!clientSupabase || !clientSupabase.auth) {
       throw new Error("Service Supabase indisponible.");
     }
 
@@ -125,30 +127,26 @@ async function initialiser() {
       );
     }
 
-    // Laisser Supabase traiter automatiquement le retour
-    // du lien de récupération (PKCE ou jetons).
-    const { data, error } = clientSupabase.auth.getSession();
+    // Récupération de la session Supabase
+    const { data, error } =
+      await clientSupabase.auth.getSession();
 
     if (error) throw error;
 
-    if (!data.session) {
+    const session = data?.session;
+
+    if (!session) {
       throw new Error(
         "Aucune session de récupération détectée. Demande un nouveau lien."
       );
     }
 
-    formulaire.hidden = false;
+    console.log(
+      "Session de récupération détectée :",
+      session.user.email
+    );
 
-    message.textContent =
-      "Lien vérifié. Tu peux maintenant choisir ton nouveau mot de passe.";
-
-  } catch (erreur) {
-    console.error("Erreur de récupération :", erreur);
-    message.textContent = erreur.message;
-    formulaire.hidden = true;
-  }
-}
-
+    // Conserve ici la suite de ton code existant.
 // Enregistrement du nouveau mot de passe
 formulaire.addEventListener("submit", async function (event) {
   event.preventDefault();
