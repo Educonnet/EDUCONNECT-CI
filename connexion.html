@@ -91,23 +91,22 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
 <script>
+
 const formulaire = document.getElementById("formReset");
 const message = document.getElementById("message");
 const bouton = document.getElementById("boutonReset");
 
 const clientSupabase = window.eduSupabase;
+
 // Vérification du lien de récupération
 async function initialiser() {
   try {
-    const clientSupabase = window.eduSupabase;
-
     if (!clientSupabase || !clientSupabase.auth) {
       throw new Error("Service Supabase indisponible.");
     }
 
     const url = new URL(window.location.href);
 
-    // Vérifier les éventuelles erreurs renvoyées par Supabase
     const hashParams = new URLSearchParams(
       url.hash.substring(1)
     );
@@ -127,7 +126,8 @@ async function initialiser() {
       );
     }
 
-    // Récupération de la session Supabase
+    // Supabase JS v2 traite automatiquement les liens
+    // de récupération si detectSessionInUrl est activé.
     const { data, error } =
       await clientSupabase.auth.getSession();
 
@@ -137,27 +137,38 @@ async function initialiser() {
 
     if (!session) {
       throw new Error(
-        "Aucune session de récupération détectée. Demande un nouveau lien."
+        "Aucune session de récupération détectée. " +
+        "Utilise le lien reçu par e-mail."
       );
     }
 
     console.log(
-      "Session de récupération détectée :",
+      "Session détectée :",
       session.user.email
     );
 
-    // Conserve ici la suite de ton code existant.
+    // Afficher le formulaire
+    formulaire.hidden = false;
+
+    message.textContent =
+      "Lien valide. Tu peux maintenant choisir ton nouveau mot de passe.";
+
+  } catch (erreur) {
+    console.error("Erreur de récupération :", erreur);
+    message.textContent = erreur.message;
+    formulaire.hidden = true;
+  }
+}
+
 // Enregistrement du nouveau mot de passe
-formulaire.addEventListener("submit", async function (event) {
+formulaire.addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  const nouveau = document.getElementById(
-    "nouveauMotDePasse"
-  ).value;
+  const nouveau =
+    document.getElementById("nouveauMotDePasse").value;
 
-  const confirmation = document.getElementById(
-    "confirmationMotDePasse"
-  ).value;
+  const confirmation =
+    document.getElementById("confirmationMotDePasse").value;
 
   if (nouveau.length < 8) {
     message.textContent =
@@ -174,30 +185,33 @@ formulaire.addEventListener("submit", async function (event) {
   try {
     bouton.disabled = true;
     bouton.textContent = "Enregistrement...";
-    message.textContent = "Mise à jour du mot de passe en cours...";
+    message.textContent =
+      "Mise à jour du mot de passe en cours...";
 
-    const { error } = clientSupabase.auth.updateUser({
-      password: nouveau
-    });
+    const { error } =
+      await clientSupabase.auth.updateUser({
+        password: nouveau
+      });
 
     if (error) throw error;
 
     message.textContent =
-      "Mot de passe modifié avec succès. Redirection vers la connexion...";
+      "Mot de passe modifié avec succès.";
 
-    // Fermer la session de récupération
     await clientSupabase.auth.signOut();
 
-    window.location.href = "connexion.html";
+    window.location.href = "/connexion";
 
   } catch (erreur) {
     console.error("Erreur de modification :", erreur);
+
     message.textContent =
       "Impossible de modifier le mot de passe : " +
       erreur.message;
 
     bouton.disabled = false;
-    bouton.textContent = "Enregistrer le nouveau mot de passe";
+    bouton.textContent =
+      "Enregistrer le nouveau mot de passe";
   }
 });
 
