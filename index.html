@@ -1,256 +1,121 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="EDUCONNECT CI : plateforme de cours et de formations en ligne.">
-  <title>EDUCONNECT CI | Apprendre autrement</title>
+  <title>Connexion | EDUCONNECT CI</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: #17324d;
-      background: #f4f8fc;
-    }
-    header {
-      background: #073b70;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 18px;
-      padding: 14px;
-      background: white;
-    }
-    nav a {
-      color: #073b70;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .hero {
-      text-align: center;
-      padding: 65px 20px;
-      background: #e2efff;
-    }
-    .hero h2 {
-      font-size: clamp(28px, 6vw, 44px);
-      margin: 0 0 15px;
-    }
-    .hero p {
-      max-width: 650px;
-      margin: 0 auto 25px;
-      line-height: 1.7;
-    }
-    .btn {
-      display: inline-block;
-      margin: 6px;
-      padding: 13px 20px;
-      border-radius: 8px;
-      background: #087b55;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .btn.secondary { background: #073b70; }
-    main { padding: 35px 18px; }
-    .courses {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
-      max-width: 750px;
-      margin: 25px auto;
-    }
-    .course {
-      padding: 22px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 3px 12px #0000000d;
-    }
-    .course h3 { color: #087b55; }
-    footer {
-      padding: 22px;
-      text-align: center;
-      color: white;
-      background: #073b70;
-    }
-    /* Directions commerciales EDUCONNECT CI */
-.directions {
-    padding: 45px 20px;
-    text-align: center;
-    background: #f5f8fc;
-}
-
-.directions > h2 {
-    color: #073b70;
-    font-size: 30px;
-    margin-bottom: 10px;
-}
-
-.directions > p {
-    color: #555;
-    margin-bottom: 30px;
-}
-
-.direction-card {
-    display: inline-block;
-    vertical-align: top;
-    width: min(100%, 430px);
-    min-height: 190px;
-    box-sizing: border-box;
-    margin: 12px;
-    padding: 25px;
-    text-align: center;
-    background: white;
-    border-radius: 14px;
-    box-shadow: 0 3px 14px #00000012;
-    border-top: 5px solid #087b55;
-}
-
-.direction-card h3 {
-    color: #073b70;
-    margin-bottom: 12px;
-}
-
-.direction-card p {
-    line-height: 1.7;
-    color: #555;
-}
+    body { margin: 0; font-family: Arial, sans-serif; color: #17324d; background: #f4f8fc; }
+    header { padding: 22px; text-align: center; color: white; background: #073b70; }
+    main { width: min(92%, 460px); margin: 35px auto; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 3px 12px #0000000d; }
+    label { display: block; margin-top: 16px; font-weight: bold; }
+    input { width: 100%; margin-top: 7px; padding: 12px; border: 1px solid #bdcbd9; border-radius: 7px; font-size: 16px; }
+    button { width: 100%; margin-top: 22px; padding: 13px; border: 0; border-radius: 7px; background: #087b55; color: white; font-size: 16px; font-weight: bold; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    a { color: #087b55; }
+    #message, #message-reinitialisation { line-height: 1.5; overflow-wrap: anywhere; }
   </style>
 </head>
 <body>
   <header>
-  <img
-    src="logo-educonnect-ci.png"
-    alt="Logo officiel EDUCONNECT CI"
-    class="logo"
-  >
-  <p>Le savoir à portée de clic</p>
-</header>
-
- <nav>
-    <a href="index.html">Accueil</a>
-    <a href="formation.html">Formation</a>
-    <a href="technologies.html">Technologies</a>
-    <a href="services.html">Services</a>
-    <a href="securite-reseaux.html">Sécurité & Réseaux</a>
-    <a href="inscription.html">Inscription</a>
-    <a href="connexion.html">Connexion</a>
-</nav>
-  <section class="hero">
-    <h2>Bienvenue chez EDUCONNECT.CI</h2>
-
-    <p>
-      Votre partenaire pour la formation, le développement
-      numérique, les services informatiques, la sécurité
-      et les réseaux.
-    </p>
-
-    <p>
-      Découvrez nos quatre directions commerciales et
-      trouvez la solution adaptée à vos besoins.
-    </p>
-
-    <a class="btn" href="#directions">Découvrir nos activités</a>
-    <a class="btn secondary" href="inscription.html">Créer un compte</a>
-</section>
-<section id="directions" class="directions">
-    <h2>Nos quatre directions commerciales</h2>
-    <p>Découvrez l'ensemble de nos prestations.</p>
-
-    <div class="direction-card">
-        <h3>EDUCONNECT FORMATION</h3>
-        <p>Formations professionnelles et informatiques.</p>
-        <a class="btn" href="formation.html">Découvrir</a>
-    </div>
-
-    <div class="direction-card">
-        <h3>EDUCONNECT TECHNOLOGIES</h3>
-        <p>Conception de logiciels, applications et sites Internet.</p>
-        <a class="btn" href="technologies.html">Découvrir</a>
-    </div>
-
-    <div class="direction-card">
-        <h3>EDUCONNECT SERVICES</h3>
-        <p>Maintenance, assistance et dépannage informatique.</p>
-        <a class="btn" href="services.html">Découvrir</a>
-    </div>
-
-    <div class="direction-card">
-        <h3>EDUCONNECT SÉCURITÉ & RÉSEAUX</h3>
-        <p>Vidéosurveillance, réseaux et connectivité.</p>
-        <a class="btn" href="securite-reseaux.html">Découvrir</a>
-    </div>
-</section>
+    <h1>EDUCONNECT CI</h1>
+    <p>Heureux de te retrouver !</p>
+  </header>
   <main>
-    <h2 style="text-align:center">Nos domaines de formation</h2>
-    <div class="courses">
-      <article class="course">
-        <h3>Informatique</h3>
-        <p>Découvre la programmation, le Web et les outils numériques.</p>
-      </article>
-      <article class="course">
-        <h3>Bureautique</h3>
-        <p>Développe tes compétences en Word, Excel et PowerPoint.</p>
-      </article>
-      <article class="course">
-        <h3>Compétences professionnelles</h3>
-        <p>Prépare-toi aux exigences du monde professionnel.</p>
-      </article>
-    </div>
-    ```
-<section id="formations-gratuites">
-  <h2 style="text-align:center">Formations gratuites</h2>
-  <div class="courses">
-    <article class="course">
-      <h3>Initiation à l’informatique</h3>
-      <p>Découvre les bases de l’ordinateur et du numérique.</p>
-      <p><strong>Prix :</strong> Gratuit</p>
-      <a class="btn" href="initiation-informatique.html">Commencer gratuitement</a>
-    </article>
-
-    <article class="course">
-      <h3>Initiation au développement Web</h3>
-      <p>Découvre HTML, CSS et JavaScript à ton rythme.</p>
-      <p><strong>Prix :</strong> Gratuit</p>
-      <a class="btn" href="initiation-web.html">Commencer gratuitement</a>
-    </article>
-  </div>
-</section>
-
-<section id="formations-payantes">
-  <h2 style="text-align:center">Formations payantes</h2>
-  <div class="courses">
-    <article class="course">
-      <h3>Développement Web professionnel</h3>
-      <p>Approfondis tes compétences pour créer des sites Web.</p>
-      <p><strong>Prix :</strong> À définir</p>
-      <a class="btn" href="inscription.html">Créer un compte</a>
-    </article>
-
-    <article class="course">
-      <h3>Bureautique avancée</h3>
-      <p>Progresse sur Word, Excel et PowerPoint.</p>
-      <p><strong>Prix :</strong> À définir</p>
-      <a class="btn" href="inscription.html">Créer un compte</a>
-    </article>
-  </div>
-</section>
-```
-
+    <h2>Connexion</h2>
+    <p>Connecte-toi à ton espace apprenant.</p>
+    <form id="formConnexion">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <label for="motdepasse">Mot de passe</label>
+      <input id="motdepasse" type="password" autocomplete="current-password" required>
+      <button id="boutonConnexion" type="submit">Se connecter</button>
+      <p style="text-align:center; margin-top:15px;">
+        <a href="#" id="motDePasseOublie">Mot de passe oublié ?</a>
+      </p>
+      <p id="message-reinitialisation" role="status" aria-live="polite"></p>
+    </form>
+    <p id="message" role="status" aria-live="polite"></p>
+    <p>Pas encore de compte ? <a href="inscription.html">Créer un compte</a></p>
+    <p><a href="index.html">Retour à l’accueil</a></p>
   </main>
 
-  <footer>
-    <p>&copy; 2026 EDUCONNECT CI — Tous droits réservés.</p>
-  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
   <script>
-  // La sauvegarde de la progression sera ajoutée ici.
-</script>
+    const formulaire = document.getElementById("formConnexion");
+    const message = document.getElementById("message");
+    const bouton = document.getElementById("boutonConnexion");
+    const lienMotDePasseOublie = document.getElementById("motDePasseOublie");
+    const messageReinitialisation = document.getElementById("message-reinitialisation");
+
+    function obtenirClient() {
+      if (!window.eduSupabase || !window.eduSupabase.auth) {
+        throw new Error("Service de connexion indisponible. Réessaie plus tard.");
+      }
+      return window.eduSupabase;
+    }
+
+    lienMotDePasseOublie.addEventListener("click", async function(event) {
+      event.preventDefault();
+      messageReinitialisation.textContent = "";
+      const email = document.getElementById("email").value.trim();
+
+      if (!email) {
+        messageReinitialisation.textContent = "Saisis d'abord ton adresse e-mail.";
+        document.getElementById("email").focus();
+        return;
+      }
+
+      try {
+        const client = obtenirClient();
+        lienMotDePasseOublie.style.pointerEvents = "none";
+        messageReinitialisation.textContent = "Envoi du lien en cours...";
+        const { error } = await client.auth.resetPasswordForEmail(email, {
+          redirectTo: "https://educonnect-ci.net/reinitialisation"
+        });
+        if (error) throw error;
+        messageReinitialisation.textContent =
+          "Si cette adresse est enregistrée, un e-mail de réinitialisation va être envoyé. Consulte ta boîte de réception et tes courriers indésirables.";
+      } catch (erreur) {
+        console.error("Erreur de réinitialisation :", erreur);
+        messageReinitialisation.textContent =
+          "Impossible d'envoyer le lien : " + (erreur.message || "erreur inconnue");
+      } finally {
+        lienMotDePasseOublie.style.pointerEvents = "";
+      }
+    });
+
+    formulaire.addEventListener("submit", async function(event) {
+      event.preventDefault();
+      message.textContent = "";
+      const email = document.getElementById("email").value.trim();
+      const motdepasse = document.getElementById("motdepasse").value;
+
+      try {
+        const client = obtenirClient();
+        bouton.disabled = true;
+        bouton.textContent = "Connexion en cours...";
+        const { data, error } = await client.auth.signInWithPassword({
+          email: email,
+          password: motdepasse
+        });
+        if (error) throw error;
+        if (data.user) {
+          window.location.href = "mon-compte.html";
+        } else {
+          throw new Error("La connexion n'a pas pu être confirmée.");
+        }
+      } catch (erreur) {
+        console.error("Erreur de connexion :", erreur);
+        message.textContent =
+          "Connexion impossible. Vérifie ton e-mail et ton mot de passe, ou confirme ton adresse e-mail si nécessaire.";
+      } finally {
+        bouton.disabled = false;
+        bouton.textContent = "Se connecter";
+      }
+    });
+  </script>
 </body>
 </html>
-```
