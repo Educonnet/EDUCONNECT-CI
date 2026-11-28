@@ -127,7 +127,7 @@ async function initialiser() {
 
     // Laisser Supabase traiter automatiquement le retour
     // du lien de récupération (PKCE ou jetons).
-    const { data, error } = await supabase.auth.getSession();
+    const { data, error } = clientSupabase.auth.getSession();
 
     if (error) throw error;
 
@@ -178,7 +178,7 @@ formulaire.addEventListener("submit", async function (event) {
     bouton.textContent = "Enregistrement...";
     message.textContent = "Mise à jour du mot de passe en cours...";
 
-    const { error } = await supabase.auth.updateUser({
+    const { error } = clientSupabase.auth.updateUser({
       password: nouveau
     });
 
@@ -188,7 +188,7 @@ formulaire.addEventListener("submit", async function (event) {
       "Mot de passe modifié avec succès. Redirection vers la connexion...";
 
     // Fermer la session de récupération
-    await supabase.auth.signOut();
+    await clientSupabase.auth.signOut();
 
     window.location.href = "connexion.html";
 
