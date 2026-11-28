@@ -1,0 +1,223 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Réinitialisation du mot de passe | EDUCONNECT CI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f8fc;
+      color: #17324d;
+    }
+    header {
+      padding: 22px;
+      text-align: center;
+      color: white;
+      background: #073b70;
+    }
+    main {
+      width: min(92%, 460px);
+      margin: 35px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #0000000d;
+    }
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      margin-top: 7px;
+      padding: 12px;
+      border: 1px solid #bdcbd9;
+      border-radius: 7px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 13px;
+      border: 0;
+      border-radius: 7px;
+      background: #087b55;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    #message { line-height: 1.5; overflow-wrap: anywhere; }
+    a { color: #087b55; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EDUCONNECT CI</h1>
+    <p>Nouveau mot de passe</p>
+  </header>
+
+  <main>
+    <h2>Réinitialiser mon mot de passe</h2>
+    <p>Choisis un nouveau mot de passe pour ton compte.</p>
+
+    <form id="formReset" hidden>
+      <label for="nouveauMotDePasse">Nouveau mot de passe</label>
+      <input id="nouveauMotDePasse" type="password"
+             autocomplete="new-password" minlength="8" required>
+
+      <label for="confirmationMotDePasse">Confirmer le mot de passe</label>
+      <input id="confirmationMotDePasse" type="password"
+             autocomplete="new-password" minlength="8" required>
+
+      <button id="boutonReset" type="submit">
+        Enregistrer le nouveau mot de passe
+      </button>
+    </form>
+
+    <p id="message" role="status" aria-live="polite">
+      Vérification du lien de récupération...
+    </p>
+
+    <p><a href="/connexion">Retour à la connexion</a></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+<script>
+
+const formulaire = document.getElementById("formReset");
+const message = document.getElementById("message");
+const bouton = document.getElementById("boutonReset");
+
+const clientSupabase = window.eduSupabase;
+
+// Vérification du lien de récupération
+async function initialiser() {
+  try {
+    if (!clientSupabase || !clientSupabase.auth) {
+      throw new Error("Service Supabase indisponible.");
+    }
+
+    const url = new URL(window.location.href);
+
+    const hashParams = new URLSearchParams(
+      url.hash.substring(1)
+    );
+
+    const errorCode =
+      url.searchParams.get("error_code") ||
+      hashParams.get("error_code");
+
+    const errorDescription =
+      url.searchParams.get("error_description") ||
+      hashParams.get("error_description");
+
+    if (errorCode) {
+      throw new Error(
+        errorDescription ||
+        "Le lien de récupération est invalide ou expiré."
+      );
+    }
+
+    // Avec detectSessionInUrl activé dans supabase.js,
+    // Supabase traite le code PKCE ou les jetons du lien au chargement.
+    // getSession() attend l'initialisation du client.
+    const { data, error } =
+      await clientSupabase.auth.getSession();
+
+    if (error) throw error;
+
+    const session = data?.session;
+
+    if (!session) {
+      throw new Error(
+        "Aucune session de récupération détectée. " +
+        "Utilise le lien reçu par e-mail."
+      );
+    }
+
+    console.log(
+      "Session détectée :",
+      session.user.email
+    );
+
+    // Afficher le formulaire
+    formulaire.hidden = false;
+
+    message.textContent =
+      "Lien valide. Tu peux maintenant choisir ton nouveau mot de passe.";
+
+  } catch (erreur) {
+    console.error("Erreur de récupération :", erreur);
+    message.textContent = erreur.message;
+    formulaire.hidden = true;
+  }
+}
+
+// Enregistrement du nouveau mot de passe
+formulaire.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const nouveau =
+    document.getElementById("nouveauMotDePasse").value;
+
+  const confirmation =
+    document.getElementById("confirmationMotDePasse").value;
+
+  if (nouveau.length < 8) {
+    message.textContent =
+      "Le mot de passe doit contenir au moins 8 caractères.";
+    return;
+  }
+
+  if (nouveau !== confirmation) {
+    message.textContent =
+      "Les deux mots de passe ne correspondent pas.";
+    return;
+  }
+
+  try {
+    bouton.disabled = true;
+    bouton.textContent = "Enregistrement...";
+    message.textContent =
+      "Mise à jour du mot de passe en cours...";
+
+    const { error } =
+      await clientSupabase.auth.updateUser({
+        password: nouveau
+      });
+
+    if (error) throw error;
+
+    message.textContent =
+      "Mot de passe modifié avec succès.";
+
+    await clientSupabase.auth.signOut();
+
+    window.location.href = "/connexion";
+
+  } catch (erreur) {
+    console.error("Erreur de modification :", erreur);
+
+    message.textContent =
+      "Impossible de modifier le mot de passe : " +
+      erreur.message;
+
+    bouton.disabled = false;
+    bouton.textContent =
+      "Enregistrer le nouveau mot de passe";
+  }
+});
+
+initialiser();
+
+  </script>
+</body>
+</html>
