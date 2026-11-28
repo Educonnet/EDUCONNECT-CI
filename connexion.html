@@ -96,79 +96,81 @@
     const message = document.getElementById("message");
     const bouton = document.getElementById("boutonReset");
 
-    async function initialiser() {
-      try {
-        if (!window.eduSupabase) {
-          throw new Error("Service Supabase indisponible.");
-        }
-
-        // Supabase JS v2 récupère la session du lien de récupération.
-        const { data, error } =
-          await window.eduSupabase.auth.getSession();
-
-        if (error) throw error;
-
-        const session = data.session;
-
-        if (!session) {
-          throw new Error(
-            "Lien invalide ou expiré. Demande un nouveau lien de récupération."
-          );
-        }
-
-        formulaire.hidden = false;
-        message.textContent =
-          "Lien vérifié. Tu peux maintenant choisir ton nouveau mot de passe.";
-
-      } catch (erreur) {
-        console.error("Erreur de récupération :", erreur);
-        message.textContent = erreur.message;
-      }
+    
+async function initialiser() {
+  try {
+    if (!window.eduSupabase) {
+      throw new Error("Service Supabase indisponible.");
     }
 
-    formulaire.addEventListener("submit", async function(event) {
-      event.preventDefault();
+    const supabase = window.eduSupabase;
+    const url = new URL(window.location.href);
 
-      const nouveau = document.getElementById("nouveauMotDePasse").value;
-      const confirmation =
-        document.getElementById("confirmationMotDePasse").value;
+    // Vérifier si Supabase a retourné une erreur.
+    const hashParams = new URLSearchParams(
+      url.hash.substring(1)
+    );
 
-      if (nouveau.length < 8) {
-        message.textContent =
-          "Le mot de passe doit contenir au moins 8 caractères.";
-        return;
-      }
+    const errorCode =
+      url.searchParams.get("error_code") ||
+      hashParams.get("error_code");
 
-      if (nouveau !== confirmation) {
-        message.textContent =
-          "Les deux mots de passe ne correspondent pas.";
-        return;
-      }
+    const errorDescription =
+      url.searchParams.get("error_description") ||
+      hashParams.get("error_description");
 
-      bouton.disabled = true;
-      bouton.textContent = "Enregistrement en cours...";
+    if (errorCode) {
+      throw new Error(
+        errorDescription
+          ? decodeURIComponent(errorDescription.replace(/\+/g, " "))
+          : "Le lien de récupération est invalide ou expiré."
+      );
+    }
 
-      try {
-        const { error } = await window.eduSupabase.auth.updateUser({
-          password: nouveau
-        });
+    // Récupérer les paramètres de retour.
+    const code = url.searchParams.get("code");
+    const accessToken = hashParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token");
 
-        if (error) throw error;
+    // Échanger le code PKCE uniquement si nécessaire.
+    if (code) {
+      const { error } =
+        await supabase.auth.exchangeCodeForSession(code);
 
-        formulaire.hidden = true;
-        message.textContent =
-          "Ton mot de passe a été modifié avec succès. Tu peux maintenant te connecter.";
+      if (error) throw error;
+    }
+    // Restaurer la session si le lien contient les jetons.
+    else if (accessToken && refreshToken) {
+      const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      });
 
-      } catch (erreur) {
-        console.error("Erreur de modification :", erreur);
-        message.textContent =
-          "Impossible de modifier le mot de passe : " + erreur.message;
+      if (error) throw error;
+    }
 
-      } finally {
-        bouton.disabled = false;
-        bouton.textContent = "Enregistrer le nouveau mot de passe";
-      }
-    });
+    // Vérifier la session finale.
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) throw error;
+
+    if (!data.session) {
+      throw new Error(
+        "Aucune session de récupération détectée. Demande un nouveau lien."
+      );
+    }
+
+    formulaire.hidden = false;
+
+    message.textContent =
+      "Lien vérifié. Tu peux maintenant choisir ton nouveau mot de passe.";
+
+  } catch (erreur) {
+    console.error("Erreur de récupération :", erreur);
+    message.textContent = erreur.message;
+  }
+}
+
 
     initialiser();
   </script>
