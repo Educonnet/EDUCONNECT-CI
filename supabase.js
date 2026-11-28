@@ -1,11 +1,7 @@
+// Configuration Supabase pour EDUCONNECT CI.
 
-// Configuration Supabase pour EDUCONNECT CI
-
-const SUPABASE_URL =
-  "https://rdhcrbdhzyrraavfscyh.supabase.co";
-
-const SUPABASE_PUBLISHABLE_KEY =
-  "sb_publishable_03BXbRMZCHVX7xuZn8F2ww_YCiIm51X";
+const SUPABASE_URL = "https://rdhcrbdhzyrraavfscyh.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_03BXbRMZCHVX7xuZn8F2ww_YCiIm51X";
 
 if (!window.supabase) {
   console.error("La bibliothèque Supabase n'est pas chargée.");
@@ -15,10 +11,9 @@ if (!window.supabase) {
     SUPABASE_PUBLISHABLE_KEY,
     {
       auth: {
-        autoRefreshToken: true,
-        persistSession: true,
         detectSessionInUrl: true,
-        flowType: "pkce"
+        persistSession: true,
+        autoRefreshToken: true
       }
     }
   );
