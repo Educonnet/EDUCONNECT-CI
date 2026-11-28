@@ -91,22 +91,23 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase.js"></script>
 
-  <script>
-    const formulaire = document.getElementById("formReset");
-    const message = document.getElementById("message");
-    const bouton = document.getElementById("boutonReset");
+ 
+const formulaire = document.getElementById("formReset");
+const message = document.getElementById("message");
+const bouton = document.getElementById("boutonReset");
 
-    
+const supabase = window.eduSupabase;
+
+// Vérification du lien de récupération
 async function initialiser() {
   try {
-    if (!window.eduSupabase) {
+    if (!supabase) {
       throw new Error("Service Supabase indisponible.");
     }
 
-    const supabase = window.eduSupabase;
     const url = new URL(window.location.href);
 
-    // Vérifier si Supabase a retourné une erreur.
+    // Vérifier les éventuelles erreurs renvoyées par Supabase
     const hashParams = new URLSearchParams(
       url.hash.substring(1)
     );
@@ -121,35 +122,13 @@ async function initialiser() {
 
     if (errorCode) {
       throw new Error(
-        errorDescription
-          ? decodeURIComponent(errorDescription.replace(/\+/g, " "))
-          : "Le lien de récupération est invalide ou expiré."
+        errorDescription ||
+        "Le lien de récupération est invalide ou expiré."
       );
     }
 
-    // Récupérer les paramètres de retour.
-    const code = url.searchParams.get("code");
-    const accessToken = hashParams.get("access_token");
-    const refreshToken = hashParams.get("refresh_token");
-
-    // Échanger le code PKCE uniquement si nécessaire.
-    if (code) {
-      const { error } =
-        await supabase.auth.exchangeCodeForSession(code);
-
-      if (error) throw error;
-    }
-    // Restaurer la session si le lien contient les jetons.
-    else if (accessToken && refreshToken) {
-      const { error } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-      });
-
-      if (error) throw error;
-    }
-
-    // Vérifier la session finale.
+    // Laisser Supabase traiter automatiquement le retour
+    // du lien de récupération (PKCE ou jetons).
     const { data, error } = await supabase.auth.getSession();
 
     if (error) throw error;
@@ -168,11 +147,66 @@ async function initialiser() {
   } catch (erreur) {
     console.error("Erreur de récupération :", erreur);
     message.textContent = erreur.message;
+    formulaire.hidden = true;
   }
 }
 
+// Enregistrement du nouveau mot de passe
+formulaire.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-    initialiser();
+  const nouveau = document.getElementById(
+    "nouveauMotDePasse"
+  ).value;
+
+  const confirmation = document.getElementById(
+    "confirmationMotDePasse"
+  ).value;
+
+  if (nouveau.length < 8) {
+    message.textContent =
+      "Le mot de passe doit contenir au moins 8 caractères.";
+    return;
+  }
+
+  if (nouveau !== confirmation) {
+    message.textContent =
+      "Les deux mots de passe ne correspondent pas.";
+    return;
+  }
+
+  try {
+    bouton.disabled = true;
+    bouton.textContent = "Enregistrement...";
+    message.textContent = "Mise à jour du mot de passe en cours...";
+
+    const { error } = await supabase.auth.updateUser({
+      password: nouveau
+    });
+
+    if (error) throw error;
+
+    message.textContent =
+      "Mot de passe modifié avec succès. Redirection vers la connexion...";
+
+    // Fermer la session de récupération
+    await supabase.auth.signOut();
+
+    window.location.href = "connexion.html";
+
+  } catch (erreur) {
+    console.error("Erreur de modification :", erreur);
+    message.textContent =
+      "Impossible de modifier le mot de passe : " +
+      erreur.message;
+
+    bouton.disabled = false;
+    bouton.textContent = "Enregistrer le nouveau mot de passe";
+  }
+});
+
+initialiser();
+
   </script>
 </body>
 </html>
